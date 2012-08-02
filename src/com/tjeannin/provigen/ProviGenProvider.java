@@ -25,16 +25,16 @@ public class ProviGenProvider extends ContentProvider {
 
 		sqLiteOpenHelper = new SQLiteOpenHelper(getContext(), DATABASE_NAME, null, 1) {
 
-			private static final String DATABASE_CREATE = "CREATE TABLE " + Alarm.TABLE_NAME + " ( " +
-					Alarm.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-					Alarm.COLUMN_HOUR + " INTEGER, " +
-					Alarm.COLUMN_MINUTE + " INTEGER, " +
-					Alarm.COLUMN_SNOOZETIME + " NUMERIC, " +
-					Alarm.COLUMN_RINGTIME + " NUMERIC, " +
-					Alarm.COLUMN_ACTIVE + " INTEGER, " +
-					Alarm.COLUMN_SNOOZED + " INTEGER, " +
-					Alarm.COLUMN_NAME + " TEXT, " +
-					Alarm.COLUMN_ACTIVE_DAYS + " TEXT " + " ) ";
+			private static final String DATABASE_CREATE = "CREATE TABLE " + AlarmContract.TABLE_NAME + " ( " +
+					AlarmContract.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+					AlarmContract.COLUMN_HOUR + " INTEGER, " +
+					AlarmContract.COLUMN_MINUTE + " INTEGER, " +
+					AlarmContract.COLUMN_SNOOZETIME + " NUMERIC, " +
+					AlarmContract.COLUMN_RINGTIME + " NUMERIC, " +
+					AlarmContract.COLUMN_ACTIVE + " INTEGER, " +
+					AlarmContract.COLUMN_SNOOZED + " INTEGER, " +
+					AlarmContract.COLUMN_NAME + " TEXT, " +
+					AlarmContract.COLUMN_ACTIVE_DAYS + " TEXT " + " ) ";
 
 			@Override
 			public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
@@ -64,15 +64,15 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			numberOfRowsAffected = database.delete(Alarm.TABLE_NAME, selection, selectionArgs);
+			numberOfRowsAffected = database.delete(AlarmContract.TABLE_NAME, selection, selectionArgs);
 			break;
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.delete(Alarm.TABLE_NAME, Alarm.COLUMN_ID + " = ? ", new String[] { alarmId });
+				numberOfRowsAffected = database.delete(AlarmContract.TABLE_NAME, AlarmContract.COLUMN_ID + " = ? ", new String[] { alarmId });
 			} else {
-				numberOfRowsAffected = database.delete(Alarm.TABLE_NAME, selection + " AND " + Alarm.COLUMN_ID + " = ? ",
+				numberOfRowsAffected = database.delete(AlarmContract.TABLE_NAME, selection + " AND " + AlarmContract.COLUMN_ID + " = ? ",
 						appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
@@ -102,7 +102,7 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			long alarmId = database.insert(Alarm.TABLE_NAME, null, values);
+			long alarmId = database.insert(AlarmContract.TABLE_NAME, null, values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.withAppendedPath(uri, String.valueOf(alarmId));
 		default:
@@ -118,14 +118,14 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			cursor = database.query(Alarm.TABLE_NAME, projection, selection, selectionArgs, "", "", sortOrder);
+			cursor = database.query(AlarmContract.TABLE_NAME, projection, selection, selectionArgs, "", "", sortOrder);
 			break;
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 			if (TextUtils.isEmpty(selection)) {
-				cursor = database.query(Alarm.TABLE_NAME, projection, Alarm.COLUMN_ID + " = ? ", new String[] { alarmId }, "", "", sortOrder);
+				cursor = database.query(AlarmContract.TABLE_NAME, projection, AlarmContract.COLUMN_ID + " = ? ", new String[] { alarmId }, "", "", sortOrder);
 			} else {
-				cursor = database.query(Alarm.TABLE_NAME, projection, selection + " AND " + Alarm.COLUMN_ID + " = ? ",
+				cursor = database.query(AlarmContract.TABLE_NAME, projection, selection + " AND " + AlarmContract.COLUMN_ID + " = ? ",
 						appendToStringArray(selectionArgs, alarmId), "", "", sortOrder);
 			}
 			break;
@@ -147,15 +147,15 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			numberOfRowsAffected = database.update(Alarm.TABLE_NAME, values, selection, selectionArgs);
+			numberOfRowsAffected = database.update(AlarmContract.TABLE_NAME, values, selection, selectionArgs);
 			break;
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.update(Alarm.TABLE_NAME, values, Alarm.COLUMN_ID + " = ? ", new String[] { alarmId });
+				numberOfRowsAffected = database.update(AlarmContract.TABLE_NAME, values, AlarmContract.COLUMN_ID + " = ? ", new String[] { alarmId });
 			} else {
-				numberOfRowsAffected = database.update(Alarm.TABLE_NAME, values, selection + " AND " + Alarm.COLUMN_ID + " = ? ",
+				numberOfRowsAffected = database.update(AlarmContract.TABLE_NAME, values, selection + " AND " + AlarmContract.COLUMN_ID + " = ? ",
 						appendToStringArray(selectionArgs, alarmId));
 			}
 			break;

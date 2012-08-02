@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
 
-import com.tjeannin.provigen.Alarm;
+import com.tjeannin.provigen.AlarmContract;
 import com.tjeannin.provigen.ProviGenProvider;
 
 public class ProviGenProviderTest extends ProviderTestCase2<ProviGenProvider> {
@@ -23,30 +23,30 @@ public class ProviGenProviderTest extends ProviderTestCase2<ProviGenProvider> {
 	}
 
 	public void testProviderIsEmpty() {
-		Cursor cursor = contentResolver.query(Alarm.CONTENT_URI, null, "", null, "");
+		Cursor cursor = contentResolver.query(AlarmContract.CONTENT_URI, null, "", null, "");
 		assertTrue(cursor.getCount() == 0);
 	}
 
 	public void testInsert() {
-		contentResolver.insert(Alarm.CONTENT_URI, Alarm.getDefaultContentValues());
-		Cursor cursor = contentResolver.query(Alarm.CONTENT_URI, null, "", null, "");
+		contentResolver.insert(AlarmContract.CONTENT_URI, AlarmContract.getDefaultContentValues());
+		Cursor cursor = contentResolver.query(AlarmContract.CONTENT_URI, null, "", null, "");
 		assertTrue(cursor.getCount() == 1);
 	}
 
 	public void testAutoIncrement() {
 
-		contentResolver.insert(Alarm.CONTENT_URI, Alarm.getDefaultContentValues());
-		contentResolver.insert(Alarm.CONTENT_URI, Alarm.getDefaultContentValues());
-		contentResolver.insert(Alarm.CONTENT_URI, Alarm.getDefaultContentValues());
+		contentResolver.insert(AlarmContract.CONTENT_URI, AlarmContract.getDefaultContentValues());
+		contentResolver.insert(AlarmContract.CONTENT_URI, AlarmContract.getDefaultContentValues());
+		contentResolver.insert(AlarmContract.CONTENT_URI, AlarmContract.getDefaultContentValues());
 
-		contentResolver.delete(Uri.withAppendedPath(Alarm.CONTENT_URI, String.valueOf(3)), "", null);
+		contentResolver.delete(Uri.withAppendedPath(AlarmContract.CONTENT_URI, String.valueOf(3)), "", null);
 
-		contentResolver.insert(Alarm.CONTENT_URI, Alarm.getDefaultContentValues());
+		contentResolver.insert(AlarmContract.CONTENT_URI, AlarmContract.getDefaultContentValues());
 
-		Cursor cursor = contentResolver.query(Uri.withAppendedPath(Alarm.CONTENT_URI, String.valueOf(4)), null, "", null, "");
+		Cursor cursor = contentResolver.query(Uri.withAppendedPath(AlarmContract.CONTENT_URI, String.valueOf(4)), null, "", null, "");
 		assertTrue(cursor.getCount() == 1);
 
-		cursor = contentResolver.query(Uri.withAppendedPath(Alarm.CONTENT_URI, String.valueOf(3)), null, "", null, "");
+		cursor = contentResolver.query(Uri.withAppendedPath(AlarmContract.CONTENT_URI, String.valueOf(3)), null, "", null, "");
 		assertTrue(cursor.getCount() == 0);
 	}
 
