@@ -50,8 +50,8 @@ public class ProviGenProvider extends ContentProvider {
 		};
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI("com.tjeannin.alarm", "alarm", ALARM);
-		uriMatcher.addURI("com.tjeannin.alarm", "alarm/#", ALARM_ID);
+		uriMatcher.addURI("com.tjeannin.provigen", "alarm", ALARM);
+		uriMatcher.addURI("com.tjeannin.provigen", "alarm/#", ALARM_ID);
 
 		return true;
 	}
