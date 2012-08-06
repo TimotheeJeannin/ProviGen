@@ -50,8 +50,11 @@ public class ProviGenProvider extends ContentProvider {
 		};
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI("com.tjeannin.provigen", "alarm", ALARM);
-		uriMatcher.addURI("com.tjeannin.provigen", "alarm/#", ALARM_ID);
+		
+		DatabaseTable entity = AlarmContract.class.getAnnotation(DatabaseTable.class);
+		
+		uriMatcher.addURI(entity.authority(), "alarm", ALARM);
+		uriMatcher.addURI(entity.authority(), "alarm/#", ALARM_ID);
 
 		return true;
 	}

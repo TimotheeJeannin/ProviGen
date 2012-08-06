@@ -3,6 +3,7 @@ package com.tjeannin.provigen;
 import android.content.ContentValues;
 import android.net.Uri;
 
+@DatabaseTable(authority = "com.tjeannin.provigen")
 public class AlarmContract {
 
 	// Provider contract.
