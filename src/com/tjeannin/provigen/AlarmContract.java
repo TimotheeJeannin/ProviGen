@@ -1,7 +1,5 @@
 package com.tjeannin.provigen;
 
-import java.util.Calendar;
-
 import android.content.ContentValues;
 import android.net.Uri;
 
@@ -18,8 +16,6 @@ public class AlarmContract {
 	public static final String COLUMN_SNOOZED = "snoozed";
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_ACTIVE_DAYS = "active_days";
-
-	public static final int[] CALENDAR_WEEK_DAYS = { Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY };
 
 	public static final Uri CONTENT_URI = Uri.parse("content://com.tjeannin.provigen/alarm");
 
