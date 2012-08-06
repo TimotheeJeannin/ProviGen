@@ -1,5 +1,7 @@
 package com.tjeannin.provigen;
 
+import java.util.List;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -50,9 +52,12 @@ public class ProviGenProvider extends ContentProvider {
 		};
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		
-		DatabaseTable entity = AlarmContract.class.getAnnotation(DatabaseTable.class);
-		
+
+		AnnotationScanner annotationScanner = new AnnotationScanner(getContext());
+		List<Class> classes = annotationScanner.getClassesAnnotatedWith(DatabaseTable.class);
+
+		DatabaseTable entity = (DatabaseTable) classes.get(0).getAnnotation(DatabaseTable.class);
+
 		uriMatcher.addURI(entity.authority(), "alarm", ALARM);
 		uriMatcher.addURI(entity.authority(), "alarm/#", ALARM_ID);
 
