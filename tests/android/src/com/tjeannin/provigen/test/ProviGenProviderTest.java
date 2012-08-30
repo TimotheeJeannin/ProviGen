@@ -19,10 +19,12 @@ public class ProviGenProviderTest extends ProviderTestCase2<ProviGenProvider> {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		ProviGenProvider.setModel(AlarmContract.class);
 		contentResolver = getMockContentResolver();
 	}
 
 	public void testProviderIsEmpty() {
+		
 		Cursor cursor = contentResolver.query(AlarmContract.CONTENT_URI, null, "", null, "");
 		assertTrue(cursor.getCount() == 0);
 	}
