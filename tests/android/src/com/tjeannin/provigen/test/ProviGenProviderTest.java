@@ -6,15 +6,14 @@ import android.net.Uri;
 import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
 
-import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.test.AlarmContentProvider.AlarmContract;
 
-public class ProviGenProviderTest extends ProviderTestCase2<ProviGenProvider> {
+public class ProviGenProviderTest extends ProviderTestCase2<AlarmContentProvider> {
 
 	private MockContentResolver contentResolver;
 
 	public ProviGenProviderTest() {
-		super(ProviGenProvider.class, "com.tjeannin.provigen");
+		super(AlarmContentProvider.class, "com.tjeannin.provigen");
 	}
 
 	@Override

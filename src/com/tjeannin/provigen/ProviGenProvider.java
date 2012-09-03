@@ -44,14 +44,14 @@ public class ProviGenProvider extends ContentProvider {
 				tableName = field.getName();
 			}
 
-			Column column = field.getAnnotation(Column.class);
-			if (column != null) {
-				databaseFields.add(new DatabaseField(field.getName(), column.value()));
-			}
-
 			Id id = field.getAnnotation(Id.class);
 			if (id != null) {
 				idField = field.getName();
+			}
+
+			Column column = field.getAnnotation(Column.class);
+			if (column != null) {
+				databaseFields.add(new DatabaseField(field.getName(), column.value()));
 			}
 
 		}
