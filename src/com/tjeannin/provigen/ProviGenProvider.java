@@ -22,24 +22,33 @@ public class ProviGenProvider extends ContentProvider {
 
 	private static String authority;
 
+	public ProviGenProvider(Contract contractClass) {
+		
+		
+		
+	}
+
 	@Override
 	public boolean onCreate() {
 
-		sqLiteOpenHelper = new SQLiteOpenHelper(getContext(), DATABASE_NAME, null, 1) {
+		sqLiteOpenHelper = new SQLiteOpenHelper(getContext(), DATABASE_NAME,
+				null, 1) {
 
-			private static final String DATABASE_CREATE = "CREATE TABLE " + AlarmContract.TABLE_NAME + " ( " +
-					AlarmContract.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-					AlarmContract.COLUMN_HOUR + " INTEGER, " +
-					AlarmContract.COLUMN_MINUTE + " INTEGER, " +
-					AlarmContract.COLUMN_SNOOZETIME + " NUMERIC, " +
-					AlarmContract.COLUMN_RINGTIME + " NUMERIC, " +
-					AlarmContract.COLUMN_ACTIVE + " INTEGER, " +
-					AlarmContract.COLUMN_SNOOZED + " INTEGER, " +
-					AlarmContract.COLUMN_NAME + " TEXT, " +
-					AlarmContract.COLUMN_ACTIVE_DAYS + " TEXT " + " ) ";
+			private static final String DATABASE_CREATE = "CREATE TABLE "
+					+ TABLE_NAME + " ( "
+					+ COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+					+ COLUMN_HOUR + " INTEGER, "
+					+ COLUMN_MINUTE + " INTEGER, "
+					+ COLUMN_SNOOZETIME + " NUMERIC, "
+					+ COLUMN_RINGTIME + " NUMERIC, "
+					+ COLUMN_ACTIVE + " INTEGER, "
+					+ COLUMN_SNOOZED + " INTEGER, "
+					+ COLUMN_NAME + " TEXT, "
+					+ COLUMN_ACTIVE_DAYS + " TEXT " + " ) ";
 
 			@Override
-			public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+			public void onUpgrade(SQLiteDatabase database, int oldVersion,
+					int newVersion) {
 
 			}
 
@@ -59,7 +68,8 @@ public class ProviGenProvider extends ContentProvider {
 	}
 
 	public static void setModel(Class<AlarmContract> clazz) {
-		authority = ((DatabaseTable) clazz.getAnnotation(DatabaseTable.class)).authority();
+		authority = ((DatabaseTable) clazz.getAnnotation(DatabaseTable.class))
+				.authority();
 	}
 
 	@Override
@@ -70,15 +80,20 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			numberOfRowsAffected = database.delete(AlarmContract.TABLE_NAME, selection, selectionArgs);
+			numberOfRowsAffected = database.delete(TABLE_NAME,
+					selection, selectionArgs);
 			break;
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.delete(AlarmContract.TABLE_NAME, AlarmContract.COLUMN_ID + " = ? ", new String[] { alarmId });
+				numberOfRowsAffected = database.delete(
+						TABLE_NAME, COLUMN_ID
+								+ " = ? ", new String[] { alarmId });
 			} else {
-				numberOfRowsAffected = database.delete(AlarmContract.TABLE_NAME, selection + " AND " + AlarmContract.COLUMN_ID + " = ? ",
+				numberOfRowsAffected = database.delete(
+						TABLE_NAME, selection + " AND "
+								+ COLUMN_ID + " = ? ",
 						appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
@@ -94,9 +109,11 @@ public class ProviGenProvider extends ContentProvider {
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			return "vnd.android.cursor.dir/vnd." + getContext().getPackageName() + ".alarm";
+			return "vnd.android.cursor.dir/vnd."
+					+ getContext().getPackageName() + ".alarm";
 		case ALARM_ID:
-			return "vnd.android.cursor.item/vnd." + getContext().getPackageName() + ".alarm";
+			return "vnd.android.cursor.item/vnd."
+					+ getContext().getPackageName() + ".alarm";
 		default:
 			throw new IllegalArgumentException("Unknown uri " + uri);
 		}
@@ -108,7 +125,8 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			long alarmId = database.insert(AlarmContract.TABLE_NAME, null, values);
+			long alarmId = database.insert(TABLE_NAME, null,
+					values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.withAppendedPath(uri, String.valueOf(alarmId));
 		default:
@@ -117,22 +135,29 @@ public class ProviGenProvider extends ContentProvider {
 	}
 
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+	public Cursor query(Uri uri, String[] projection, String selection,
+			String[] selectionArgs, String sortOrder) {
 		SQLiteDatabase database = sqLiteOpenHelper.getReadableDatabase();
 
 		Cursor cursor = null;
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			cursor = database.query(AlarmContract.TABLE_NAME, projection, selection, selectionArgs, "", "", sortOrder);
+			cursor = database.query(TABLE_NAME, projection,
+					selection, selectionArgs, "", "", sortOrder);
 			break;
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 			if (TextUtils.isEmpty(selection)) {
-				cursor = database.query(AlarmContract.TABLE_NAME, projection, AlarmContract.COLUMN_ID + " = ? ", new String[] { alarmId }, "", "", sortOrder);
+				cursor = database.query(TABLE_NAME, projection,
+						COLUMN_ID + " = ? ",
+						new String[] { alarmId }, "", "", sortOrder);
 			} else {
-				cursor = database.query(AlarmContract.TABLE_NAME, projection, selection + " AND " + AlarmContract.COLUMN_ID + " = ? ",
-						appendToStringArray(selectionArgs, alarmId), "", "", sortOrder);
+				cursor = database
+						.query(TABLE_NAME, projection, selection
+								+ " AND " + COLUMN_ID + " = ? ",
+								appendToStringArray(selectionArgs, alarmId),
+								"", "", sortOrder);
 			}
 			break;
 		default:
@@ -146,22 +171,29 @@ public class ProviGenProvider extends ContentProvider {
 	}
 
 	@Override
-	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+	public int update(Uri uri, ContentValues values, String selection,
+			String[] selectionArgs) {
 		SQLiteDatabase database = sqLiteOpenHelper.getWritableDatabase();
 
 		int numberOfRowsAffected = 0;
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			numberOfRowsAffected = database.update(AlarmContract.TABLE_NAME, values, selection, selectionArgs);
+			numberOfRowsAffected = database.update(TABLE_NAME,
+					values, selection, selectionArgs);
 			break;
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.update(AlarmContract.TABLE_NAME, values, AlarmContract.COLUMN_ID + " = ? ", new String[] { alarmId });
+				numberOfRowsAffected = database.update(
+						TABLE_NAME, values,
+						COLUMN_ID + " = ? ",
+						new String[] { alarmId });
 			} else {
-				numberOfRowsAffected = database.update(AlarmContract.TABLE_NAME, values, selection + " AND " + AlarmContract.COLUMN_ID + " = ? ",
+				numberOfRowsAffected = database.update(
+						TABLE_NAME, values, selection + " AND "
+								+ COLUMN_ID + " = ? ",
 						appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
@@ -174,8 +206,11 @@ public class ProviGenProvider extends ContentProvider {
 
 	/**
 	 * Appends the given element to a copy of the given array.
-	 * @param array The array to copy.
-	 * @param element The element to append.
+	 * 
+	 * @param array
+	 *            The array to copy.
+	 * @param element
+	 *            The element to append.
 	 * @return An Array with the element appended.
 	 */
 	private static String[] appendToStringArray(String[] array, String element) {
