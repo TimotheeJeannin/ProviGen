@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import com.tjeannin.provigen.annotations.Column;
+import com.tjeannin.provigen.annotations.Id;
 import com.tjeannin.provigen.annotations.Table;
 
 import android.app.ActionBar.Tab;
@@ -21,6 +22,7 @@ import android.util.SparseArray;
 public class ProviGenProvider extends ContentProvider {
 
 	private String tableName;
+	private String idColum;
 	private List<DatabaseField> columns;
 
 	private SQLiteOpenHelper sqLiteOpenHelper;
@@ -38,20 +40,19 @@ public class ProviGenProvider extends ContentProvider {
 		Field[] fields = contractClass.getFields();
 		for (Field field : fields) {
 
-			if (field.getAnnotations().length == 1) {
+			Table table = field.getAnnotation(Table.class);
+			if (table != null) {
+				tableName = field.getName();
+			}
 
-				Table table = field.getAnnotation(Table.class);
-				if (table != null) {
-					tableName = field.getName();
-				}
+			Column column = field.getAnnotation(Column.class);
+			if (column != null) {
+				columns.add(new DatabaseField(field.getName(), column.value()));
+			}
 
-				Column column = field.getAnnotation(Column.class);
-				if (column != null) {
-					columns.add(new DatabaseField(field.getName(), column.value()));
-				}
-
-			} else {
-				throw new InvalidContractException();
+			Id id = field.getAnnotation(Id.class);
+			if (id != null) {
+				idColum = field.getName();
 			}
 
 		}
@@ -110,11 +111,11 @@ public class ProviGenProvider extends ContentProvider {
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.delete(tableName, COLUMN_ID
+				numberOfRowsAffected = database.delete(tableName, idColum
 						+ " = ? ", new String[] { alarmId });
 			} else {
 				numberOfRowsAffected = database.delete(tableName, selection
-						+ " AND " + COLUMN_ID + " = ? ",
+						+ " AND " + idColum + " = ? ",
 						appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
@@ -169,11 +170,11 @@ public class ProviGenProvider extends ContentProvider {
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 			if (TextUtils.isEmpty(selection)) {
-				cursor = database.query(tableName, projection, COLUMN_ID
+				cursor = database.query(tableName, projection, idColum
 						+ " = ? ", new String[] { alarmId }, "", "", sortOrder);
 			} else {
 				cursor = database.query(tableName, projection, selection
-						+ " AND " + COLUMN_ID + " = ? ",
+						+ " AND " + idColum + " = ? ",
 						appendToStringArray(selectionArgs, alarmId), "", "",
 						sortOrder);
 			}
@@ -205,10 +206,10 @@ public class ProviGenProvider extends ContentProvider {
 
 			if (TextUtils.isEmpty(selection)) {
 				numberOfRowsAffected = database.update(tableName, values,
-						COLUMN_ID + " = ? ", new String[] { alarmId });
+						idColum + " = ? ", new String[] { alarmId });
 			} else {
 				numberOfRowsAffected = database.update(tableName, values,
-						selection + " AND " + COLUMN_ID + " = ? ",
+						selection + " AND " + idColum + " = ? ",
 						appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
