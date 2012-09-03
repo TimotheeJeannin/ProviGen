@@ -3,11 +3,6 @@ package com.tjeannin.provigen;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import com.tjeannin.provigen.annotations.Column;
-import com.tjeannin.provigen.annotations.Id;
-import com.tjeannin.provigen.annotations.Table;
-
-import android.app.ActionBar.Tab;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -17,13 +12,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.SparseArray;
+
+import com.tjeannin.provigen.annotations.Column;
+import com.tjeannin.provigen.annotations.Id;
+import com.tjeannin.provigen.annotations.Table;
 
 public class ProviGenProvider extends ContentProvider {
 
 	private String tableName;
-	private String idColum;
-	private List<DatabaseField> columns;
+	private String idField;
+	private List<DatabaseField> databaseFields;
 
 	private SQLiteOpenHelper sqLiteOpenHelper;
 
@@ -35,6 +33,7 @@ public class ProviGenProvider extends ContentProvider {
 
 	private static String authority;
 
+	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
 
 		Field[] fields = contractClass.getFields();
@@ -47,12 +46,12 @@ public class ProviGenProvider extends ContentProvider {
 
 			Column column = field.getAnnotation(Column.class);
 			if (column != null) {
-				columns.add(new DatabaseField(field.getName(), column.value()));
+				databaseFields.add(new DatabaseField(field.getName(), column.value()));
 			}
 
 			Id id = field.getAnnotation(Id.class);
 			if (id != null) {
-				idColum = field.getName();
+				idField = field.getName();
 			}
 
 		}
@@ -73,13 +72,13 @@ public class ProviGenProvider extends ContentProvider {
 			public void onCreate(SQLiteDatabase database) {
 
 				// Create alarm table.
-				database.execSQL(buildTableCreationQuery(tableName, columns));
+				database.execSQL(buildTableCreationQuery(tableName, databaseFields));
 			}
 
 			private String buildTableCreationQuery(String tableName, List<DatabaseField> fields) {
 				StringBuilder builder = new StringBuilder("CREATE TABLE ");
 				builder.append(tableName + " ( ");
-				for (DatabaseField field : columns) {
+				for (DatabaseField field : databaseFields) {
 					builder.append(" " + field.getName() + " " + field.getType().toString());
 					builder.append(", ");
 				}
@@ -111,11 +110,11 @@ public class ProviGenProvider extends ContentProvider {
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.delete(tableName, idColum
+				numberOfRowsAffected = database.delete(tableName, idField
 						+ " = ? ", new String[] { alarmId });
 			} else {
 				numberOfRowsAffected = database.delete(tableName, selection
-						+ " AND " + idColum + " = ? ",
+						+ " AND " + idField + " = ? ",
 						appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
@@ -170,11 +169,11 @@ public class ProviGenProvider extends ContentProvider {
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 			if (TextUtils.isEmpty(selection)) {
-				cursor = database.query(tableName, projection, idColum
+				cursor = database.query(tableName, projection, idField
 						+ " = ? ", new String[] { alarmId }, "", "", sortOrder);
 			} else {
 				cursor = database.query(tableName, projection, selection
-						+ " AND " + idColum + " = ? ",
+						+ " AND " + idField + " = ? ",
 						appendToStringArray(selectionArgs, alarmId), "", "",
 						sortOrder);
 			}
@@ -206,10 +205,10 @@ public class ProviGenProvider extends ContentProvider {
 
 			if (TextUtils.isEmpty(selection)) {
 				numberOfRowsAffected = database.update(tableName, values,
-						idColum + " = ? ", new String[] { alarmId });
+						idField + " = ? ", new String[] { alarmId });
 			} else {
 				numberOfRowsAffected = database.update(tableName, values,
-						selection + " AND " + idColum + " = ? ",
+						selection + " AND " + idField + " = ? ",
 						appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
