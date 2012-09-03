@@ -21,7 +21,7 @@ import android.util.SparseArray;
 public class ProviGenProvider extends ContentProvider {
 
 	private String tableName;
-	private SparseArray<String> columns;
+	private List<DatabaseField> columns;
 
 	private SQLiteOpenHelper sqLiteOpenHelper;
 
@@ -47,7 +47,7 @@ public class ProviGenProvider extends ContentProvider {
 
 				Column column = field.getAnnotation(Column.class);
 				if (column != null) {
-					columns.append(column.value(), field.getName());
+					columns.add(new DatabaseField(field.getName(), column.value()));
 				}
 
 			} else {
@@ -61,21 +61,10 @@ public class ProviGenProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 
-		sqLiteOpenHelper = new SQLiteOpenHelper(getContext(), DATABASE_NAME,
-				null, 1) {
-
-			private final String DATABASE_CREATE = "CREATE TABLE " + tableName
-					+ " ( " + COLUMN_ID
-					+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_HOUR
-					+ " INTEGER, " + COLUMN_MINUTE + " INTEGER, "
-					+ COLUMN_SNOOZETIME + " NUMERIC, " + COLUMN_RINGTIME
-					+ " NUMERIC, " + COLUMN_ACTIVE + " INTEGER, "
-					+ COLUMN_SNOOZED + " INTEGER, " + COLUMN_NAME + " TEXT, "
-					+ COLUMN_ACTIVE_DAYS + " TEXT " + " ) ";
+		sqLiteOpenHelper = new SQLiteOpenHelper(getContext(), DATABASE_NAME, null, 1) {
 
 			@Override
-			public void onUpgrade(SQLiteDatabase database, int oldVersion,
-					int newVersion) {
+			public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
 
 			}
 
@@ -83,8 +72,20 @@ public class ProviGenProvider extends ContentProvider {
 			public void onCreate(SQLiteDatabase database) {
 
 				// Create alarm table.
-				database.execSQL(DATABASE_CREATE);
+				database.execSQL(buildTableCreationQuery(tableName, columns));
 			}
+
+			private String buildTableCreationQuery(String tableName, List<DatabaseField> fields) {
+				StringBuilder builder = new StringBuilder("CREATE TABLE ");
+				builder.append(tableName + " ( ");
+				for (DatabaseField field : columns) {
+					builder.append(" " + field.getName() + " " + field.getType().toString());
+					builder.append(", ");
+				}
+				builder.append(tableName + " ) ");
+				return builder.toString();
+			}
+
 		};
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
