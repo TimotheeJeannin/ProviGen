@@ -18,7 +18,7 @@ public class AlarmContentProvider extends ProviGenProvider {
 		@Table
 		public static final String TABLE_NAME = "alarms";
 
-		@Column(Type.INTEGER)
+		@Column(Colu  Type.INTEGER)
 		public static final String COLUMN_ID = "_id";
 
 		@Column(Type.INTEGER)
