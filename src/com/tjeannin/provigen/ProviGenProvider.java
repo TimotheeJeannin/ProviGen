@@ -33,7 +33,7 @@ public class ProviGenProvider extends ContentProvider {
 
 	private static String authority;
 
-	public ProviGenProvider(Contract contractClass) {
+	public ProviGenProvider(Class contractClass) {
 
 		
 		

@@ -2,16 +2,15 @@ package com.tjeannin.provigen.test;
 
 import android.net.Uri;
 
-import com.tjeannin.provigen.Contract;
 import com.tjeannin.provigen.ProviGenProvider;
 
 public class AlarmContentProvider extends ProviGenProvider {
 
 	public AlarmContentProvider() {
-		super(AlarmContract);
+		super(AlarmContract.class);
 	}
 
-	public static class AlarmContract extends Contract {
+	public static class AlarmContract {
 
 		public static final String TABLE_NAME = "alarms";
 		public static final String COLUMN_ID = "_id";
