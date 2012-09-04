@@ -1,6 +1,7 @@
 package com.tjeannin.provigen;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentProvider;
@@ -49,6 +50,7 @@ public class ProviGenProvider extends ContentProvider {
 				idField = field.getName();
 			}
 
+			databaseFields = new ArrayList<DatabaseField>();
 			Column column = field.getAnnotation(Column.class);
 			if (column != null) {
 				databaseFields.add(new DatabaseField(field.getName(), column.value()));
