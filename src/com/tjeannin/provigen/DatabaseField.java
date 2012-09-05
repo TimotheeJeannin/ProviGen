@@ -3,9 +3,9 @@ package com.tjeannin.provigen;
 public class DatabaseField {
 
 	String name;
-	Type type;
+	String type;
 
-	public DatabaseField(String name, Type type) {
+	public DatabaseField(String name, String type) {
 		super();
 		this.name = name;
 		this.type = type;
@@ -19,11 +19,11 @@ public class DatabaseField {
 		this.name = name;
 	}
 
-	public Type getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(Type type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 

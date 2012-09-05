@@ -32,7 +32,7 @@ public class ProviGenProvider extends ContentProvider {
 
 	public static final String DATABASE_NAME = "alarm_app";
 
-	private static String authority;
+	private static String authority = "com.tjeannin.provigen";
 
 	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
@@ -53,7 +53,7 @@ public class ProviGenProvider extends ContentProvider {
 			databaseFields = new ArrayList<DatabaseField>();
 			Column column = field.getAnnotation(Column.class);
 			if (column != null) {
-				databaseFields.add(new DatabaseField(field.getName(), column.value()));
+				databaseFields.add(new DatabaseField(field.getName(), column.type()));
 			}
 
 		}

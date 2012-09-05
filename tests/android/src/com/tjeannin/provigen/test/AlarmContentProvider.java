@@ -21,31 +21,31 @@ public class AlarmContentProvider extends ProviGenProvider {
 		public static final String TABLE_NAME = "alarms";
 
 		@Id
-		@Column(Type.INTEGER)
+		@Column(type = Type.INTEGER)
 		public static final String COLUMN_ID = "_id";
 
-		@Column(Type.INTEGER)
+		@Column(type = Type.INTEGER)
 		public static final String COLUMN_HOUR = "hour";
 
-		@Column(Type.INTEGER)
+		@Column(type = Type.INTEGER)
 		public static final String COLUMN_MINUTE = "minute";
 
-		@Column(Type.INTEGER)
+		@Column(type = Type.INTEGER)
 		public static final String COLUMN_RINGTIME = "ring_time";
 
-		@Column(Type.INTEGER)
+		@Column(type = Type.INTEGER)
 		public static final String COLUMN_SNOOZETIME = "snooze_time";
 
-		@Column(Type.INTEGER)
+		@Column(type = Type.INTEGER)
 		public static final String COLUMN_ACTIVE = "active";
 
-		@Column(Type.INTEGER)
+		@Column(type = Type.INTEGER)
 		public static final String COLUMN_SNOOZED = "snoozed";
 
-		@Column(Type.TEXT)
+		@Column(type = Type.TEXT)
 		public static final String COLUMN_NAME = "name";
 
-		@Column(Type.TEXT)
+		@Column(type = Type.TEXT)
 		public static final String COLUMN_ACTIVE_DAYS = "active_days";
 
 		public static final Uri CONTENT_URI = Uri.parse("content://com.tjeannin.alarm/alarm");
