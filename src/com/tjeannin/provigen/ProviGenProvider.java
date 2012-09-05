@@ -37,25 +37,29 @@ public class ProviGenProvider extends ContentProvider {
 	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
 
-		Field[] fields = contractClass.getFields();
-		for (Field field : fields) {
+		try {
+			Field[] fields = contractClass.getFields();
+			for (Field field : fields) {
 
-			Table table = field.getAnnotation(Table.class);
-			if (table != null) {
-				tableName = field.getName();
+				Table table = field.getAnnotation(Table.class);
+				if (table != null) {
+					tableName = (String) field.get(null);
+				}
+
+				Id id = field.getAnnotation(Id.class);
+				if (id != null) {
+					idField = (String) field.get(null);
+				}
+
+				databaseFields = new ArrayList<DatabaseField>();
+				Column column = field.getAnnotation(Column.class);
+				if (column != null) {
+					databaseFields.add(new DatabaseField((String) field.get(null), column.type()));
+				}
+
 			}
-
-			Id id = field.getAnnotation(Id.class);
-			if (id != null) {
-				idField = field.getName();
-			}
-
-			databaseFields = new ArrayList<DatabaseField>();
-			Column column = field.getAnnotation(Column.class);
-			if (column != null) {
-				databaseFields.add(new DatabaseField(field.getName(), column.type()));
-			}
-
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -81,7 +85,10 @@ public class ProviGenProvider extends ContentProvider {
 				StringBuilder builder = new StringBuilder("CREATE TABLE ");
 				builder.append(tableName + " ( ");
 				for (DatabaseField field : databaseFields) {
-					builder.append(" " + field.getName() + " " + field.getType().toString());
+					builder.append(" " + field.getName() + " " + field.getType());
+					if(field.getName().equals(idField)){
+						builder.append(" PRIMARY KEY AUTOINCREMENT ");
+					}
 					builder.append(", ");
 				}
 				builder.append(tableName + " ) ");
