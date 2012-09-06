@@ -101,7 +101,6 @@ public class ProviGenProvider extends ContentProvider {
 			@Override
 			public void onCreate(SQLiteDatabase database) {
 
-				// Create alarm table.
 				database.execSQL(buildTableCreationQuery(databaseTableName, databaseFields));
 			}
 
@@ -122,8 +121,8 @@ public class ProviGenProvider extends ContentProvider {
 		};
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI(authority, "alarm", ITEM);
-		uriMatcher.addURI(authority, "alarm/#", ITEM_ID);
+		uriMatcher.addURI(authority, databaseTableName, ITEM);
+		uriMatcher.addURI(authority, databaseTableName + "/#", ITEM_ID);
 
 		return true;
 	}
@@ -139,13 +138,13 @@ public class ProviGenProvider extends ContentProvider {
 			numberOfRowsAffected = database.delete(databaseTableName, selection, selectionArgs);
 			break;
 		case ITEM_ID:
-			String alarmId = String.valueOf(ContentUris.parseId(uri));
+			String itemId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.delete(databaseTableName, databaseIdField + " = ? ", new String[] { alarmId });
+				numberOfRowsAffected = database.delete(databaseTableName, databaseIdField + " = ? ", new String[] { itemId });
 			} else {
 				numberOfRowsAffected = database.delete(databaseTableName, selection + " AND " +
-						databaseIdField + " = ? ", appendToStringArray(selectionArgs, alarmId));
+						databaseIdField + " = ? ", appendToStringArray(selectionArgs, itemId));
 			}
 			break;
 		default:
@@ -160,9 +159,9 @@ public class ProviGenProvider extends ContentProvider {
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
-			return "vnd.android.cursor.dir/vnd." + getContext().getPackageName() + ".alarm";
+			return "vnd.android.cursor.dir/vnd." + getContext().getPackageName() + ".item";
 		case ITEM_ID:
-			return "vnd.android.cursor.item/vnd." + getContext().getPackageName() + ".alarm";
+			return "vnd.android.cursor.item/vnd." + getContext().getPackageName() + ".item";
 		default:
 			throw new IllegalArgumentException("Unknown uri " + uri);
 		}
@@ -174,9 +173,9 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
-			long alarmId = database.insert(databaseTableName, null, values);
+			long itemId = database.insert(databaseTableName, null, values);
 			getContext().getContentResolver().notifyChange(uri, null);
-			return Uri.withAppendedPath(uri, String.valueOf(alarmId));
+			return Uri.withAppendedPath(uri, String.valueOf(itemId));
 		default:
 			throw new IllegalArgumentException("Unknown uri " + uri);
 		}
@@ -193,12 +192,12 @@ public class ProviGenProvider extends ContentProvider {
 			cursor = database.query(databaseTableName, projection, selection, selectionArgs, "", "", sortOrder);
 			break;
 		case ITEM_ID:
-			String alarmId = String.valueOf(ContentUris.parseId(uri));
+			String itemId = String.valueOf(ContentUris.parseId(uri));
 			if (TextUtils.isEmpty(selection)) {
-				cursor = database.query(databaseTableName, projection, databaseIdField + " = ? ", new String[] { alarmId }, "", "", sortOrder);
+				cursor = database.query(databaseTableName, projection, databaseIdField + " = ? ", new String[] { itemId }, "", "", sortOrder);
 			} else {
 				cursor = database.query(databaseTableName, projection, selection + " AND " + databaseIdField + " = ? ",
-						appendToStringArray(selectionArgs, alarmId), "", "", sortOrder);
+						appendToStringArray(selectionArgs, itemId), "", "", sortOrder);
 			}
 			break;
 		default:
@@ -223,13 +222,13 @@ public class ProviGenProvider extends ContentProvider {
 			numberOfRowsAffected = database.update(databaseTableName, values, selection, selectionArgs);
 			break;
 		case ITEM_ID:
-			String alarmId = String.valueOf(ContentUris.parseId(uri));
+			String itemId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.update(databaseTableName, values, databaseIdField + " = ? ", new String[] { alarmId });
+				numberOfRowsAffected = database.update(databaseTableName, values, databaseIdField + " = ? ", new String[] { itemId });
 			} else {
 				numberOfRowsAffected = database.update(databaseTableName, values, selection + " AND " + databaseIdField + " = ? ",
-						appendToStringArray(selectionArgs, alarmId));
+						appendToStringArray(selectionArgs, itemId));
 			}
 			break;
 		default:

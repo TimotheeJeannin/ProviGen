@@ -50,7 +50,7 @@ public class AlarmContentProvider extends ProviGenProvider {
 		@Column(type = Type.TEXT)
 		public static final String COLUMN_ACTIVE_DAYS = "active_days";
 
-		public static final Uri CONTENT_URI = Uri.parse("content://com.tjeannin.provigen/alarm");
+		public static final Uri CONTENT_URI = Uri.parse("content://com.tjeannin.provigen/" + TABLE_NAME);
 
 	}
 
