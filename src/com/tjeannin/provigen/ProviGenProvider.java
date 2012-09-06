@@ -37,6 +37,8 @@ public class ProviGenProvider extends ContentProvider {
 	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
 
+		databaseFields = new ArrayList<DatabaseField>();
+		
 		try {
 			Field[] fields = contractClass.getFields();
 			for (Field field : fields) {
@@ -51,7 +53,6 @@ public class ProviGenProvider extends ContentProvider {
 					idField = (String) field.get(null);
 				}
 
-				databaseFields = new ArrayList<DatabaseField>();
 				Column column = field.getAnnotation(Column.class);
 				if (column != null) {
 					databaseFields.add(new DatabaseField((String) field.get(null), column.type()));
