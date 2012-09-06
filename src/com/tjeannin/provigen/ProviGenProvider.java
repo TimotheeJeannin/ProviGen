@@ -15,12 +15,14 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.tjeannin.provigen.annotations.Column;
+import com.tjeannin.provigen.annotations.Contract;
 import com.tjeannin.provigen.annotations.Id;
 import com.tjeannin.provigen.annotations.Table;
 
 public class ProviGenProvider extends ContentProvider {
 
-	private String databaseName = "alarm_app";
+	private String authority;
+	private String databaseName;
 	private String databaseIdField;
 	private String databaseTableName;
 	private List<DatabaseField> databaseFields;
@@ -31,11 +33,20 @@ public class ProviGenProvider extends ContentProvider {
 	private static final int ITEM = 1;
 	private static final int ITEM_ID = 2;
 
-
-	private String providerAuthority = "com.tjeannin.provigen";
-
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
+
+		Contract contract = (Contract) contractClass.getAnnotation(Contract.class);
+		if (contract != null) {
+			if (authority != null) {
+				throw new InvalidContractException("A contract can not have several authority.");
+			}
+			if (databaseName != null) {
+				throw new InvalidContractException("A contract can not have several databaseName.");
+			}
+			authority = contract.authority();
+			databaseName = contract.databaseName();
+		}
 
 		databaseFields = new ArrayList<DatabaseField>();
 
@@ -74,9 +85,7 @@ public class ProviGenProvider extends ContentProvider {
 					e.printStackTrace();
 				}
 			}
-
 		}
-
 	}
 
 	@Override
@@ -113,8 +122,8 @@ public class ProviGenProvider extends ContentProvider {
 		};
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI(providerAuthority, "alarm", ITEM);
-		uriMatcher.addURI(providerAuthority, "alarm/#", ITEM_ID);
+		uriMatcher.addURI(authority, "alarm", ITEM);
+		uriMatcher.addURI(authority, "alarm/#", ITEM_ID);
 
 		return true;
 	}

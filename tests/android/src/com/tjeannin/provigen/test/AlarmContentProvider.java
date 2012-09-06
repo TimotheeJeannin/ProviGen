@@ -6,6 +6,7 @@ import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.Type;
 import com.tjeannin.provigen.annotations.Column;
+import com.tjeannin.provigen.annotations.Contract;
 import com.tjeannin.provigen.annotations.Id;
 import com.tjeannin.provigen.annotations.Table;
 
@@ -15,6 +16,7 @@ public class AlarmContentProvider extends ProviGenProvider {
 		super(AlarmContract.class);
 	}
 
+	@Contract(authority = "com.tjeannin.provigen", databaseName = "alarm_app")
 	public static class AlarmContract {
 
 		@Table
