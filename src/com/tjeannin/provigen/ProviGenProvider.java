@@ -20,19 +20,19 @@ import com.tjeannin.provigen.annotations.Table;
 
 public class ProviGenProvider extends ContentProvider {
 
-	private String tableName;
-	private String idField;
+	private String databaseName = "alarm_app";
+	private String databaseIdField;
+	private String databaseTableName;
 	private List<DatabaseField> databaseFields;
 
 	private SQLiteOpenHelper sqLiteOpenHelper;
 
 	private UriMatcher uriMatcher;
-	private static final int ALARM = 1;
-	private static final int ALARM_ID = 2;
+	private static final int ITEM = 1;
+	private static final int ITEM_ID = 2;
 
-	public static final String DATABASE_NAME = "alarm_app";
 
-	private static String authority = "com.tjeannin.provigen";
+	private String providerAuthority = "com.tjeannin.provigen";
 
 	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
@@ -44,11 +44,11 @@ public class ProviGenProvider extends ContentProvider {
 
 			Table table = field.getAnnotation(Table.class);
 			if (table != null) {
-				if (tableName != null) {
+				if (databaseTableName != null) {
 					throw new InvalidContractException("A contract can not have several fields annoted with Table.");
 				}
 				try {
-					tableName = (String) field.get(null);
+					databaseTableName = (String) field.get(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -56,11 +56,11 @@ public class ProviGenProvider extends ContentProvider {
 
 			Id id = field.getAnnotation(Id.class);
 			if (id != null) {
-				if (idField != null) {
+				if (databaseIdField != null) {
 					throw new InvalidContractException("A contract can not have several fields annoted with Id.");
 				}
 				try {
-					idField = (String) field.get(null);
+					databaseIdField = (String) field.get(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -82,7 +82,7 @@ public class ProviGenProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 
-		sqLiteOpenHelper = new SQLiteOpenHelper(getContext(), DATABASE_NAME, null, 1) {
+		sqLiteOpenHelper = new SQLiteOpenHelper(getContext(), databaseName, null, 1) {
 
 			@Override
 			public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
@@ -93,7 +93,7 @@ public class ProviGenProvider extends ContentProvider {
 			public void onCreate(SQLiteDatabase database) {
 
 				// Create alarm table.
-				database.execSQL(buildTableCreationQuery(tableName, databaseFields));
+				database.execSQL(buildTableCreationQuery(databaseTableName, databaseFields));
 			}
 
 			private String buildTableCreationQuery(String tableName, List<DatabaseField> fields) {
@@ -101,7 +101,7 @@ public class ProviGenProvider extends ContentProvider {
 				builder.append(tableName + " ( ");
 				for (DatabaseField field : databaseFields) {
 					builder.append(" " + field.getName() + " " + field.getType());
-					if (field.getName().equals(idField)) {
+					if (field.getName().equals(databaseIdField)) {
 						builder.append(" PRIMARY KEY AUTOINCREMENT ");
 					}
 					builder.append(", ");
@@ -113,8 +113,8 @@ public class ProviGenProvider extends ContentProvider {
 		};
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI(authority, "alarm", ALARM);
-		uriMatcher.addURI(authority, "alarm/#", ALARM_ID);
+		uriMatcher.addURI(providerAuthority, "alarm", ITEM);
+		uriMatcher.addURI(providerAuthority, "alarm/#", ITEM_ID);
 
 		return true;
 	}
@@ -126,17 +126,17 @@ public class ProviGenProvider extends ContentProvider {
 		int numberOfRowsAffected = 0;
 
 		switch (uriMatcher.match(uri)) {
-		case ALARM:
-			numberOfRowsAffected = database.delete(tableName, selection, selectionArgs);
+		case ITEM:
+			numberOfRowsAffected = database.delete(databaseTableName, selection, selectionArgs);
 			break;
-		case ALARM_ID:
+		case ITEM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.delete(tableName, idField + " = ? ", new String[] { alarmId });
+				numberOfRowsAffected = database.delete(databaseTableName, databaseIdField + " = ? ", new String[] { alarmId });
 			} else {
-				numberOfRowsAffected = database.delete(tableName, selection + " AND " +
-						idField + " = ? ", appendToStringArray(selectionArgs, alarmId));
+				numberOfRowsAffected = database.delete(databaseTableName, selection + " AND " +
+						databaseIdField + " = ? ", appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
 		default:
@@ -150,9 +150,9 @@ public class ProviGenProvider extends ContentProvider {
 	@Override
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)) {
-		case ALARM:
+		case ITEM:
 			return "vnd.android.cursor.dir/vnd." + getContext().getPackageName() + ".alarm";
-		case ALARM_ID:
+		case ITEM_ID:
 			return "vnd.android.cursor.item/vnd." + getContext().getPackageName() + ".alarm";
 		default:
 			throw new IllegalArgumentException("Unknown uri " + uri);
@@ -164,8 +164,8 @@ public class ProviGenProvider extends ContentProvider {
 		SQLiteDatabase database = sqLiteOpenHelper.getWritableDatabase();
 
 		switch (uriMatcher.match(uri)) {
-		case ALARM:
-			long alarmId = database.insert(tableName, null, values);
+		case ITEM:
+			long alarmId = database.insert(databaseTableName, null, values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.withAppendedPath(uri, String.valueOf(alarmId));
 		default:
@@ -180,15 +180,15 @@ public class ProviGenProvider extends ContentProvider {
 		Cursor cursor = null;
 
 		switch (uriMatcher.match(uri)) {
-		case ALARM:
-			cursor = database.query(tableName, projection, selection, selectionArgs, "", "", sortOrder);
+		case ITEM:
+			cursor = database.query(databaseTableName, projection, selection, selectionArgs, "", "", sortOrder);
 			break;
-		case ALARM_ID:
+		case ITEM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 			if (TextUtils.isEmpty(selection)) {
-				cursor = database.query(tableName, projection, idField + " = ? ", new String[] { alarmId }, "", "", sortOrder);
+				cursor = database.query(databaseTableName, projection, databaseIdField + " = ? ", new String[] { alarmId }, "", "", sortOrder);
 			} else {
-				cursor = database.query(tableName, projection, selection + " AND " + idField + " = ? ",
+				cursor = database.query(databaseTableName, projection, selection + " AND " + databaseIdField + " = ? ",
 						appendToStringArray(selectionArgs, alarmId), "", "", sortOrder);
 			}
 			break;
@@ -210,16 +210,16 @@ public class ProviGenProvider extends ContentProvider {
 		int numberOfRowsAffected = 0;
 
 		switch (uriMatcher.match(uri)) {
-		case ALARM:
-			numberOfRowsAffected = database.update(tableName, values, selection, selectionArgs);
+		case ITEM:
+			numberOfRowsAffected = database.update(databaseTableName, values, selection, selectionArgs);
 			break;
-		case ALARM_ID:
+		case ITEM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.update(tableName, values, idField + " = ? ", new String[] { alarmId });
+				numberOfRowsAffected = database.update(databaseTableName, values, databaseIdField + " = ? ", new String[] { alarmId });
 			} else {
-				numberOfRowsAffected = database.update(tableName, values, selection + " AND " + idField + " = ? ",
+				numberOfRowsAffected = database.update(databaseTableName, values, selection + " AND " + databaseIdField + " = ? ",
 						appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
