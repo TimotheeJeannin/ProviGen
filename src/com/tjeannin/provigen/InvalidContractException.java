@@ -2,6 +2,10 @@ package com.tjeannin.provigen;
 
 public class InvalidContractException extends Exception {
 
+	public InvalidContractException(String string) {
+		super(string);
+	}
+
 	/**
 	 * Version UID.
 	 */

@@ -38,29 +38,43 @@ public class ProviGenProvider extends ContentProvider {
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
 
 		databaseFields = new ArrayList<DatabaseField>();
-		
-		try {
-			Field[] fields = contractClass.getFields();
-			for (Field field : fields) {
 
-				Table table = field.getAnnotation(Table.class);
-				if (table != null) {
+		Field[] fields = contractClass.getFields();
+		for (Field field : fields) {
+
+			Table table = field.getAnnotation(Table.class);
+			if (table != null) {
+				if (tableName != null) {
+					throw new InvalidContractException("A contract can not have several fields annoted with Table.");
+				}
+				try {
 					tableName = (String) field.get(null);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-
-				Id id = field.getAnnotation(Id.class);
-				if (id != null) {
-					idField = (String) field.get(null);
-				}
-
-				Column column = field.getAnnotation(Column.class);
-				if (column != null) {
-					databaseFields.add(new DatabaseField((String) field.get(null), column.type()));
-				}
-
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+
+			Id id = field.getAnnotation(Id.class);
+			if (id != null) {
+				if (idField != null) {
+					throw new InvalidContractException("A contract can not have several fields annoted with Id.");
+				}
+				try {
+					idField = (String) field.get(null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			Column column = field.getAnnotation(Column.class);
+			if (column != null) {
+				try {
+					databaseFields.add(new DatabaseField((String) field.get(null), column.type()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
 		}
 
 	}
@@ -87,7 +101,7 @@ public class ProviGenProvider extends ContentProvider {
 				builder.append(tableName + " ( ");
 				for (DatabaseField field : databaseFields) {
 					builder.append(" " + field.getName() + " " + field.getType());
-					if(field.getName().equals(idField)){
+					if (field.getName().equals(idField)) {
 						builder.append(" PRIMARY KEY AUTOINCREMENT ");
 					}
 					builder.append(", ");
