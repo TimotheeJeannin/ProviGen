@@ -127,19 +127,16 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			numberOfRowsAffected = database.delete(tableName, selection,
-					selectionArgs);
+			numberOfRowsAffected = database.delete(tableName, selection, selectionArgs);
 			break;
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.delete(tableName, idField
-						+ " = ? ", new String[] { alarmId });
+				numberOfRowsAffected = database.delete(tableName, idField + " = ? ", new String[] { alarmId });
 			} else {
-				numberOfRowsAffected = database.delete(tableName, selection
-						+ " AND " + idField + " = ? ",
-						appendToStringArray(selectionArgs, alarmId));
+				numberOfRowsAffected = database.delete(tableName, selection + " AND " +
+						idField + " = ? ", appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
 		default:
@@ -154,11 +151,9 @@ public class ProviGenProvider extends ContentProvider {
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			return "vnd.android.cursor.dir/vnd."
-					+ getContext().getPackageName() + ".alarm";
+			return "vnd.android.cursor.dir/vnd." + getContext().getPackageName() + ".alarm";
 		case ALARM_ID:
-			return "vnd.android.cursor.item/vnd."
-					+ getContext().getPackageName() + ".alarm";
+			return "vnd.android.cursor.item/vnd." + getContext().getPackageName() + ".alarm";
 		default:
 			throw new IllegalArgumentException("Unknown uri " + uri);
 		}
@@ -179,27 +174,22 @@ public class ProviGenProvider extends ContentProvider {
 	}
 
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection,
-			String[] selectionArgs, String sortOrder) {
+	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteDatabase database = sqLiteOpenHelper.getReadableDatabase();
 
 		Cursor cursor = null;
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			cursor = database.query(tableName, projection, selection,
-					selectionArgs, "", "", sortOrder);
+			cursor = database.query(tableName, projection, selection, selectionArgs, "", "", sortOrder);
 			break;
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 			if (TextUtils.isEmpty(selection)) {
-				cursor = database.query(tableName, projection, idField
-						+ " = ? ", new String[] { alarmId }, "", "", sortOrder);
+				cursor = database.query(tableName, projection, idField + " = ? ", new String[] { alarmId }, "", "", sortOrder);
 			} else {
-				cursor = database.query(tableName, projection, selection
-						+ " AND " + idField + " = ? ",
-						appendToStringArray(selectionArgs, alarmId), "", "",
-						sortOrder);
+				cursor = database.query(tableName, projection, selection + " AND " + idField + " = ? ",
+						appendToStringArray(selectionArgs, alarmId), "", "", sortOrder);
 			}
 			break;
 		default:
@@ -221,18 +211,15 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ALARM:
-			numberOfRowsAffected = database.update(tableName, values,
-					selection, selectionArgs);
+			numberOfRowsAffected = database.update(tableName, values, selection, selectionArgs);
 			break;
 		case ALARM_ID:
 			String alarmId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.update(tableName, values,
-						idField + " = ? ", new String[] { alarmId });
+				numberOfRowsAffected = database.update(tableName, values, idField + " = ? ", new String[] { alarmId });
 			} else {
-				numberOfRowsAffected = database.update(tableName, values,
-						selection + " AND " + idField + " = ? ",
+				numberOfRowsAffected = database.update(tableName, values, selection + " AND " + idField + " = ? ",
 						appendToStringArray(selectionArgs, alarmId));
 			}
 			break;
@@ -245,10 +232,8 @@ public class ProviGenProvider extends ContentProvider {
 
 	/**
 	 * Appends the given element to a copy of the given array.
-	 * @param array
-	 *            The array to copy.
-	 * @param element
-	 *            The element to append.
+	 * @param array The array to copy.
+	 * @param element The element to append.
 	 * @return An Array with the element appended.
 	 */
 	private static String[] appendToStringArray(String[] array, String element) {
