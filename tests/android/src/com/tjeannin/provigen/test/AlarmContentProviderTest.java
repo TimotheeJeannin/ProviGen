@@ -8,11 +8,11 @@ import android.test.mock.MockContentResolver;
 
 import com.tjeannin.provigen.test.AlarmContentProvider.AlarmContract;
 
-public class ProviGenProviderTest extends ProviderTestCase2<AlarmContentProvider> {
+public class AlarmContentProviderTest extends ProviderTestCase2<AlarmContentProvider> {
 
 	private MockContentResolver contentResolver;
 
-	public ProviGenProviderTest() {
+	public AlarmContentProviderTest() {
 		super(AlarmContentProvider.class, "com.tjeannin.provigen");
 	}
 
