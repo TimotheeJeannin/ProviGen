@@ -34,6 +34,5 @@ public static class SimpleContract {
 	public static final String MY_STRING_COLUMN = "string";
 
 	public static final Uri CONTENT_URI = Uri.parse("content://com.myapp/" + TABLE_NAME);
-
 }
 ```
