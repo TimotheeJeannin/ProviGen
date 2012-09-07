@@ -1,4 +1,4 @@
-package com.tjeannin.provigensample;
+package com.tjeannin.provigen.sample;
 
 import android.net.Uri;
 

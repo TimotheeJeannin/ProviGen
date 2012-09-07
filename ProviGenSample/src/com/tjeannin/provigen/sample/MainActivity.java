@@ -1,4 +1,6 @@
-package com.tjeannin.provigensample;
+package com.tjeannin.provigen.sample;
+
+import com.tjeannin.provigensample.R;
 
 import android.os.Bundle;
 import android.app.Activity;
