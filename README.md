@@ -36,3 +36,14 @@ public static class SimpleContract {
 	public static final Uri CONTENT_URI = Uri.parse("content://com.myapp/" + TABLE_NAME);
 }
 ```
+
+3. Extend the ProviGenProvider as follows:
+
+```java
+public class SampleContentProvider extends ProviGenProvider {
+
+	public SampleContentProvider() throws InvalidContractException {
+		super(SampleContract.class);
+	}
+}
+```
