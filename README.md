@@ -10,11 +10,11 @@ ProviGen allows you to easily generate a [ContentProvider] from a given [Contrac
 How to install and use
 ----------------------
 
-1. Put the ProviGen [jar] in your `libs` folder or add ProviGen as a library project.
+* Put the ProviGen [jar] in your `libs` folder or add ProviGen as a library project.
 
 [jar]: https://github.com/TimotheeJeannin/ProviGen/downloads
 
-2. Annotate your ContractClass as follows:
+* Annotate your ContractClass as follows:
 
 ```java
 @Contract(authority = "com.myapp", databaseName = "myDataBaseName")
@@ -37,7 +37,7 @@ public static class MyContract {
 }
 ```
 
-3. Extend the ProviGenProvider as follows:
+* Extend the ProviGenProvider as follows:
 
 ```java
 public class MyContentProvider extends ProviGenProvider {
@@ -48,7 +48,7 @@ public class MyContentProvider extends ProviGenProvider {
 }
 ```
 
-4. Add your provider in your manifest:
+* Add your provider in your manifest:
 
 ```xml
 <provider
