@@ -18,7 +18,7 @@ How to install and use
 
 ```java
 @Contract(authority = "com.myapp", databaseName = "myDataBaseName")
-public static class SimpleContract {
+public static class MyContract {
 
 	@Table
 	public static final String TABLE_NAME = "myTableName";
@@ -40,10 +40,19 @@ public static class SimpleContract {
 3. Extend the ProviGenProvider as follows:
 
 ```java
-public class SampleContentProvider extends ProviGenProvider {
+public class MyContentProvider extends ProviGenProvider {
 
-	public SampleContentProvider() throws InvalidContractException {
-		super(SampleContract.class);
+	public MyContentProvider() throws InvalidContractException {
+		super(MyContract.class);
 	}
 }
+```
+
+4. Add your provider in your manifest:
+
+```xml
+<provider
+    android:name="com.myapp.MyContentProvider"
+    android:authorities="com.myapp" >
+</provider>
 ```
