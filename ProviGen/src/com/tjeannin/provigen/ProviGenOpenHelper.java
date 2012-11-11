@@ -8,19 +8,12 @@ public class ProviGenOpenHelper extends SQLiteOpenHelper {
 
 	private ContractHolder contractHolder;
 
-	ProviGenOpenHelper(Context context, ContractHolder contractHolder) throws InvalidContractException {
+	public ProviGenOpenHelper(Context context) throws InvalidContractException {
 		super(context, "ProviGenDatabase", null, 1);
-		this.contractHolder = contractHolder;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public ProviGenOpenHelper(Context context, Class contractClass) throws InvalidContractException {
-		super(context, "ProviGenDatabase", null, 1);
-		this.contractHolder = new ContractHolder(contractClass);
-	}
-
-	ContractHolder getContractHolder() {
-		return contractHolder;
+	void setContractHolder(ContractHolder holder) {
+		contractHolder = holder;
 	}
 
 	@Override

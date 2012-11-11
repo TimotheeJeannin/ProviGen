@@ -1,7 +1,5 @@
 package com.tjeannin.provigen;
 
-import java.security.InvalidParameterException;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -26,30 +24,27 @@ public class ProviGenProvider extends ContentProvider {
 		contractHolder = new ContractHolder(contractClass);
 	}
 
-	public ProviGenProvider(ProviGenOpenHelper openHelper) throws InvalidContractException {
-		this.openHelper = openHelper;
-	}
-
 	@Override
 	public boolean onCreate() {
 
-		if (openHelper != null) {
-			contractHolder = openHelper.getContractHolder();
-		} else if (contractHolder != null) {
+		if (openHelper == null) {
 			try {
-				openHelper = new ProviGenOpenHelper(getContext(), contractHolder);
+				openHelper = new ProviGenOpenHelper(getContext());
 			} catch (InvalidContractException e) {
 				e.printStackTrace();
 			}
-		} else {
-			throw new InvalidParameterException("Missing contract or open helper.");
 		}
+		openHelper.setContractHolder(contractHolder);
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(contractHolder.getAuthority(), contractHolder.getTable(), ITEM);
 		uriMatcher.addURI(contractHolder.getAuthority(), contractHolder.getTable() + "/#", ITEM_ID);
 
 		return true;
+	}
+
+	public void setProviGenOpenHelper(ProviGenOpenHelper proviGenOpenHelper) {
+		openHelper = proviGenOpenHelper;
 	}
 
 	@Override
