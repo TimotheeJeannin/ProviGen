@@ -10,7 +10,7 @@ import com.tjeannin.provigen.annotations.Column;
 import com.tjeannin.provigen.annotations.ContentUri;
 import com.tjeannin.provigen.annotations.Id;
 
-public class ContractHolder {
+class ContractHolder {
 
 	private String authority;
 	private String idField;

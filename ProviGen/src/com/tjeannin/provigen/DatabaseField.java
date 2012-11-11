@@ -1,6 +1,6 @@
 package com.tjeannin.provigen;
 
-public class DatabaseField {
+class DatabaseField {
 
 	String name;
 	String type;
