@@ -1,7 +1,5 @@
 package com.tjeannin.provigen;
 
-import java.util.List;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -17,7 +15,7 @@ public class ProviGenOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase database) {
-		database.execSQL(buildTableCreationQuery(contractHolder.getTable(), contractHolder.getFields()));
+		database.execSQL(buildTableCreationQuery());
 	}
 
 	@Override
@@ -25,18 +23,21 @@ public class ProviGenOpenHelper extends SQLiteOpenHelper {
 
 	}
 
-	private String buildTableCreationQuery(String tableName, List<DatabaseField> fields) {
+	private String buildTableCreationQuery() {
 
 		StringBuilder builder = new StringBuilder("CREATE TABLE ");
-		builder.append(tableName + " ( ");
-		for (DatabaseField field : fields) {
+		builder.append(contractHolder.getTable() + " ( ");
+		for (int i = 0; i < contractHolder.getFields().size(); i++) {
+			DatabaseField field = contractHolder.getFields().get(i);
 			builder.append(" " + field.getName() + " " + field.getType());
-			if (field.getName().equals(fields)) {
+			if (field.getName().equals(contractHolder.getIdField())) {
 				builder.append(" PRIMARY KEY AUTOINCREMENT ");
 			}
-			builder.append(", ");
+			if (i < contractHolder.getFields().size() - 1) {
+				builder.append(", ");
+			}
 		}
-		builder.append(tableName + " ) ");
+		builder.append(" ) ");
 		return builder.toString();
 	}
 
