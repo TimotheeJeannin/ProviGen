@@ -27,13 +27,13 @@ public class SimpleContentProviderTest extends
 
 		Cursor cursor = contentResolver.query(SimpleContract.CONTENT_URI, null,
 				"", null, "");
-		assertTrue(cursor.getCount() == 0);
+		assertEquals(0, cursor.getCount());
 	}
 
 	public void testInsert() {
 		contentResolver.insert(SimpleContract.CONTENT_URI, getDefaultContentValues());
 		Cursor cursor = contentResolver.query(SimpleContract.CONTENT_URI, null, "", null, "");
-		assertTrue(cursor.getCount() == 1);
+		assertEquals(1, cursor.getCount());
 	}
 
 	public void testAutoIncrement() {
@@ -47,10 +47,10 @@ public class SimpleContentProviderTest extends
 		contentResolver.insert(SimpleContract.CONTENT_URI, getDefaultContentValues());
 
 		Cursor cursor = contentResolver.query(Uri.withAppendedPath(SimpleContract.CONTENT_URI, String.valueOf(4)), null, "", null, "");
-		assertTrue(cursor.getCount() == 1);
+		assertEquals(1, cursor.getCount());
 
 		cursor = contentResolver.query(Uri.withAppendedPath(SimpleContract.CONTENT_URI, String.valueOf(3)), null, "", null, "");
-		assertTrue(cursor.getCount() == 0);
+		assertEquals(0, cursor.getCount());
 	}
 
 	private ContentValues getDefaultContentValues() {

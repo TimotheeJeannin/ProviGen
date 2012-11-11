@@ -1,128 +1,41 @@
 package com.tjeannin.provigen;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.tjeannin.provigen.annotations.Column;
-import com.tjeannin.provigen.annotations.Contract;
-import com.tjeannin.provigen.annotations.Id;
-import com.tjeannin.provigen.annotations.Table;
-
 public class ProviGenProvider extends ContentProvider {
 
-	private String authority;
-	private String databaseName;
-	private String databaseIdField;
-	private String databaseTableName;
-	private List<DatabaseField> databaseFields;
-
-	private SQLiteOpenHelper sqLiteOpenHelper;
+	private ProviGenOpenHelper sqLiteOpenHelper;
 
 	private UriMatcher uriMatcher;
 	private static final int ITEM = 1;
 	private static final int ITEM_ID = 2;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private ContractHolder contractHolder;
+
+	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
-
-		Contract contract = (Contract) contractClass.getAnnotation(Contract.class);
-		if (contract != null) {
-			if (authority != null) {
-				throw new InvalidContractException("A contract can not have several authority.");
-			}
-			if (databaseName != null) {
-				throw new InvalidContractException("A contract can not have several databaseName.");
-			}
-			authority = contract.authority();
-			databaseName = contract.databaseName();
-		}
-
-		databaseFields = new ArrayList<DatabaseField>();
-
-		Field[] fields = contractClass.getFields();
-		for (Field field : fields) {
-
-			Table table = field.getAnnotation(Table.class);
-			if (table != null) {
-				if (databaseTableName != null) {
-					throw new InvalidContractException("A contract can not have several fields annoted with Table.");
-				}
-				try {
-					databaseTableName = (String) field.get(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-			Id id = field.getAnnotation(Id.class);
-			if (id != null) {
-				if (databaseIdField != null) {
-					throw new InvalidContractException("A contract can not have several fields annoted with Id.");
-				}
-				try {
-					databaseIdField = (String) field.get(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-			Column column = field.getAnnotation(Column.class);
-			if (column != null) {
-				try {
-					databaseFields.add(new DatabaseField((String) field.get(null), column.type()));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		contractHolder = new ContractHolder(contractClass);
 	}
 
 	@Override
 	public boolean onCreate() {
 
-		sqLiteOpenHelper = new SQLiteOpenHelper(getContext(), databaseName, null, 1) {
-
-			@Override
-			public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-
-			}
-
-			@Override
-			public void onCreate(SQLiteDatabase database) {
-
-				database.execSQL(buildTableCreationQuery(databaseTableName, databaseFields));
-			}
-
-			private String buildTableCreationQuery(String tableName, List<DatabaseField> fields) {
-				StringBuilder builder = new StringBuilder("CREATE TABLE ");
-				builder.append(tableName + " ( ");
-				for (DatabaseField field : databaseFields) {
-					builder.append(" " + field.getName() + " " + field.getType());
-					if (field.getName().equals(databaseIdField)) {
-						builder.append(" PRIMARY KEY AUTOINCREMENT ");
-					}
-					builder.append(", ");
-				}
-				builder.append(tableName + " ) ");
-				return builder.toString();
-			}
-
-		};
+		try {
+			sqLiteOpenHelper = new ProviGenOpenHelper(getContext(), contractHolder);
+		} catch (InvalidContractException e) {
+			e.printStackTrace();
+		}
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI(authority, databaseTableName, ITEM);
-		uriMatcher.addURI(authority, databaseTableName + "/#", ITEM_ID);
+		uriMatcher.addURI(contractHolder.getAuthority(), contractHolder.getTable(), ITEM);
+		uriMatcher.addURI(contractHolder.getAuthority(), contractHolder.getTable() + "/#", ITEM_ID);
 
 		return true;
 	}
@@ -135,16 +48,16 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
-			numberOfRowsAffected = database.delete(databaseTableName, selection, selectionArgs);
+			numberOfRowsAffected = database.delete(contractHolder.getTable(), selection, selectionArgs);
 			break;
 		case ITEM_ID:
 			String itemId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.delete(databaseTableName, databaseIdField + " = ? ", new String[] { itemId });
+				numberOfRowsAffected = database.delete(contractHolder.getTable(), contractHolder.getIdField() + " = ? ", new String[] { itemId });
 			} else {
-				numberOfRowsAffected = database.delete(databaseTableName, selection + " AND " +
-						databaseIdField + " = ? ", appendToStringArray(selectionArgs, itemId));
+				numberOfRowsAffected = database.delete(contractHolder.getTable(), selection + " AND " +
+						contractHolder.getIdField() + " = ? ", appendToStringArray(selectionArgs, itemId));
 			}
 			break;
 		default:
@@ -173,7 +86,7 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
-			long itemId = database.insert(databaseTableName, null, values);
+			long itemId = database.insert(contractHolder.getTable(), null, values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.withAppendedPath(uri, String.valueOf(itemId));
 		default:
@@ -189,14 +102,14 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
-			cursor = database.query(databaseTableName, projection, selection, selectionArgs, "", "", sortOrder);
+			cursor = database.query(contractHolder.getTable(), projection, selection, selectionArgs, "", "", sortOrder);
 			break;
 		case ITEM_ID:
 			String itemId = String.valueOf(ContentUris.parseId(uri));
 			if (TextUtils.isEmpty(selection)) {
-				cursor = database.query(databaseTableName, projection, databaseIdField + " = ? ", new String[] { itemId }, "", "", sortOrder);
+				cursor = database.query(contractHolder.getTable(), projection, contractHolder.getIdField() + " = ? ", new String[] { itemId }, "", "", sortOrder);
 			} else {
-				cursor = database.query(databaseTableName, projection, selection + " AND " + databaseIdField + " = ? ",
+				cursor = database.query(contractHolder.getTable(), projection, selection + " AND " + contractHolder.getIdField() + " = ? ",
 						appendToStringArray(selectionArgs, itemId), "", "", sortOrder);
 			}
 			break;
@@ -219,15 +132,15 @@ public class ProviGenProvider extends ContentProvider {
 
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
-			numberOfRowsAffected = database.update(databaseTableName, values, selection, selectionArgs);
+			numberOfRowsAffected = database.update(contractHolder.getTable(), values, selection, selectionArgs);
 			break;
 		case ITEM_ID:
 			String itemId = String.valueOf(ContentUris.parseId(uri));
 
 			if (TextUtils.isEmpty(selection)) {
-				numberOfRowsAffected = database.update(databaseTableName, values, databaseIdField + " = ? ", new String[] { itemId });
+				numberOfRowsAffected = database.update(contractHolder.getTable(), values, contractHolder.getIdField() + " = ? ", new String[] { itemId });
 			} else {
-				numberOfRowsAffected = database.update(databaseTableName, values, selection + " AND " + databaseIdField + " = ? ",
+				numberOfRowsAffected = database.update(contractHolder.getTable(), values, selection + " AND " + contractHolder.getIdField() + " = ? ",
 						appendToStringArray(selectionArgs, itemId));
 			}
 			break;
