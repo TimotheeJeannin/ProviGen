@@ -1,5 +1,7 @@
 package com.tjeannin.provigen;
 
+import java.security.InvalidParameterException;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -11,7 +13,7 @@ import android.text.TextUtils;
 
 public class ProviGenProvider extends ContentProvider {
 
-	private ProviGenOpenHelper sqLiteOpenHelper;
+	private ProviGenOpenHelper openHelper;
 
 	private UriMatcher uriMatcher;
 	private static final int ITEM = 1;
@@ -24,13 +26,23 @@ public class ProviGenProvider extends ContentProvider {
 		contractHolder = new ContractHolder(contractClass);
 	}
 
+	public ProviGenProvider(ProviGenOpenHelper openHelper) throws InvalidContractException {
+		this.openHelper = openHelper;
+	}
+
 	@Override
 	public boolean onCreate() {
 
-		try {
-			sqLiteOpenHelper = new ProviGenOpenHelper(getContext(), contractHolder);
-		} catch (InvalidContractException e) {
-			e.printStackTrace();
+		if (openHelper != null) {
+			contractHolder = openHelper.getContractHolder();
+		} else if (contractHolder != null) {
+			try {
+				openHelper = new ProviGenOpenHelper(getContext(), contractHolder);
+			} catch (InvalidContractException e) {
+				e.printStackTrace();
+			}
+		} else {
+			throw new InvalidParameterException("Missing contract or open helper.");
 		}
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -42,7 +54,7 @@ public class ProviGenProvider extends ContentProvider {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		SQLiteDatabase database = sqLiteOpenHelper.getWritableDatabase();
+		SQLiteDatabase database = openHelper.getWritableDatabase();
 
 		int numberOfRowsAffected = 0;
 
@@ -82,7 +94,7 @@ public class ProviGenProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		SQLiteDatabase database = sqLiteOpenHelper.getWritableDatabase();
+		SQLiteDatabase database = openHelper.getWritableDatabase();
 
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
@@ -96,7 +108,7 @@ public class ProviGenProvider extends ContentProvider {
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-		SQLiteDatabase database = sqLiteOpenHelper.getReadableDatabase();
+		SQLiteDatabase database = openHelper.getReadableDatabase();
 
 		Cursor cursor = null;
 
@@ -126,7 +138,7 @@ public class ProviGenProvider extends ContentProvider {
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
-		SQLiteDatabase database = sqLiteOpenHelper.getWritableDatabase();
+		SQLiteDatabase database = openHelper.getWritableDatabase();
 
 		int numberOfRowsAffected = 0;
 

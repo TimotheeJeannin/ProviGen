@@ -13,6 +13,16 @@ public class ProviGenOpenHelper extends SQLiteOpenHelper {
 		this.contractHolder = contractHolder;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public ProviGenOpenHelper(Context context, Class contractClass) throws InvalidContractException {
+		super(context, "ProviGenDatabase", null, 1);
+		this.contractHolder = new ContractHolder(contractClass);
+	}
+
+	ContractHolder getContractHolder() {
+		return contractHolder;
+	}
+
 	@Override
 	public void onCreate(SQLiteDatabase database) {
 		database.execSQL(buildTableCreationQuery());
