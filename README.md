@@ -17,11 +17,7 @@ How to install and use
 * Annotate your ContractClass as follows:
 
 ```java
-@Contract(authority = "com.myapp", databaseName = "myDataBaseName")
 public static class MyContract {
-
-	@Table
-	public static final String TABLE_NAME = "myTableName";
 
 	@Id
 	@Column(type = Type.INTEGER)
@@ -33,7 +29,8 @@ public static class MyContract {
 	@Column(type = Type.TEXT)
 	public static final String MY_STRING_COLUMN = "string";
 
-	public static final Uri CONTENT_URI = Uri.parse("content://com.myapp/" + TABLE_NAME);
+	@ContentUri
+	public static final Uri CONTENT_URI = Uri.parse("content://com.myapp/table_name");
 }
 ```
 
