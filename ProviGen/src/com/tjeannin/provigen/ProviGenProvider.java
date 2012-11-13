@@ -29,7 +29,7 @@ public class ProviGenProvider extends ContentProvider {
 
 		if (openHelper == null) {
 			try {
-				openHelper = new ProviGenOpenHelper(getContext());
+				openHelper = new ProviGenOpenHelper(getContext(), 1);
 			} catch (InvalidContractException e) {
 				e.printStackTrace();
 			}
