@@ -6,9 +6,9 @@ import java.util.List;
 
 import android.net.Uri;
 
-import com.tjeannin.provigen.annotations.Column;
-import com.tjeannin.provigen.annotations.ContentUri;
-import com.tjeannin.provigen.annotations.Id;
+import com.tjeannin.provigen.annotation.Column;
+import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.annotation.Id;
 
 class ContractHolder {
 

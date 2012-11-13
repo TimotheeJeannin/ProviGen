@@ -1,4 +1,4 @@
-package com.tjeannin.provigen.annotations;
+package com.tjeannin.provigen.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

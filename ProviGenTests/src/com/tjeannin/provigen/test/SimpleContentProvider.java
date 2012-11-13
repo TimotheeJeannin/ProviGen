@@ -5,9 +5,9 @@ import android.net.Uri;
 import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.Type;
-import com.tjeannin.provigen.annotations.Column;
-import com.tjeannin.provigen.annotations.ContentUri;
-import com.tjeannin.provigen.annotations.Id;
+import com.tjeannin.provigen.annotation.Column;
+import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.annotation.Id;
 
 public class SimpleContentProvider extends ProviGenProvider {
 
