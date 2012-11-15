@@ -11,6 +11,7 @@ import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.Type;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.annotation.Id;
 
 public class SampleContentProvider extends ProviGenProvider {
@@ -29,6 +30,7 @@ public class SampleContentProvider extends ProviGenProvider {
 		return super.onCreate();
 	}
 
+	@Contract(version = 1)
 	public static class SampleContract {
 
 		@Id
