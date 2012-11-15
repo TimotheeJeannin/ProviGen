@@ -16,7 +16,7 @@ public class ProviGenOpenHelper extends SQLiteOpenHelper {
 	}
 
 	ProviGenOpenHelper(Context context, ContractHolder contractHolder) {
-		super(context, "ProviGenDatabase", null, contractHolder.getContractVersion());
+		super(context, "ProviGenDatabase", null, contractHolder.getVersion());
 		this.contractHolder = contractHolder;
 	}
 

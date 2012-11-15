@@ -13,7 +13,7 @@ import com.tjeannin.provigen.annotation.Id;
 
 class ContractHolder {
 
-	private int contractVersion;
+	private int version;
 	private String authority;
 	private String idField;
 	private String tableName;
@@ -24,7 +24,7 @@ class ContractHolder {
 
 		Contract contract = (Contract) contractClass.getAnnotation(Contract.class);
 		if (contract != null) {
-			contractVersion = contract.version();
+			version = contract.version();
 		} else {
 			throw new InvalidContractException("The given class does not have a @Contract annotation.");
 		}
@@ -75,8 +75,8 @@ class ContractHolder {
 		}
 	}
 
-	public int getContractVersion() {
-		return contractVersion;
+	public int getVersion() {
+		return version;
 	}
 
 	public String getAuthority() {
