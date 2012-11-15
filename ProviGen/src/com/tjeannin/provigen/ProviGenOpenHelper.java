@@ -4,12 +4,20 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.tjeannin.provigen.annotation.Contract;
+
 public class ProviGenOpenHelper extends SQLiteOpenHelper {
 
 	private ContractHolder contractHolder;
 
-	public ProviGenOpenHelper(Context context, int version) throws InvalidContractException {
-		super(context, "ProviGenDatabase", null, version);
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public ProviGenOpenHelper(Context context, Class contractClass) {
+		super(context, "ProviGenDatabase", null, ((Contract) contractClass.getAnnotation(Contract.class)).version());
+	}
+
+	ProviGenOpenHelper(Context context, ContractHolder contractHolder) {
+		super(context, "ProviGenDatabase", null, contractHolder.getContractVersion());
+		this.contractHolder = contractHolder;
 	}
 
 	void setContractHolder(ContractHolder holder) {

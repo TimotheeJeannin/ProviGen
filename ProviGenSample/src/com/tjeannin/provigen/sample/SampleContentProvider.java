@@ -22,11 +22,7 @@ public class SampleContentProvider extends ProviGenProvider {
 
 	@Override
 	public boolean onCreate() {
-		try {
-			setProviGenOpenHelper(new SampleOpenHelper(getContext(), 1));
-		} catch (InvalidContractException e) {
-			e.printStackTrace();
-		}
+		setProviGenOpenHelper(new SampleOpenHelper(getContext(), SampleContract.class));
 		return super.onCreate();
 	}
 
@@ -53,8 +49,9 @@ public class SampleContentProvider extends ProviGenProvider {
 
 	class SampleOpenHelper extends ProviGenOpenHelper {
 
-		SampleOpenHelper(Context context, int version) throws InvalidContractException {
-			super(context, version);
+		@SuppressWarnings("rawtypes")
+		public SampleOpenHelper(Context context, Class contractClass) {
+			super(context, contractClass);
 		}
 
 		@Override

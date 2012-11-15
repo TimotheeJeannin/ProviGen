@@ -28,13 +28,10 @@ public class ProviGenProvider extends ContentProvider {
 	public boolean onCreate() {
 
 		if (openHelper == null) {
-			try {
-				openHelper = new ProviGenOpenHelper(getContext(), contractHolder.getContractVersion());
-			} catch (InvalidContractException e) {
-				e.printStackTrace();
-			}
+			openHelper = new ProviGenOpenHelper(getContext(), contractHolder);
+		} else {
+			openHelper.setContractHolder(contractHolder);
 		}
-		openHelper.setContractHolder(contractHolder);
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(contractHolder.getAuthority(), contractHolder.getTable(), ITEM);
