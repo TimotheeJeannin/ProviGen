@@ -1,6 +1,7 @@
 package com.tjeannin.provigen;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -29,11 +30,6 @@ public class ProviGenOpenHelper extends SQLiteOpenHelper {
 		database.execSQL(buildTableCreationQuery());
 	}
 
-	@Override
-	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-
-	}
-
 	private String buildTableCreationQuery() {
 
 		StringBuilder builder = new StringBuilder("CREATE TABLE ");
@@ -50,6 +46,29 @@ public class ProviGenOpenHelper extends SQLiteOpenHelper {
 		}
 		builder.append(" ) ");
 		return builder.toString();
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+
+		Cursor cursor = database.rawQuery("PRAGMA table_info(" + contractHolder.getTable() + ")", null);
+
+		for (DatabaseField field : contractHolder.getFields()) {
+			if (!isFieldExistAsColumn(field.getName(), cursor)) {
+				database.execSQL("ALTER TABLE " + contractHolder.getTable() + " ADD COLUMN " + field.getName() + " " + field.getType() + ";");
+			}
+		}
+	}
+
+	private boolean isFieldExistAsColumn(String field, Cursor columnCursor) {
+		if (columnCursor.moveToFirst()) {
+			do {
+				if (field.equals(columnCursor.getString(1))) {
+					return true;
+				}
+			} while (columnCursor.moveToNext());
+		}
+		return false;
 	}
 
 }

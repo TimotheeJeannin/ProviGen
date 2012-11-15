@@ -44,6 +44,14 @@ public class ProviGenProvider extends ContentProvider {
 		openHelper = proviGenOpenHelper;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public void setContractClass(Class contractClass) throws InvalidContractException {
+		contractHolder = new ContractHolder(contractClass);
+		if(openHelper != null){
+			openHelper.setContractHolder(contractHolder);
+		}
+	}
+
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		SQLiteDatabase database = openHelper.getWritableDatabase();

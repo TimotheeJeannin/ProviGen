@@ -2,8 +2,8 @@ package com.tjeannin.provigen;
 
 class DatabaseField {
 
-	String name;
-	String type;
+	private String name;
+	private String type;
 
 	public DatabaseField(String name, String type) {
 		super();
