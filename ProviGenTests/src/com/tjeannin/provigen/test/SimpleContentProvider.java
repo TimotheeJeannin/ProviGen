@@ -13,11 +13,26 @@ import com.tjeannin.provigen.annotation.Id;
 public class SimpleContentProvider extends ProviGenProvider {
 
 	public SimpleContentProvider() throws InvalidContractException {
-		super(SimpleContract.class);
+		super(SimpleContractVersionOne.class);
 	}
 
 	@Contract(version = 1)
-	public static class SimpleContract {
+	public static class SimpleContractVersionOne {
+
+		@Id
+		@Column(type = Type.INTEGER)
+		public static final String COLUMN_ID = "_id";
+
+		@Column(type = Type.INTEGER)
+		public static final String COLUMN_INT = "int";
+
+		@ContentUri
+		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
+
+	}
+
+	@Contract(version = 2)
+	public static class SimpleContractVersionTwo {
 
 		@Id
 		@Column(type = Type.INTEGER)
