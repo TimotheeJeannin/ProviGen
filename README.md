@@ -17,6 +17,7 @@ How to install and use
 * Annotate your ContractClass as follows:
 
 ```java
+@Contract(version = 1)
 public static class MyContract {
 
 	@Id
