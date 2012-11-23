@@ -27,11 +27,7 @@ public class ProviGenProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 
-		if (openHelper == null) {
-			openHelper = new ProviGenOpenHelper(getContext(), contractHolder);
-		} else {
-			openHelper.setContractHolder(contractHolder);
-		}
+		openHelper = new ProviGenOpenHelper(getContext(), this, contractHolder);
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(contractHolder.getAuthority(), contractHolder.getTable(), ITEM);
@@ -40,16 +36,18 @@ public class ProviGenProvider extends ContentProvider {
 		return true;
 	}
 
-	public void setProviGenOpenHelper(ProviGenOpenHelper proviGenOpenHelper) {
-		openHelper = proviGenOpenHelper;
+	public void onCreateDatabase(SQLiteDatabase database) {
+		openHelper.autoCreateDatabase(database);
+	}
+
+	public void onUpgradeDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
+		openHelper.autoUpgradeDatabase(database, oldVersion, newVersion);
 	}
 
 	@SuppressWarnings("rawtypes")
 	public void setContractClass(Class contractClass) throws InvalidContractException {
 		contractHolder = new ContractHolder(contractClass);
-		if(openHelper != null){
-			openHelper.setContractHolder(contractHolder);
-		}
+		openHelper = new ProviGenOpenHelper(getContext(), this, contractHolder);
 	}
 
 	@Override

@@ -5,32 +5,28 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.tjeannin.provigen.annotation.Contract;
-
-public class ProviGenOpenHelper extends SQLiteOpenHelper {
+class ProviGenOpenHelper extends SQLiteOpenHelper {
 
 	private ContractHolder contractHolder;
+	private ProviGenProvider provigenProvider;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public ProviGenOpenHelper(Context context, Class contractClass) {
-		super(context, "ProviGenDatabase", null, ((Contract) contractClass.getAnnotation(Contract.class)).version());
-	}
-
-	ProviGenOpenHelper(Context context, ContractHolder contractHolder) {
+	ProviGenOpenHelper(Context context, ProviGenProvider proviGenProvider, ContractHolder contractHolder) {
 		super(context, "ProviGenDatabase", null, contractHolder.getVersion());
 		this.contractHolder = contractHolder;
-	}
-
-	void setContractHolder(ContractHolder holder) {
-		contractHolder = holder;
+		this.provigenProvider = proviGenProvider;
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase database) {
-		database.execSQL(buildTableCreationQuery());
+		provigenProvider.onCreateDatabase(database);
 	}
 
-	private String buildTableCreationQuery() {
+	@Override
+	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+		provigenProvider.onUpgradeDatabase(database, oldVersion, newVersion);
+	}
+
+	void autoCreateDatabase(SQLiteDatabase database) {
 
 		StringBuilder builder = new StringBuilder("CREATE TABLE ");
 		builder.append(contractHolder.getTable() + " ( ");
@@ -45,12 +41,11 @@ public class ProviGenOpenHelper extends SQLiteOpenHelper {
 			}
 		}
 		builder.append(" ) ");
-		return builder.toString();
+
+		database.execSQL(builder.toString());
 	}
 
-	@Override
-	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-
+	void autoUpgradeDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
 		Cursor cursor = database.rawQuery("PRAGMA table_info(" + contractHolder.getTable() + ")", null);
 
 		for (DatabaseField field : contractHolder.getFields()) {
