@@ -9,7 +9,6 @@ import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
 
 import com.tjeannin.provigen.InvalidContractException;
-import com.tjeannin.provigen.ProviGenOpenHelper;
 import com.tjeannin.provigen.test.SimpleContentProvider.SimpleContractVersionOne;
 import com.tjeannin.provigen.test.SimpleContentProvider.SimpleContractVersionTwo;
 
@@ -62,7 +61,6 @@ public class SimpleContentProviderTest extends
 
 		getContext().deleteDatabase("ProviGenDatabase");
 
-		getProvider().setProviGenOpenHelper(new ProviGenOpenHelper(getContext(), SimpleContractVersionOne.class));
 		getProvider().setContractClass(SimpleContractVersionOne.class);
 
 		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionOne());
@@ -74,7 +72,6 @@ public class SimpleContentProviderTest extends
 		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.COLUMN_REAL));
 		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.COLUMN_STRING));
 
-		getProvider().setProviGenOpenHelper(new ProviGenOpenHelper(getContext(), SimpleContractVersionTwo.class));
 		getProvider().setContractClass(SimpleContractVersionTwo.class);
 
 		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionTwo());
