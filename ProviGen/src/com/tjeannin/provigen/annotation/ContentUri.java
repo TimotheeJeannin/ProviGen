@@ -9,8 +9,8 @@ import android.content.ContentProvider;
 
 /**
  * Defines the {@link ContentUri} that should be used to query the {@link ContentProvider}.<br/>
- * The last path segment will be used as the database table name.<br/>
- * The authority of this {@link ContentUri} will be used as the {@link ContentProvider}'s authority.
+ * The last path segment will be used for the database table name.<br/>
+ * The authority of this {@link ContentUri} will be used for the {@link ContentProvider}'s authority.
  * <br/><br/>
  * Example:
  * <br/>

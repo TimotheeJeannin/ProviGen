@@ -51,7 +51,7 @@ class ContractHolder {
 			Id id = field.getAnnotation(Id.class);
 			if (id != null) {
 				if (idField != null) {
-					throw new InvalidContractException("A contract can not have several fields annoted with Id.");
+					throw new InvalidContractException("A contract can not have several fields annoted with @Id.");
 				}
 				try {
 					idField = (String) field.get(null);
@@ -71,7 +71,7 @@ class ContractHolder {
 		}
 
 		if (authority == null || tableName == null) {
-			throw new InvalidContractException("The contract is missing a content uri.");
+			throw new InvalidContractException("The contract is missing a @ContentUri.");
 		}
 	}
 

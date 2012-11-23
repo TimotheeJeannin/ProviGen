@@ -1,5 +1,8 @@
 package com.tjeannin.provigen;
 
+/**
+ * Available SQLite columns types.
+ */
 public class Type {
 
 	public static final String INTEGER = "INTEGER";

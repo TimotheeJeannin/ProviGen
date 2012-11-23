@@ -1,5 +1,7 @@
 package com.tjeannin.provigen;
 
+import com.tjeannin.provigen.annotation.Contract;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -9,6 +11,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
 
+/**
+ * Behaves as a {@link ContentProvider} for the given {@link Contract} class.
+ */
 public class ProviGenProvider extends ContentProvider {
 
 	private ProviGenOpenHelper openHelper;
@@ -19,6 +24,10 @@ public class ProviGenProvider extends ContentProvider {
 
 	private ContractHolder contractHolder;
 
+	/**
+	 * @param contractClass A {@link Contract} class.
+	 * @throws InvalidContractException
+	 */
 	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
 		contractHolder = new ContractHolder(contractClass);
@@ -36,14 +45,40 @@ public class ProviGenProvider extends ContentProvider {
 		return true;
 	}
 
+	/**
+	 * Called when the database is created for the first time. </br>
+	 * The {@link ProviGenProvider} automatically creates a database table if {@code super.onCreateDatabase(database)} is called.</br>
+	 * The initial population of the tables should happen here.
+	 * @param database The database.
+	 */
 	public void onCreateDatabase(SQLiteDatabase database) {
 		openHelper.autoCreateDatabase(database);
 	}
 
+	/**
+	 * Called when the database needs to be upgraded. </br>
+	 * If the {@link Contract} contains new columns, the {@link ProviGenProvider} automatically adds these columns
+	 * if {@code super.onUpgradeDatabase(database, oldVersion, newVersion)} is called.</br>
+	 * Anything else related to database upgrade should be done here.
+	 * <p>
+	 * This method executes within a transaction. If an exception is thrown, all changes
+	 * will automatically be rolled back.
+	 * </p>
+	 * @param database The database.
+	 * @param oldVersion The old database version (same as contract old version).
+	 * @param newVersion The new database version (same as contract new version).
+	 */
 	public void onUpgradeDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
 		openHelper.autoUpgradeDatabase(database, oldVersion, newVersion);
 	}
 
+	/**
+	 * Used to switch from a {@link Contract} to an other dynamically.<br/>
+	 * Note that this may change the database schema.
+	 * May be used for testing purpose. <br/>
+	 * @param contractClass The {@link Contract} to switch to.
+	 * @throws InvalidContractException
+	 */
 	@SuppressWarnings("rawtypes")
 	public void setContractClass(Class contractClass) throws InvalidContractException {
 		contractHolder = new ContractHolder(contractClass);
