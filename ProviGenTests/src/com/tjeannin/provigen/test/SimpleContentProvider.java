@@ -3,12 +3,12 @@ package com.tjeannin.provigen.test;
 import android.net.Uri;
 
 import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.Type;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
-import com.tjeannin.provigen.annotation.Id;
 
 public class SimpleContentProvider extends ProviGenProvider {
 
@@ -17,11 +17,7 @@ public class SimpleContentProvider extends ProviGenProvider {
 	}
 
 	@Contract(version = 1)
-	public static class SimpleContractVersionOne {
-
-		@Id
-		@Column(type = Type.INTEGER)
-		public static final String COLUMN_ID = "_id";
+	public static interface SimpleContractVersionOne extends ProviGenBaseContract {
 
 		@Column(type = Type.INTEGER)
 		public static final String COLUMN_INT = "int";
@@ -32,11 +28,7 @@ public class SimpleContentProvider extends ProviGenProvider {
 	}
 
 	@Contract(version = 2)
-	public static class SimpleContractVersionTwo {
-
-		@Id
-		@Column(type = Type.INTEGER)
-		public static final String COLUMN_ID = "_id";
+	public static interface SimpleContractVersionTwo extends ProviGenBaseContract {
 
 		@Column(type = Type.INTEGER)
 		public static final String COLUMN_INT = "int";

@@ -26,7 +26,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		setContentView(R.layout.activity_main);
 
 		String[] columns = new String[] {
-				SampleContract.COLUMN_ID,
+				SampleContract._ID,
 				SampleContract.COLUMN_INT,
 				SampleContract.COLUMN_REAL,
 				SampleContract.COLUMN_STRING };

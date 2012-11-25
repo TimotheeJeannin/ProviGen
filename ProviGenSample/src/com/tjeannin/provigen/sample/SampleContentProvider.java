@@ -5,12 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.Type;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
-import com.tjeannin.provigen.annotation.Id;
 
 public class SampleContentProvider extends ProviGenProvider {
 
@@ -29,11 +29,7 @@ public class SampleContentProvider extends ProviGenProvider {
 	}
 	
 	@Contract(version = 1)
-	public static class SampleContract {
-
-		@Id
-		@Column(type = Type.INTEGER)
-		public static final String COLUMN_ID = "_id";
+	public static interface SampleContract extends ProviGenBaseContract {
 
 		@Column(type = Type.INTEGER)
 		public static final String COLUMN_INT = "int";

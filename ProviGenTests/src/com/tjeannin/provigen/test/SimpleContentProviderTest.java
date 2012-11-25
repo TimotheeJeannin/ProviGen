@@ -65,9 +65,9 @@ public class SimpleContentProviderTest extends
 
 		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionOne());
 		Cursor cursor = contentResolver.query(SimpleContractVersionOne.CONTENT_URI, null, "", null, "");
-		
+
 		assertEquals(2, cursor.getColumnCount());
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.COLUMN_ID));
+		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne._ID));
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.COLUMN_INT));
 		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.COLUMN_REAL));
 		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.COLUMN_STRING));
@@ -76,10 +76,10 @@ public class SimpleContentProviderTest extends
 
 		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionTwo());
 		cursor = contentResolver.query(SimpleContractVersionTwo.CONTENT_URI, null, "", null, "");
-		
+
 		assertEquals(4, cursor.getColumnCount());
 		assertEquals(2, cursor.getCount());
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.COLUMN_ID));
+		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne._ID));
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.COLUMN_INT));
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.COLUMN_REAL));
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.COLUMN_STRING));
@@ -90,7 +90,7 @@ public class SimpleContentProviderTest extends
 		contentValues.put(SimpleContractVersionOne.COLUMN_INT, 1);
 		return contentValues;
 	}
-	
+
 	private ContentValues getDefaultContentValuesVersionTwo() {
 		ContentValues contentValues = getDefaultContentValuesVersionOne();
 		contentValues.put(SimpleContractVersionTwo.COLUMN_STRING, "ok");
