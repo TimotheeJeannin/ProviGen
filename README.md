@@ -18,11 +18,7 @@ How to install and use
 
 ```java
 @Contract(version = 1)
-public static class MyContract {
-
-	@Id
-	@Column(type = Type.INTEGER)
-	public static final String COLUMN_ID = "_id";
+public static class MyContract extends ProviGenBaseContract {
 
 	@Column(type = Type.INTEGER)
 	public static final String MY_INT_COLUMN = "int";
@@ -42,6 +38,22 @@ public class MyContentProvider extends ProviGenProvider {
 
 	public MyContentProvider() throws InvalidContractException {
 		super(MyContract.class);
+	}
+
+	@Override
+	public void onCreateDatabase(SQLiteDatabase database) {
+		// Automatically creates table and needed columns.
+		super.onCreateDatabase(database); 
+
+		// If needed, populate table here.
+	}
+
+	@Override
+	public void onUpgradeDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
+		// Automatically adds new columns.
+		super.onUpgradeDatabase(database, oldVersion, newVersion);
+
+		// Anything else related to database upgrade should be done here. 
 	}
 }
 ```
