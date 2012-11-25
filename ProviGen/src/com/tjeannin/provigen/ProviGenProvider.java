@@ -47,7 +47,8 @@ public class ProviGenProvider extends ContentProvider {
 
 	/**
 	 * Called when the database is created for the first time. </br>
-	 * The {@link ProviGenProvider} automatically creates a database table if {@code super.onCreateDatabase(database)} is called.</br>
+	 * The {@link ProviGenProvider} automatically creates a database table and the needed columns
+	 * if {@code super.onCreateDatabase(database)} is called.</br>
 	 * The initial population of the tables should happen here.
 	 * @param database The database.
 	 */
