@@ -68,9 +68,9 @@ public class SimpleContentProviderTest extends
 
 		assertEquals(2, cursor.getColumnCount());
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne._ID));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.COLUMN_INT));
-		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.COLUMN_REAL));
-		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.COLUMN_STRING));
+		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.MY_INT));
+		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_REAL));
+		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_STRING));
 
 		getProvider().setContractClass(SimpleContractVersionTwo.class);
 
@@ -80,21 +80,21 @@ public class SimpleContentProviderTest extends
 		assertEquals(4, cursor.getColumnCount());
 		assertEquals(2, cursor.getCount());
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne._ID));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.COLUMN_INT));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.COLUMN_REAL));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.COLUMN_STRING));
+		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.MY_INT));
+		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_REAL));
+		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_STRING));
 	}
 
 	private ContentValues getDefaultContentValuesVersionOne() {
 		ContentValues contentValues = new ContentValues(4);
-		contentValues.put(SimpleContractVersionOne.COLUMN_INT, 1);
+		contentValues.put(SimpleContractVersionOne.MY_INT, 1);
 		return contentValues;
 	}
 
 	private ContentValues getDefaultContentValuesVersionTwo() {
 		ContentValues contentValues = getDefaultContentValuesVersionOne();
-		contentValues.put(SimpleContractVersionTwo.COLUMN_STRING, "ok");
-		contentValues.put(SimpleContractVersionTwo.COLUMN_REAL, 1 / 3);
+		contentValues.put(SimpleContractVersionTwo.MY_STRING, "ok");
+		contentValues.put(SimpleContractVersionTwo.MY_REAL, 1 / 3);
 		return contentValues;
 	}
 

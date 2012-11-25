@@ -20,7 +20,7 @@ public class SimpleContentProvider extends ProviGenProvider {
 	public static interface SimpleContractVersionOne extends ProviGenBaseContract {
 
 		@Column(type = Type.INTEGER)
-		public static final String COLUMN_INT = "int";
+		public static final String MY_INT = "int";
 
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
@@ -31,13 +31,13 @@ public class SimpleContentProvider extends ProviGenProvider {
 	public static interface SimpleContractVersionTwo extends ProviGenBaseContract {
 
 		@Column(type = Type.INTEGER)
-		public static final String COLUMN_INT = "int";
+		public static final String MY_INT = "int";
 
 		@Column(type = Type.TEXT)
-		public static final String COLUMN_STRING = "string";
+		public static final String MY_STRING = "string";
 
 		@Column(type = Type.REAL)
-		public static final String COLUMN_REAL = "hour";
+		public static final String MY_REAL = "real";
 
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");

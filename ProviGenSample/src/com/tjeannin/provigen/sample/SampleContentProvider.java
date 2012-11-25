@@ -23,8 +23,8 @@ public class SampleContentProvider extends ProviGenProvider {
 		super.onCreateDatabase(database);
 		
 		ContentValues values = new ContentValues(2);
-		values.put(SampleContract.COLUMN_INT, 8);
-		values.put(SampleContract.COLUMN_STRING, "a super dingue string");
+		values.put(SampleContract.MY_INT, 8);
+		values.put(SampleContract.MY_STRING, "a super dingue string");
 		database.insert("table_name", null, values);
 	}
 	
@@ -32,13 +32,13 @@ public class SampleContentProvider extends ProviGenProvider {
 	public static interface SampleContract extends ProviGenBaseContract {
 
 		@Column(type = Type.INTEGER)
-		public static final String COLUMN_INT = "int";
+		public static final String MY_INT = "int";
 
 		@Column(type = Type.TEXT)
-		public static final String COLUMN_STRING = "string";
+		public static final String MY_STRING = "string";
 
 		@Column(type = Type.REAL)
-		public static final String COLUMN_REAL = "hour";
+		public static final String MY_REAL = "hour";
 
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.tjeannin.provigen.sample/table_name");
