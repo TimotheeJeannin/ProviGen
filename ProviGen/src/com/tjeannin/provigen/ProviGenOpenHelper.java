@@ -44,13 +44,23 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 	}
 
 	void addMissingColumnsInTable(SQLiteDatabase database, ContractHolder contractHolder) {
+	    
 		Cursor cursor = database.rawQuery("PRAGMA table_info(" + contractHolder.getTable() + ")", null);
-
 		for (DatabaseField field : contractHolder.getFields()) {
 			if (!fieldExistAsColumn(field.getName(), cursor)) {
 				database.execSQL("ALTER TABLE " + contractHolder.getTable() + " ADD COLUMN " + field.getName() + " " + field.getType() + ";");
 			}
 		}
+	}
+	
+	public boolean hasTableInDatabase(SQLiteDatabase database, ContractHolder contractHolder){
+	    
+	    Cursor cursor = database.rawQuery(
+	            "SELECT * FROM sqlite_master WHERE name = ? ", 
+	            new String[]{contractHolder.getTable()});
+	    boolean exists = cursor.getCount() != 0;
+	    cursor.close();
+	    return exists;
 	}
 
 	private boolean fieldExistAsColumn(String field, Cursor columnCursor) {
