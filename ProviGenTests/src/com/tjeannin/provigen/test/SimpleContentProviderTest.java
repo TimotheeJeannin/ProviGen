@@ -38,12 +38,14 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null,
 				"", null, "");
 		assertEquals(0, cursor.getCount());
+		cursor.close();
 	}
 
 	public void testInsert() {
 		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
 		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 		assertEquals(1, cursor.getCount());
+		cursor.close();
 	}
 
 	public void testAutoIncrement() {
@@ -58,9 +60,11 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 
 		Cursor cursor = contentResolver.query(Uri.withAppendedPath(ContractOne.CONTENT_URI, String.valueOf(4)), null, "", null, "");
 		assertEquals(1, cursor.getCount());
+		cursor.close();
 
 		cursor = contentResolver.query(Uri.withAppendedPath(ContractOne.CONTENT_URI, String.valueOf(3)), null, "", null, "");
 		assertEquals(0, cursor.getCount());
+		cursor.close();
 	}
 
 	public void testUpgradeFromDatabaseVersion1to2() throws InvalidContractException {
@@ -88,6 +92,7 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(ContractOne.MY_INT));
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(ContractTwo.MY_REAL));
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(ContractTwo.MY_STRING));
+		cursor.close();
 	}
 
 	private void validateSimpleContractVersionOne() {
@@ -99,17 +104,39 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(ContractOne.MY_INT));
 		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(ContractTwo.MY_REAL));
 		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(ContractTwo.MY_STRING));
+		cursor.close();
 	}
 
-	public void testHandlesBasicMultipleTables() {
+	public void testMultipleTablesInsert() {
+
+		// Check there is no data.
+		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
+		assertEquals(0, cursor.getCount());
+		cursor.close();
+
+		cursor = contentResolver.query(ContractThree.CONTENT_URI, null, "", null, "");
+		assertEquals(0, cursor.getCount());
+		cursor.close();
 
 		contentResolver.insert(ContractThree.CONTENT_URI, getDefaultContentValuesAnother());
 
-		Cursor cursor = contentResolver.query(ContractThree.CONTENT_URI, null, "", null, "");
+		cursor = contentResolver.query(ContractThree.CONTENT_URI, null, "", null, "");
 		assertEquals(1, cursor.getCount());
+		cursor.close();
 
 		cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 		assertEquals(0, cursor.getCount());
+		cursor.close();
+
+		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
+
+		cursor = contentResolver.query(ContractThree.CONTENT_URI, null, "", null, "");
+		assertEquals(1, cursor.getCount());
+		cursor.close();
+
+		cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
+		assertEquals(1, cursor.getCount());
+		cursor.close();
 	}
 
 	public void testAddingAnotherTableLater() throws InvalidContractException {
@@ -119,16 +146,19 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
 		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 		assertEquals(1, cursor.getCount());
+		cursor.close();
 
 		getProvider().setContractClasses(new Class[] { ContractThree.class, ContractOne.class });
 
 		contentResolver.insert(ContractThree.CONTENT_URI, getDefaultContentValuesVersionOne());
 		cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 		assertEquals(1, cursor.getCount());
+		cursor.close();
 
 		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
 		cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 		assertEquals(2, cursor.getCount());
+		cursor.close();
 	}
 
 	private ContentValues getDefaultContentValuesAnother() {
