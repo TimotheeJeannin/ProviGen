@@ -9,11 +9,11 @@ import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
 
 import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.test.SimpleContentProvider.AnotherSimpleContract;
 import com.tjeannin.provigen.test.SimpleContentProvider.SimpleContractVersionOne;
 import com.tjeannin.provigen.test.SimpleContentProvider.SimpleContractVersionTwo;
 
-public class SimpleContentProviderTest extends
-		ProviderTestCase2<SimpleContentProvider> {
+public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentProvider> {
 
 	private MockContentResolver contentResolver;
 
@@ -25,6 +25,12 @@ public class SimpleContentProviderTest extends
 	protected void setUp() throws Exception {
 		super.setUp();
 		contentResolver = getMockContentResolver();
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		getContext().deleteDatabase("ProviGenDatabase");
+		super.tearDown();
 	}
 
 	public void testProviderIsEmpty() {
@@ -59,8 +65,6 @@ public class SimpleContentProviderTest extends
 
 	public void testUpgradeFromDatabaseVersion1to2() throws InvalidContractException {
 
-		getContext().deleteDatabase("ProviGenDatabase");
-
 		getProvider().setContractClass(SimpleContractVersionOne.class);
 
 		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionOne());
@@ -83,6 +87,24 @@ public class SimpleContentProviderTest extends
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.MY_INT));
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_REAL));
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_STRING));
+	}
+
+	public void testHandlesMultipleTables() {
+
+		contentResolver.insert(AnotherSimpleContract.CONTENT_URI, getDefaultContentValuesAnother());
+
+		Cursor cursor = contentResolver.query(AnotherSimpleContract.CONTENT_URI, null, "", null, "");
+		assertEquals(1, cursor.getCount());
+
+		cursor = contentResolver.query(SimpleContractVersionOne.CONTENT_URI, null, "", null, "");
+		assertEquals(0, cursor.getCount());
+
+	}
+
+	private ContentValues getDefaultContentValuesAnother() {
+		ContentValues contentValues = new ContentValues(1);
+		contentValues.put(AnotherSimpleContract.ANOTHER_INT, 48);
+		return contentValues;
 	}
 
 	private ContentValues getDefaultContentValuesVersionOne() {

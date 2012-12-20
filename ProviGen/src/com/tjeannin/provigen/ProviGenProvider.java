@@ -26,13 +26,23 @@ public class ProviGenProvider extends ContentProvider {
 	private ContractHolder contractHolder;
 
 	/**
-	 * @param contractClass A {@link Contract} class.
+	 * @param contractClass A {@link Contract} class to build the {@link ContentProvider} with.
 	 * @throws InvalidContractException
 	 */
 	@SuppressLint("Registered")
 	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
 		contractHolder = new ContractHolder(contractClass);
+	}
+
+	/**
+	 * @param contractClasses An array of {@link Contract} classes to build the {@link ContentProvider} with.
+	 * @throws InvalidContractException
+	 */
+	@SuppressLint("Registered")
+	@SuppressWarnings("rawtypes")
+	public ProviGenProvider(Class[] contractClasses) throws InvalidContractException {
+		this(contractClasses[0]);
 	}
 
 	@Override
