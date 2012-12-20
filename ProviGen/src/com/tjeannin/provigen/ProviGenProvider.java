@@ -48,7 +48,7 @@ public class ProviGenProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 
-		openHelper = new ProviGenOpenHelper(getContext(), this, contractHolder);
+		openHelper = new ProviGenOpenHelper(getContext(), this, contractHolder.getVersion());
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(contractHolder.getAuthority(), contractHolder.getTable(), ITEM);
@@ -65,7 +65,7 @@ public class ProviGenProvider extends ContentProvider {
 	 * @param database The database.
 	 */
 	public void onCreateDatabase(SQLiteDatabase database) {
-		openHelper.autoCreateDatabase(database);
+		openHelper.createTable(database, contractHolder);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class ProviGenProvider extends ContentProvider {
 	 * @param newVersion The new database version (same as contract new version).
 	 */
 	public void onUpgradeDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
-		openHelper.autoUpgradeDatabase(database, oldVersion, newVersion);
+		openHelper.addMissingColumnsInTable(database, contractHolder);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class ProviGenProvider extends ContentProvider {
 	@SuppressWarnings("rawtypes")
 	public void setContractClasses(Class[] contractClasses) throws InvalidContractException {
 		contractHolder = new ContractHolder(contractClasses[0]);
-		openHelper = new ProviGenOpenHelper(getContext(), this, contractHolder);
+		openHelper = new ProviGenOpenHelper(getContext(), this, contractHolder.getVersion());
 	}
 
 	@Override
