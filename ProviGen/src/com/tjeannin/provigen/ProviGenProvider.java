@@ -93,8 +93,8 @@ public class ProviGenProvider extends ContentProvider {
 	 * @throws InvalidContractException
 	 */
 	@SuppressWarnings("rawtypes")
-	public void setContractClass(Class contractClass) throws InvalidContractException {
-		contractHolder = new ContractHolder(contractClass);
+	public void setContractClasses(Class[] contractClasses) throws InvalidContractException {
+		contractHolder = new ContractHolder(contractClasses[0]);
 		openHelper = new ProviGenOpenHelper(getContext(), this, contractHolder);
 	}
 

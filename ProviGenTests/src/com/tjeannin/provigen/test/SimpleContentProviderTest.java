@@ -65,7 +65,7 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 
 	public void testUpgradeFromDatabaseVersion1to2() throws InvalidContractException {
 
-		getProvider().setContractClass(SimpleContractVersionOne.class);
+		getProvider().setContractClasses(new Class[] { SimpleContractVersionOne.class });
 
 		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionOne());
 		Cursor cursor = contentResolver.query(SimpleContractVersionOne.CONTENT_URI, null, "", null, "");
@@ -76,7 +76,7 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_REAL));
 		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_STRING));
 
-		getProvider().setContractClass(SimpleContractVersionTwo.class);
+		getProvider().setContractClasses(new Class[] { SimpleContractVersionTwo.class });
 
 		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionTwo());
 		cursor = contentResolver.query(SimpleContractVersionTwo.CONTENT_URI, null, "", null, "");
@@ -89,7 +89,7 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_STRING));
 	}
 
-	public void testHandlesMultipleTables() {
+	public void testHandlesBasicMultipleTables() {
 
 		contentResolver.insert(AnotherSimpleContract.CONTENT_URI, getDefaultContentValuesAnother());
 
@@ -98,7 +98,25 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 
 		cursor = contentResolver.query(SimpleContractVersionOne.CONTENT_URI, null, "", null, "");
 		assertEquals(0, cursor.getCount());
+	}
 
+	public void testAddingAnotherTableLater() throws InvalidContractException {
+
+		getProvider().setContractClasses(new Class[] { SimpleContractVersionOne.class });
+
+		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionOne());
+		Cursor cursor = contentResolver.query(SimpleContractVersionOne.CONTENT_URI, null, "", null, "");
+		assertEquals(1, cursor.getCount());
+
+		getProvider().setContractClasses(new Class[] { AnotherSimpleContract.class, SimpleContractVersionOne.class });
+		
+		contentResolver.insert(AnotherSimpleContract.CONTENT_URI, getDefaultContentValuesVersionOne());
+		cursor = contentResolver.query(SimpleContractVersionOne.CONTENT_URI, null, "", null, "");
+		assertEquals(1, cursor.getCount());
+		
+		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionOne());
+		cursor = contentResolver.query(SimpleContractVersionOne.CONTENT_URI, null, "", null, "");
+		assertEquals(2, cursor.getCount());
 	}
 
 	private ContentValues getDefaultContentValuesAnother() {
