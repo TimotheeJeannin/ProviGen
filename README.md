@@ -12,7 +12,7 @@ How to install and use
 
 * Put the ProviGen [jar] in your `libs` folder or add ProviGen as a library project.
 
-[jar]: https://github.com/TimotheeJeannin/ProviGen/downloads
+[jar]: https://github.com/TimotheeJeannin/ProviGen/tree/master/ProviGenDownloads
 
 * Annotate your ContractClass as follows:
 
