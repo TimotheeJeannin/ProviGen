@@ -1,7 +1,5 @@
 package com.tjeannin.provigen;
 
-import com.tjeannin.provigen.annotation.Contract;
-
 import android.annotation.SuppressLint;
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -11,6 +9,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
+
+import com.tjeannin.provigen.annotation.Contract;
 
 /**
  * Behaves as a {@link ContentProvider} for the given {@link Contract} class.
@@ -23,7 +23,7 @@ public class ProviGenProvider extends ContentProvider {
 	private static final int ITEM = 1;
 	private static final int ITEM_ID = 2;
 
-	private ContractHolder contractHolder;
+	private ContractHolderList contracts = new ContractHolderList();
 
 	/**
 	 * @param contractClass A {@link Contract} class to build the {@link ContentProvider} with.
@@ -32,7 +32,7 @@ public class ProviGenProvider extends ContentProvider {
 	@SuppressLint("Registered")
 	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
-		contractHolder = new ContractHolder(contractClass);
+		contracts.add(new ContractHolder(contractClass));
 	}
 
 	/**
@@ -42,36 +42,45 @@ public class ProviGenProvider extends ContentProvider {
 	@SuppressLint("Registered")
 	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class[] contractClasses) throws InvalidContractException {
-		this(contractClasses[0]);
+		for (int i = 0; i < contractClasses.length; i++) {
+			contracts.add(new ContractHolder(contractClasses[i]));
+		}
 	}
 
 	@Override
 	public boolean onCreate() {
 
-		openHelper = new ProviGenOpenHelper(getContext(), this, contractHolder.getVersion());
+		openHelper = new ProviGenOpenHelper(getContext(), this, contracts.getVersionSum());
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI(contractHolder.getAuthority(), contractHolder.getTable(), ITEM);
-		uriMatcher.addURI(contractHolder.getAuthority(), contractHolder.getTable() + "/#", ITEM_ID);
+		for (ContractHolder contract : contracts) {
+			uriMatcher.addURI(contract.getAuthority(), contract.getTable(), ITEM);
+			uriMatcher.addURI(contract.getAuthority(), contract.getTable() + "/#", ITEM_ID);
+		}
 
 		return true;
 	}
 
 	/**
 	 * Called when the database is created for the first time. </br>
-	 * The {@link ProviGenProvider} automatically creates a database table and the needed columns
+	 * The {@link ProviGenProvider} automatically creates database tables and the needed columns
 	 * if {@code super.onCreateDatabase(database)} is called.</br>
 	 * The initial population of the tables should happen here.
 	 * @param database The database.
 	 */
 	public void onCreateDatabase(SQLiteDatabase database) {
-		openHelper.createTable(database, contractHolder);
+		for (ContractHolder contract : contracts) {
+			openHelper.createTable(database, contract);
+		}
 	}
 
 	/**
-	 * Called when the database needs to be upgraded. </br>
-	 * If the {@link Contract} contains new columns, the {@link ProviGenProvider} automatically adds these columns
-	 * if {@code super.onUpgradeDatabase(database, oldVersion, newVersion)} is called.</br>
+	 * Called when the database needs to be upgraded. </br></br>
+	 * Call {@code super.onUpgradeDatabase(database, oldVersion, newVersion)} to:
+	 * <ul>
+	 * <li>Automatically add columns if some are missing.</li>
+	 * <li>Automatically create tables and needed columns for new added {@link Contract}s.</li>
+	 * </ul>
 	 * Anything else related to database upgrade should be done here.
 	 * <p>
 	 * This method executes within a transaction. If an exception is thrown, all changes
@@ -82,7 +91,13 @@ public class ProviGenProvider extends ContentProvider {
 	 * @param newVersion The new database version (same as contract new version).
 	 */
 	public void onUpgradeDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
-		openHelper.addMissingColumnsInTable(database, contractHolder);
+		for (ContractHolder contract : contracts) {
+			if (!openHelper.hasTableInDatabase(database, contract)) {
+				openHelper.createTable(database, contract);
+			} else {
+				openHelper.addMissingColumnsInTable(database, contract);
+			}
+		}
 	}
 
 	/**
@@ -94,8 +109,11 @@ public class ProviGenProvider extends ContentProvider {
 	 */
 	@SuppressWarnings("rawtypes")
 	public void setContractClasses(Class[] contractClasses) throws InvalidContractException {
-		contractHolder = new ContractHolder(contractClasses[0]);
-		openHelper = new ProviGenOpenHelper(getContext(), this, contractHolder.getVersion());
+		contracts.clear();
+		for (int i = 0; i < contractClasses.length; i++) {
+			contracts.add(new ContractHolder(contractClasses[i]));
+		}
+		openHelper = new ProviGenOpenHelper(getContext(), this, contracts.getVersionSum());
 	}
 
 	@Override
@@ -103,6 +121,7 @@ public class ProviGenProvider extends ContentProvider {
 		SQLiteDatabase database = openHelper.getWritableDatabase();
 
 		int numberOfRowsAffected = 0;
+		ContractHolder contractHolder = contracts.findMatching(uri);
 
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
@@ -142,6 +161,7 @@ public class ProviGenProvider extends ContentProvider {
 	public Uri insert(Uri uri, ContentValues values) {
 		SQLiteDatabase database = openHelper.getWritableDatabase();
 
+		ContractHolder contractHolder = contracts.findMatching(uri);
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
 			long itemId = database.insert(contractHolder.getTable(), null, values);
@@ -156,6 +176,7 @@ public class ProviGenProvider extends ContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteDatabase database = openHelper.getReadableDatabase();
 
+		ContractHolder contractHolder = contracts.findMatching(uri);
 		Cursor cursor = null;
 
 		switch (uriMatcher.match(uri)) {
@@ -186,6 +207,7 @@ public class ProviGenProvider extends ContentProvider {
 			String[] selectionArgs) {
 		SQLiteDatabase database = openHelper.getWritableDatabase();
 
+		ContractHolder contractHolder = contracts.findMatching(uri);
 		int numberOfRowsAffected = 0;
 
 		switch (uriMatcher.match(uri)) {

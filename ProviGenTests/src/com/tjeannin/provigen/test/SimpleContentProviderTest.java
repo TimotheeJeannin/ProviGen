@@ -66,7 +66,31 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 	public void testUpgradeFromDatabaseVersion1to2() throws InvalidContractException {
 
 		getProvider().setContractClasses(new Class[] { SimpleContractVersionOne.class });
+		validateSimpleContractVersionOne();
+		getProvider().setContractClasses(new Class[] { SimpleContractVersionTwo.class });
+		validateSimpleContractVersionTwo();
+	}
 
+	public void testUpgradingExistingContractWithMultipleTables() throws InvalidContractException {
+
+		getProvider().setContractClasses(new Class[] { AnotherSimpleContract.class, SimpleContractVersionOne.class });
+		validateSimpleContractVersionOne();
+		getProvider().setContractClasses(new Class[] { SimpleContractVersionTwo.class, AnotherSimpleContract.class });
+		validateSimpleContractVersionTwo();
+	}
+
+	private void validateSimpleContractVersionTwo() {
+		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionTwo());
+		Cursor cursor = contentResolver.query(SimpleContractVersionTwo.CONTENT_URI, null, "", null, "");
+
+		assertEquals(4, cursor.getColumnCount());
+		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne._ID));
+		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.MY_INT));
+		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_REAL));
+		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_STRING));
+	}
+
+	private void validateSimpleContractVersionOne() {
 		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionOne());
 		Cursor cursor = contentResolver.query(SimpleContractVersionOne.CONTENT_URI, null, "", null, "");
 
@@ -75,18 +99,6 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.MY_INT));
 		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_REAL));
 		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_STRING));
-
-		getProvider().setContractClasses(new Class[] { SimpleContractVersionTwo.class });
-
-		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionTwo());
-		cursor = contentResolver.query(SimpleContractVersionTwo.CONTENT_URI, null, "", null, "");
-
-		assertEquals(4, cursor.getColumnCount());
-		assertEquals(2, cursor.getCount());
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne._ID));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionOne.MY_INT));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_REAL));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(SimpleContractVersionTwo.MY_STRING));
 	}
 
 	public void testHandlesBasicMultipleTables() {
@@ -109,11 +121,11 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		assertEquals(1, cursor.getCount());
 
 		getProvider().setContractClasses(new Class[] { AnotherSimpleContract.class, SimpleContractVersionOne.class });
-		
+
 		contentResolver.insert(AnotherSimpleContract.CONTENT_URI, getDefaultContentValuesVersionOne());
 		cursor = contentResolver.query(SimpleContractVersionOne.CONTENT_URI, null, "", null, "");
 		assertEquals(1, cursor.getCount());
-		
+
 		contentResolver.insert(SimpleContractVersionOne.CONTENT_URI, getDefaultContentValuesVersionOne());
 		cursor = contentResolver.query(SimpleContractVersionOne.CONTENT_URI, null, "", null, "");
 		assertEquals(2, cursor.getCount());
