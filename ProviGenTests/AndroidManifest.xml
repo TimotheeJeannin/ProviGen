@@ -10,7 +10,7 @@
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
-        android:targetPackage="com.tjeannin.provigen" />
+        android:targetPackage="com.tjeannin.provigen.test" />
 
     <application
         android:allowBackup="false"

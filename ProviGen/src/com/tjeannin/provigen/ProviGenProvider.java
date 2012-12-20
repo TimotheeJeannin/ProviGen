@@ -2,6 +2,7 @@ package com.tjeannin.provigen;
 
 import com.tjeannin.provigen.annotation.Contract;
 
+import android.annotation.SuppressLint;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -28,6 +29,7 @@ public class ProviGenProvider extends ContentProvider {
 	 * @param contractClass A {@link Contract} class.
 	 * @throws InvalidContractException
 	 */
+	@SuppressLint("Registered")
 	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
 		contractHolder = new ContractHolder(contractClass);
