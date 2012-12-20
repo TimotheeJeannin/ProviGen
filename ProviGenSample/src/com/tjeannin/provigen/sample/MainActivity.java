@@ -26,10 +26,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		setContentView(R.layout.activity_main);
 
 		String[] columns = new String[] {
-				SampleContract.COLUMN_ID,
-				SampleContract.COLUMN_INT,
-				SampleContract.COLUMN_REAL,
-				SampleContract.COLUMN_STRING };
+				SampleContract._ID,
+				SampleContract.MY_INT,
+				SampleContract.MY_REAL,
+				SampleContract.MY_STRING };
 
 		int[] ids = {
 				R.id.item_id,
@@ -74,9 +74,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		switch (view.getId()) {
 		case R.id.add:
 			ContentValues values = new ContentValues();
-			values.put(SampleContract.COLUMN_INT, 5);
-			values.put(SampleContract.COLUMN_STRING, "afhzpuf");
-			values.put(SampleContract.COLUMN_REAL, 0.45896);
+			values.put(SampleContract.MY_INT, 5);
+			values.put(SampleContract.MY_STRING, "afhzpuf");
+			values.put(SampleContract.MY_REAL, 0.45896);
 			getContentResolver().insert(SampleContract.CONTENT_URI, values);
 			break;
 
