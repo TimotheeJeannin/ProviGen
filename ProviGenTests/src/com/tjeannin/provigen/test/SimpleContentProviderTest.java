@@ -42,7 +42,7 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 	}
 
 	public void testInsert() {
-		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
+		contentResolver.insert(ContractOne.CONTENT_URI, getValues(1));
 		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 		assertEquals(1, cursor.getCount());
 		cursor.close();
@@ -50,13 +50,13 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 
 	public void testAutoIncrement() {
 
-		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
-		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
-		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
+		contentResolver.insert(ContractOne.CONTENT_URI, getValues(1));
+		contentResolver.insert(ContractOne.CONTENT_URI, getValues(1));
+		contentResolver.insert(ContractOne.CONTENT_URI, getValues(1));
 
 		contentResolver.delete(Uri.withAppendedPath(ContractOne.CONTENT_URI, String.valueOf(3)), "", null);
 
-		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
+		contentResolver.insert(ContractOne.CONTENT_URI, getValues(1));
 
 		Cursor cursor = contentResolver.query(Uri.withAppendedPath(ContractOne.CONTENT_URI, String.valueOf(4)), null, "", null, "");
 		assertEquals(1, cursor.getCount());
@@ -84,7 +84,7 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 	}
 
 	private void validateSimpleContractVersionTwo() {
-		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionTwo());
+		contentResolver.insert(ContractOne.CONTENT_URI, getValues(2));
 		Cursor cursor = contentResolver.query(ContractTwo.CONTENT_URI, null, "", null, "");
 
 		assertEquals(4, cursor.getColumnCount());
@@ -96,7 +96,7 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 	}
 
 	private void validateSimpleContractVersionOne() {
-		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
+		contentResolver.insert(ContractOne.CONTENT_URI, getValues(1));
 		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 
 		assertEquals(2, cursor.getColumnCount());
@@ -113,12 +113,12 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		assertEquals(0, getCount(ContractOne.CONTENT_URI));
 		assertEquals(0, getCount(ContractThree.CONTENT_URI));
 
-		contentResolver.insert(ContractThree.CONTENT_URI, getDefaultContentValuesAnother());
+		contentResolver.insert(ContractThree.CONTENT_URI, getValues(3));
 
 		assertEquals(0, getCount(ContractOne.CONTENT_URI));
 		assertEquals(1, getCount(ContractThree.CONTENT_URI));
 
-		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
+		contentResolver.insert(ContractOne.CONTENT_URI, getValues(1));
 
 		assertEquals(1, getCount(ContractOne.CONTENT_URI));
 		assertEquals(1, getCount(ContractThree.CONTENT_URI));
@@ -128,21 +128,20 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 
 		getProvider().setContractClasses(new Class[] { ContractOne.class });
 
-		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
+		contentResolver.insert(ContractOne.CONTENT_URI, getValues(1));
 		assertEquals(1, getCount(ContractOne.CONTENT_URI));
 
 		getProvider().setContractClasses(new Class[] { ContractThree.class, ContractOne.class });
 		assertEquals(0, getCount(ContractThree.CONTENT_URI));
 		assertEquals(1, getCount(ContractOne.CONTENT_URI));
 
-		contentResolver.insert(ContractThree.CONTENT_URI, getDefaultContentValuesAnother());
+		contentResolver.insert(ContractThree.CONTENT_URI, getValues(3));
 		assertEquals(1, getCount(ContractThree.CONTENT_URI));
 		assertEquals(1, getCount(ContractOne.CONTENT_URI));
 
-		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
+		contentResolver.insert(ContractOne.CONTENT_URI, getValues(1));
 		assertEquals(1, getCount(ContractThree.CONTENT_URI));
 		assertEquals(2, getCount(ContractOne.CONTENT_URI));
-
 	}
 
 	private int getCount(Uri uri) {
@@ -152,23 +151,20 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		return count;
 	}
 
-	private ContentValues getDefaultContentValuesAnother() {
-		ContentValues contentValues = new ContentValues(1);
-		contentValues.put(ContractThree.ANOTHER_INT, 48);
+	private ContentValues getValues(int contractNumber) {
+		ContentValues contentValues = new ContentValues();
+		switch (contractNumber) {
+		case 2:
+			contentValues.put(ContractTwo.MY_STRING, "ok");
+			contentValues.put(ContractTwo.MY_REAL, 1 / 3);
+		case 1:
+			contentValues.put(ContractOne.MY_INT, 1);
+			break;
+		case 3:
+			contentValues = new ContentValues(1);
+			contentValues.put(ContractThree.ANOTHER_INT, 48);
+			break;
+		}
 		return contentValues;
 	}
-
-	private ContentValues getDefaultContentValuesVersionOne() {
-		ContentValues contentValues = new ContentValues(4);
-		contentValues.put(ContractOne.MY_INT, 1);
-		return contentValues;
-	}
-
-	private ContentValues getDefaultContentValuesVersionTwo() {
-		ContentValues contentValues = getDefaultContentValuesVersionOne();
-		contentValues.put(ContractTwo.MY_STRING, "ok");
-		contentValues.put(ContractTwo.MY_REAL, 1 / 3);
-		return contentValues;
-	}
-
 }
