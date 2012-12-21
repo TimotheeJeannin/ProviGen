@@ -13,11 +13,11 @@ import com.tjeannin.provigen.annotation.Contract;
 public class SimpleContentProvider extends ProviGenProvider {
 
 	public SimpleContentProvider() throws InvalidContractException {
-		super(SimpleContractVersionOne.class);
+		super(new Class[] { ContractOne.class, ContractThree.class });
 	}
 
 	@Contract(version = 1)
-	public static interface SimpleContractVersionOne extends ProviGenBaseContract {
+	public static interface ContractOne extends ProviGenBaseContract {
 
 		@Column(type = Type.INTEGER)
 		public static final String MY_INT = "int";
@@ -28,7 +28,7 @@ public class SimpleContentProvider extends ProviGenProvider {
 	}
 
 	@Contract(version = 2)
-	public static interface SimpleContractVersionTwo extends ProviGenBaseContract {
+	public static interface ContractTwo extends ProviGenBaseContract {
 
 		@Column(type = Type.INTEGER)
 		public static final String MY_INT = "int";
@@ -41,6 +41,17 @@ public class SimpleContentProvider extends ProviGenProvider {
 
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
+
+	}
+
+	@Contract(version = 1)
+	public static interface ContractThree extends ProviGenBaseContract {
+
+		@Column(type = Type.INTEGER)
+		public static final String ANOTHER_INT = "another_int";
+
+		@ContentUri
+		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/another_table_name");
 
 	}
 

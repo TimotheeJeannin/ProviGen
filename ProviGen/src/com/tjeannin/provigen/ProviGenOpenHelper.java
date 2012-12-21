@@ -7,12 +7,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 class ProviGenOpenHelper extends SQLiteOpenHelper {
 
-	private ContractHolder contractHolder;
 	private ProviGenProvider provigenProvider;
 
-	ProviGenOpenHelper(Context context, ProviGenProvider proviGenProvider, ContractHolder contractHolder) {
-		super(context, "ProviGenDatabase", null, contractHolder.getVersion());
-		this.contractHolder = contractHolder;
+	ProviGenOpenHelper(Context context, ProviGenProvider proviGenProvider, int version) {
+		super(context, "ProviGenDatabase", null, version);
 		this.provigenProvider = proviGenProvider;
 	}
 
@@ -26,7 +24,7 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 		provigenProvider.onUpgradeDatabase(database, oldVersion, newVersion);
 	}
 
-	void autoCreateDatabase(SQLiteDatabase database) {
+	void createTable(SQLiteDatabase database, ContractHolder contractHolder) {
 
 		StringBuilder builder = new StringBuilder("CREATE TABLE ");
 		builder.append(contractHolder.getTable() + " ( ");
@@ -45,17 +43,27 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 		database.execSQL(builder.toString());
 	}
 
-	void autoUpgradeDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
+	void addMissingColumnsInTable(SQLiteDatabase database, ContractHolder contractHolder) {
+	    
 		Cursor cursor = database.rawQuery("PRAGMA table_info(" + contractHolder.getTable() + ")", null);
-
 		for (DatabaseField field : contractHolder.getFields()) {
-			if (!isFieldExistAsColumn(field.getName(), cursor)) {
+			if (!fieldExistAsColumn(field.getName(), cursor)) {
 				database.execSQL("ALTER TABLE " + contractHolder.getTable() + " ADD COLUMN " + field.getName() + " " + field.getType() + ";");
 			}
 		}
 	}
+	
+	public boolean hasTableInDatabase(SQLiteDatabase database, ContractHolder contractHolder){
+	    
+	    Cursor cursor = database.rawQuery(
+	            "SELECT * FROM sqlite_master WHERE name = ? ", 
+	            new String[]{contractHolder.getTable()});
+	    boolean exists = cursor.getCount() != 0;
+	    cursor.close();
+	    return exists;
+	}
 
-	private boolean isFieldExistAsColumn(String field, Cursor columnCursor) {
+	private boolean fieldExistAsColumn(String field, Cursor columnCursor) {
 		if (columnCursor.moveToFirst()) {
 			do {
 				if (field.equals(columnCursor.getString(1))) {
