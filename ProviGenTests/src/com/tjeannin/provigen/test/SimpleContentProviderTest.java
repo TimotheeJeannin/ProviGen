@@ -110,33 +110,18 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 	public void testMultipleTablesInsert() {
 
 		// Check there is no data.
-		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
-		assertEquals(0, cursor.getCount());
-		cursor.close();
-
-		cursor = contentResolver.query(ContractThree.CONTENT_URI, null, "", null, "");
-		assertEquals(0, cursor.getCount());
-		cursor.close();
+		assertEquals(0, getCount(ContractOne.CONTENT_URI));
+		assertEquals(0, getCount(ContractThree.CONTENT_URI));
 
 		contentResolver.insert(ContractThree.CONTENT_URI, getDefaultContentValuesAnother());
 
-		cursor = contentResolver.query(ContractThree.CONTENT_URI, null, "", null, "");
-		assertEquals(1, cursor.getCount());
-		cursor.close();
-
-		cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
-		assertEquals(0, cursor.getCount());
-		cursor.close();
+		assertEquals(0, getCount(ContractOne.CONTENT_URI));
+		assertEquals(1, getCount(ContractThree.CONTENT_URI));
 
 		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
 
-		cursor = contentResolver.query(ContractThree.CONTENT_URI, null, "", null, "");
-		assertEquals(1, cursor.getCount());
-		cursor.close();
-
-		cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
-		assertEquals(1, cursor.getCount());
-		cursor.close();
+		assertEquals(1, getCount(ContractOne.CONTENT_URI));
+		assertEquals(1, getCount(ContractThree.CONTENT_URI));
 	}
 
 	public void testAddingAnotherTableLater() throws InvalidContractException {
@@ -144,21 +129,27 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		getProvider().setContractClasses(new Class[] { ContractOne.class });
 
 		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
-		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
-		assertEquals(1, cursor.getCount());
-		cursor.close();
+		assertEquals(1, getCount(ContractOne.CONTENT_URI));
 
 		getProvider().setContractClasses(new Class[] { ContractThree.class, ContractOne.class });
+		assertEquals(0, getCount(ContractThree.CONTENT_URI));
+		assertEquals(1, getCount(ContractOne.CONTENT_URI));
 
-		contentResolver.insert(ContractThree.CONTENT_URI, getDefaultContentValuesVersionOne());
-		cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
-		assertEquals(1, cursor.getCount());
-		cursor.close();
+		contentResolver.insert(ContractThree.CONTENT_URI, getDefaultContentValuesAnother());
+		assertEquals(1, getCount(ContractThree.CONTENT_URI));
+		assertEquals(1, getCount(ContractOne.CONTENT_URI));
 
 		contentResolver.insert(ContractOne.CONTENT_URI, getDefaultContentValuesVersionOne());
-		cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
-		assertEquals(2, cursor.getCount());
+		assertEquals(1, getCount(ContractThree.CONTENT_URI));
+		assertEquals(2, getCount(ContractOne.CONTENT_URI));
+
+	}
+
+	private int getCount(Uri uri) {
+		Cursor cursor = contentResolver.query(uri, null, "", null, "");
+		int count = cursor.getCount();
 		cursor.close();
+		return count;
 	}
 
 	private ContentValues getDefaultContentValuesAnother() {
