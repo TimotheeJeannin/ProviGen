@@ -18,7 +18,7 @@ How to install and use
 
 ```java
 @Contract(version = 1)
-public static interface MyContract extends ProviGenBaseContract {
+public interface MyContract extends ProviGenBaseContract {
 
 	@Column(type = Type.INTEGER)
 	public static final String MY_INT_COLUMN = "int";
