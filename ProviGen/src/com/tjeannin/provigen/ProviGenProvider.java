@@ -75,6 +75,18 @@ public class ProviGenProvider extends ContentProvider {
 	}
 
 	/**
+	 * Creates a table in the database for the specified {@link Contract}.<br/>
+	 * This may be used if you're <b>not</b> calling {@code super.onCreateDatabase(database)}.
+	 * @param database The database.
+	 * @param contractClass A {@link Contract} class to create the table with.
+	 * @throws InvalidContractException
+	 */
+	@SuppressWarnings("rawtypes")
+	public void createTable(SQLiteDatabase database, Class contractClass) throws InvalidContractException {
+		openHelper.createTable(database, new ContractHolder(contractClass));
+	}
+
+	/**
 	 * Called when the database needs to be upgraded. </br></br>
 	 * Call {@code super.onUpgradeDatabase(database, oldVersion, newVersion)} to:
 	 * <ul>
@@ -98,6 +110,18 @@ public class ProviGenProvider extends ContentProvider {
 				openHelper.addMissingColumnsInTable(database, contract);
 			}
 		}
+	}
+
+	/**
+	 * Adds missing table columns for the specified {@link Contract}.<br/>
+	 * This may be used if you're <b>not</b> calling {@code super.onCreateDatabase(database)}.
+	 * @param database The database.
+	 * @param contractClass A {@link Contract} class to use to create missing columns.
+	 * @throws InvalidContractException
+	 */
+	@SuppressWarnings("rawtypes")
+	public void addMissingColumnsInTable(SQLiteDatabase database, Class contractClass) throws InvalidContractException {
+		openHelper.addMissingColumnsInTable(database, new ContractHolder(contractClass));
 	}
 
 	/**
