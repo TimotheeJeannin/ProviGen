@@ -144,6 +144,11 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		assertEquals(2, getCount(ContractOne.CONTENT_URI));
 	}
 
+	public void testGetMimeType() {
+		String mimeType = getProvider().getType(ContractOne.CONTENT_URI);
+		assertEquals("vnd.android.cursor.dir/vdn.table_name_simple", mimeType);
+	}
+
 	private int getCount(Uri uri) {
 		Cursor cursor = contentResolver.query(uri, null, "", null, "");
 		int count = cursor.getCount();
