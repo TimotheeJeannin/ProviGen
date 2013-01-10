@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import android.net.Uri;
 
-public class ContractHolderList extends ArrayList<ContractHolder> {
+class ContractHolderList extends ArrayList<ContractHolder> {
 
 	private static final long serialVersionUID = 2449365634235483191L;
 
