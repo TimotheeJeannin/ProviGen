@@ -177,11 +177,14 @@ public class ProviGenProvider extends ContentProvider {
 
 	@Override
 	public String getType(Uri uri) {
+
+		ContractHolder contractHolder = contracts.findMatching(uri);
+
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
-			return "vnd.android.cursor.dir/vnd." + getContext().getPackageName() + ".item";
+			return "vnd.android.cursor.dir/vdn." + contractHolder.getTable();
 		case ITEM_ID:
-			return "vnd.android.cursor.item/vnd." + getContext().getPackageName() + ".item";
+			return "vnd.android.cursor.item/vdn." + contractHolder.getTable();
 		default:
 			throw new IllegalArgumentException("Unknown uri " + uri);
 		}
