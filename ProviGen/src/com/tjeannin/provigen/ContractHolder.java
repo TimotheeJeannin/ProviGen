@@ -10,6 +10,7 @@ import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.annotation.Id;
+import com.tjeannin.provigen.annotation.Unique;
 
 class ContractHolder {
 
@@ -63,16 +64,53 @@ class ContractHolder {
 			Column column = field.getAnnotation(Column.class);
 			if (column != null) {
 				try {
-					databaseFields.add(new DatabaseField((String) field.get(null), column.value()));
+					DatabaseField databaseField = new DatabaseField((String) field.get(null), column.value());
+
+					Unique unique = field.getAnnotation(Unique.class);
+					if (unique != null) {
+						databaseField.setUnique(true);
+						databaseField.setOnConflict(unique.value());
+					}
+
+					databaseFields.add(databaseField);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
 
+		if (!isOnConflictUnique()) {
+			throw new InvalidContractException("OnConflict parameter sould be the same for all @Unique annotations.");
+		}
+
 		if (authority == null || tableName == null) {
 			throw new InvalidContractException("The contract is missing a @ContentUri.");
 		}
+	}
+
+	public boolean hasUniqueDatabaseFields() {
+		for (DatabaseField field : databaseFields) {
+			if (field.isUnique()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isOnConflictUnique() {
+		String onConflict = null;
+		for (DatabaseField field : databaseFields) {
+			if (field.isUnique()) {
+				if (onConflict == null) {
+					onConflict = field.getOnConflict();
+				} else {
+					if (!onConflict.equals(field.getOnConflict())) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	public int getVersion() {

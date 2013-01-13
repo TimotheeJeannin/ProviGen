@@ -26,18 +26,38 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 
 	void createTable(SQLiteDatabase database, ContractHolder contractHolder) {
 
+		// CREATE TABLE myTable (
 		StringBuilder builder = new StringBuilder("CREATE TABLE ");
 		builder.append(contractHolder.getTable() + " ( ");
+
+		// myInt INTEGER, myString TEXT
 		for (int i = 0; i < contractHolder.getFields().size(); i++) {
 			DatabaseField field = contractHolder.getFields().get(i);
 			builder.append(" " + field.getName() + " " + field.getType());
 			if (field.getName().equals(contractHolder.getIdField())) {
 				builder.append(" PRIMARY KEY AUTOINCREMENT ");
 			}
-			if (i < contractHolder.getFields().size() - 1) {
-				builder.append(", ");
-			}
+			builder.append(", ");
 		}
+		builder.deleteCharAt(builder.length() - 2);
+
+		if (contractHolder.hasUniqueDatabaseFields()) {
+
+			// , UNIQUE ( myInt, myString ) ON CONFLICT REPLACE
+			builder.append(" , UNIQUE( ");
+			String onConflict = null;
+			for (int i = 0; i < contractHolder.getFields().size(); i++) {
+				DatabaseField field = contractHolder.getFields().get(i);
+				if (field.isUnique()) {
+					builder.append(field.getName() + ", ");
+					onConflict = field.getOnConflict();
+				}
+			}
+			builder.deleteCharAt(builder.length() - 2);
+			builder.append(" ) ON CONFLICT " + onConflict);
+		}
+
+		// )
 		builder.append(" ) ");
 
 		database.execSQL(builder.toString());

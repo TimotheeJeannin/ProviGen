@@ -4,6 +4,8 @@ class DatabaseField {
 
 	private String name;
 	private String type;
+	private boolean unique = false;
+	private String onConflict;
 
 	public DatabaseField(String name, String type) {
 		super();
@@ -27,4 +29,19 @@ class DatabaseField {
 		this.type = type;
 	}
 
+	public boolean isUnique() {
+		return unique;
+	}
+
+	public void setUnique(boolean unique) {
+		this.unique = unique;
+	}
+
+	public String getOnConflict() {
+		return onConflict;
+	}
+
+	public void setOnConflict(String onConflict) {
+		this.onConflict = onConflict;
+	}
 }
