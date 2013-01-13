@@ -7,8 +7,8 @@ import android.net.Uri;
 import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
-import com.tjeannin.provigen.Type;
 import com.tjeannin.provigen.annotation.Column;
+import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
 
@@ -31,13 +31,13 @@ public class SampleContentProvider extends ProviGenProvider {
 	@Contract(version = 1)
 	public static interface SampleContract extends ProviGenBaseContract {
 
-		@Column(type = Type.INTEGER)
+		@Column(Type.INTEGER)
 		public static final String MY_INT = "int";
 
-		@Column(type = Type.TEXT)
+		@Column(Type.TEXT)
 		public static final String MY_STRING = "string";
 
-		@Column(type = Type.REAL)
+		@Column(Type.REAL)
 		public static final String MY_REAL = "hour";
 
 		@ContentUri

@@ -63,7 +63,7 @@ class ContractHolder {
 			Column column = field.getAnnotation(Column.class);
 			if (column != null) {
 				try {
-					databaseFields.add(new DatabaseField((String) field.get(null), column.type()));
+					databaseFields.add(new DatabaseField((String) field.get(null), column.value()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

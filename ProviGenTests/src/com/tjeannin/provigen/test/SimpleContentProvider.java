@@ -5,8 +5,8 @@ import android.net.Uri;
 import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
-import com.tjeannin.provigen.Type;
 import com.tjeannin.provigen.annotation.Column;
+import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
 
@@ -19,7 +19,7 @@ public class SimpleContentProvider extends ProviGenProvider {
 	@Contract(version = 1)
 	public static interface ContractOne extends ProviGenBaseContract {
 
-		@Column(type = Type.INTEGER)
+		@Column(Type.INTEGER)
 		public static final String MY_INT = "int";
 
 		@ContentUri
@@ -30,13 +30,13 @@ public class SimpleContentProvider extends ProviGenProvider {
 	@Contract(version = 2)
 	public static interface ContractTwo extends ProviGenBaseContract {
 
-		@Column(type = Type.INTEGER)
+		@Column(Type.INTEGER)
 		public static final String MY_INT = "int";
 
-		@Column(type = Type.TEXT)
+		@Column(Type.TEXT)
 		public static final String MY_STRING = "string";
 
-		@Column(type = Type.REAL)
+		@Column(Type.REAL)
 		public static final String MY_REAL = "real";
 
 		@ContentUri
@@ -47,7 +47,7 @@ public class SimpleContentProvider extends ProviGenProvider {
 	@Contract(version = 1)
 	public static interface ContractThree extends ProviGenBaseContract {
 
-		@Column(type = Type.INTEGER)
+		@Column(Type.INTEGER)
 		public static final String ANOTHER_INT = "another_int";
 
 		@ContentUri
