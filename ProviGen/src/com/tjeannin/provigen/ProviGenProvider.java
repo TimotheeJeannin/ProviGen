@@ -143,7 +143,7 @@ public class ProviGenProvider extends ContentProvider {
 		for (int i = 0; i < contractClasses.length; i++) {
 			contracts.add(new ContractHolder(contractClasses[i]));
 		}
-		openHelper = new ProviGenOpenHelper(getContext(), this, contracts.getVersionSum());
+		onCreate();
 	}
 
 	@Override
