@@ -9,8 +9,8 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 
 	private ProviGenProvider provigenProvider;
 
-	ProviGenOpenHelper(Context context, ProviGenProvider proviGenProvider, int version) {
-		super(context, "ProviGenDatabase", null, version);
+	ProviGenOpenHelper(Context context, ProviGenProvider proviGenProvider, String databaseName, int version) {
+		super(context, databaseName, null, version);
 		this.provigenProvider = proviGenProvider;
 	}
 
@@ -64,7 +64,7 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 	}
 
 	void addMissingColumnsInTable(SQLiteDatabase database, ContractHolder contractHolder) {
-	    
+
 		Cursor cursor = database.rawQuery("PRAGMA table_info(" + contractHolder.getTable() + ")", null);
 		for (DatabaseField field : contractHolder.getFields()) {
 			if (!fieldExistAsColumn(field.getName(), cursor)) {
@@ -72,15 +72,15 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 			}
 		}
 	}
-	
-	public boolean hasTableInDatabase(SQLiteDatabase database, ContractHolder contractHolder){
-	    
-	    Cursor cursor = database.rawQuery(
-	            "SELECT * FROM sqlite_master WHERE name = ? ", 
-	            new String[]{contractHolder.getTable()});
-	    boolean exists = cursor.getCount() != 0;
-	    cursor.close();
-	    return exists;
+
+	public boolean hasTableInDatabase(SQLiteDatabase database, ContractHolder contractHolder) {
+
+		Cursor cursor = database.rawQuery(
+				"SELECT * FROM sqlite_master WHERE name = ? ",
+				new String[] { contractHolder.getTable() });
+		boolean exists = cursor.getCount() != 0;
+		cursor.close();
+		return exists;
 	}
 
 	private boolean fieldExistAsColumn(String field, Cursor columnCursor) {

@@ -17,13 +17,13 @@ import com.tjeannin.provigen.annotation.Contract;
  */
 public class ProviGenProvider extends ContentProvider {
 
+	private ContractHolderList contracts = new ContractHolderList();
+	private String databaseName = "ProviGenDatabase";
 	private ProviGenOpenHelper openHelper;
 
 	private UriMatcher uriMatcher;
 	private static final int ITEM = 1;
 	private static final int ITEM_ID = 2;
-
-	private ContractHolderList contracts = new ContractHolderList();
 
 	/**
 	 * @param contractClass A {@link Contract} class to build the {@link ContentProvider} with.
@@ -33,6 +33,18 @@ public class ProviGenProvider extends ContentProvider {
 	@SuppressWarnings("rawtypes")
 	public ProviGenProvider(Class contractClass) throws InvalidContractException {
 		contracts.add(new ContractHolder(contractClass));
+	}
+
+	/**
+	 * @param contractClass A {@link Contract} class to build the {@link ContentProvider} with.
+	 * @param databaseName The name of the database to work with.
+	 * @throws InvalidContractException
+	 */
+	@SuppressLint("Registered")
+	@SuppressWarnings("rawtypes")
+	public ProviGenProvider(Class contractClass, String databaseName) throws InvalidContractException {
+		this(contractClass);
+		this.databaseName = databaseName;
 	}
 
 	/**
@@ -47,10 +59,22 @@ public class ProviGenProvider extends ContentProvider {
 		}
 	}
 
+	/**
+	 * @param contractClasses An array of {@link Contract} classes to build the {@link ContentProvider} with.
+	 * @param databaseName The name of the database to work with.
+	 * @throws InvalidContractException
+	 */
+	@SuppressLint("Registered")
+	@SuppressWarnings("rawtypes")
+	public ProviGenProvider(Class[] contractClasses, String databaseName) throws InvalidContractException {
+		this(contractClasses);
+		this.databaseName = databaseName;
+	}
+
 	@Override
 	public boolean onCreate() {
 
-		openHelper = new ProviGenOpenHelper(getContext(), this, contracts.getVersionSum());
+		openHelper = new ProviGenOpenHelper(getContext(), this, databaseName, contracts.getVersionSum());
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		for (ContractHolder contract : contracts) {
