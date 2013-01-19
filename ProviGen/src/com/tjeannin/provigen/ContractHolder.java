@@ -79,7 +79,7 @@ class ContractHolder {
 			}
 		}
 
-		if (!isOnConflictUnique()) {
+		if (!isOnConflictSameEverywhere()) {
 			throw new InvalidContractException("OnConflict parameter sould be the same for all @Unique annotations.");
 		}
 
@@ -97,7 +97,7 @@ class ContractHolder {
 		return false;
 	}
 
-	private boolean isOnConflictUnique() {
+	private boolean isOnConflictSameEverywhere() {
 		String onConflict = null;
 		for (DatabaseField field : databaseFields) {
 			if (field.isUnique()) {
