@@ -20,10 +20,10 @@ How to install and use
 @Contract(version = 1)
 public interface MyContract extends ProviGenBaseContract {
 
-	@Column(type = Type.INTEGER)
+	@Column(Type.INTEGER)
 	public static final String MY_INT_COLUMN = "int";
 
-	@Column(type = Type.TEXT)
+	@Column(Type.TEXT)
 	public static final String MY_STRING_COLUMN = "string";
 
 	@ContentUri
