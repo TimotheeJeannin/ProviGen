@@ -1,5 +1,4 @@
-ProviGen
-========
+# ProviGen
 
 ProviGen allows you to easily generate a [ContentProvider] from a given [ContractClass].
 
@@ -7,14 +6,13 @@ ProviGen allows you to easily generate a [ContentProvider] from a given [Contrac
 
 [ContractClass]: http://developer.android.com/guide/topics/providers/content-provider-basics.html#ContractClasses
 
-How to install and use
-----------------------
+## How to install and use
 
 * Put the ProviGen [jar] in your `libs` folder or add ProviGen as a library project.
 
 [jar]: https://github.com/TimotheeJeannin/ProviGen/tree/master/ProviGenDownloads
 
-* Annotate your ContractClass as follows:
+* Annotate your ContractClass.
 
 ```java
 @Contract(version = 1)
@@ -31,8 +29,48 @@ public interface MyContract extends ProviGenBaseContract {
 }
 ```
 
-* Extend the ProviGenProvider as follows:
+* Extend the ProviGenProvider.
 
+```java
+public class MyContentProvider extends ProviGenProvider {
+
+	public MyContentProvider() throws InvalidContractException {
+		super(MyContract.class);
+	}
+}
+```
+
+* Add your provider in your manifest.
+
+```xml
+<provider
+    android:name="com.myapp.MyContentProvider"
+    android:authorities="com.myapp" >
+</provider>
+```
+
+You have a fully working [ContentProvider] for your [ContractClass].
+
+## Features
+
+### Multiple contact classes
+
+You can use ProviGen with several [ContractClass] just by passing an array of contract classes to the ProviGenProvider constructor.
+```java
+public class MyContentProvider extends ProviGenProvider {
+
+	public MyContentProvider() throws InvalidContractException {
+		super(new Class[] { FirstContract.class, SecondContract.class });
+	}
+}
+```
+ProviGen will create a table for each contract class.     
+The table name will be the last path segment of the contract's content uri.
+
+### Initial population
+
+ProviGen will automatically create the needed table for you.    
+Initial population can be done overriding the `onCreateDatabase` method.
 ```java
 public class MyContentProvider extends ProviGenProvider {
 
@@ -47,6 +85,20 @@ public class MyContentProvider extends ProviGenProvider {
 
 		// If needed, populate table here.
 	}
+}
+```
+If you want to create the table yourself, just don't call `super.onCreateDatabase(database)`.
+
+### Contract upgrades
+
+If you increase the version of a contract class, ProviGen will automatically add missing columns for you.    
+Any other changes should be done overriding the `onUpgradeDatabase` method.
+```java
+public class MyContentProvider extends ProviGenProvider {
+
+	public MyContentProvider() throws InvalidContractException {
+		super(MyContract.class);
+	}
 
 	@Override
 	public void onUpgradeDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
@@ -57,12 +109,16 @@ public class MyContentProvider extends ProviGenProvider {
 	}
 }
 ```
+If you want to add missing columns yourself, just don't call `super.onUpgradeDatabase(database, oldVersion, newVersion)`
 
-* Add your provider in your manifest:
+### Data constraint
 
-```xml
-<provider
-    android:name="com.myapp.MyContentProvider"
-    android:authorities="com.myapp" >
-</provider>
+You can apply a `UNIQUE` constraint just by using the `@Unique` annotation.
+
+```java
+@Unique(OnConflict.REPLACE)
+@Column(Type.INTEGER)
+public static final String MY_INT = "my_int";
 ```
+
+`CHECK` and `NOT NULL` constraint are not supported yet.
