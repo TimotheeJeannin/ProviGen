@@ -2,11 +2,7 @@
 
 ProviGen allows you to easily generate a [ContentProvider] from a given [ContractClass].
 
-[ContentProvider]: https://developer.android.com/reference/android/content/ContentProvider.html
-
-[ContractClass]: http://developer.android.com/guide/topics/providers/content-provider-basics.html#ContractClasses
-
-## How to install and use
+## Installation
 
 * Put the ProviGen [jar] in your `libs` folder or add ProviGen as a library project.
 
@@ -49,7 +45,21 @@ public class MyContentProvider extends ProviGenProvider {
 </provider>
 ```
 
-You have a fully working [ContentProvider] for your [ContractClass].
+## Usage
+
+You can make the usual insert, update, delete and query using a [ContentResolver].    
+For example querying a single row boils down to:
+```java
+getContentResolver().query(	
+	Uri.withAppendedPath(MyContract.CONTENT_URI, myId),
+	null, "", null, "");
+```
+or 
+```java
+getContentResolver().query(
+	MyContract.CONTENT_URI, null, 
+	MyContract._ID + " = ? ", new String[]{ myId }, "");
+```
 
 ## Features
 
@@ -122,3 +132,9 @@ public static final String MY_INT = "my_int";
 ```
 
 `CHECK` and `NOT NULL` constraint are not supported yet.
+
+[ContentProvider]: https://developer.android.com/reference/android/content/ContentProvider.html
+
+[ContractClass]: http://developer.android.com/guide/topics/providers/content-provider-basics.html#ContractClasses
+
+[ContentResolver]: https://developer.android.com/reference/android/content/ContentResolver.html
