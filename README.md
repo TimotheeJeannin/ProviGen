@@ -1,6 +1,6 @@
 # ProviGen
 
-ProviGen allows you to easily generate a [ContentProvider] from a given [ContractClass].
+ProviGen allows you to easily make a [ContentProvider] from a given [ContractClass].    
 
 ## Installation
 
