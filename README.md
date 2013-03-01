@@ -79,6 +79,11 @@ public class MyContentProvider extends ProviGenProvider {
 ProviGen will create a table for each contract class.     
 The table name will be the last path segment of the contract's content uri.
 
+### Notifications and observers
+
+ProviGen fully supports the uri notification mechanism.   
+You can safely use it with [CursorLoader]s and [ContentObserver]s.
+
 ### Initial population
 
 ProviGen will automatically create the needed table for you.    
@@ -134,6 +139,10 @@ public static final String MY_INT = "my_int";
 ```
 
 `CHECK` and `NOT NULL` constraint are not supported yet.
+
+[ContentObserver]: https://developer.android.com/reference/android/database/ContentObserver.html
+
+[CursorLoader]: http://developer.android.com/reference/android/content/CursorLoader.html
 
 [ContentProvider]: https://developer.android.com/reference/android/content/ContentProvider.html
 
