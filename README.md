@@ -45,6 +45,8 @@ public class MyContentProvider extends ProviGenProvider {
 </provider>
 ```
 
+* You're done.
+
 ## Usage
 
 You can make the usual insert, update, delete and query using a [ContentResolver].    
