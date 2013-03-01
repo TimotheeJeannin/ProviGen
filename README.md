@@ -130,7 +130,7 @@ If you want to add missing columns yourself, just don't call `super.onUpgradeDat
 
 ### Data constraint
 
-You can apply a `UNIQUE` constraint just by using the `@Unique` annotation.
+You can apply a `UNIQUE` constraint to a column using the `@Unique` annotation.
 
 ```java
 @Unique(OnConflict.REPLACE)
