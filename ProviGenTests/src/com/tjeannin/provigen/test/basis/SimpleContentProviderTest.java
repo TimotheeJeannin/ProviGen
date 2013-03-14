@@ -1,4 +1,4 @@
-package com.tjeannin.provigen.test;
+package com.tjeannin.provigen.test.basis;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,9 +8,10 @@ import android.net.Uri;
 import android.test.mock.MockContentResolver;
 
 import com.tjeannin.provigen.InvalidContractException;
-import com.tjeannin.provigen.test.SimpleContentProvider.ContractOne;
-import com.tjeannin.provigen.test.SimpleContentProvider.ContractThree;
-import com.tjeannin.provigen.test.SimpleContentProvider.ContractTwo;
+import com.tjeannin.provigen.test.ExtendedProviderTestCase;
+import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractOne;
+import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractThree;
+import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractTwo;
 
 public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleContentProvider> {
 
