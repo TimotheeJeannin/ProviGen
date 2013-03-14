@@ -10,6 +10,7 @@ import android.test.ProviderTestCase2;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
+import com.tjeannin.provigen.annotation.Id;
 
 public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> extends ProviderTestCase2<T> {
 
@@ -37,6 +38,7 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
 	 *         <li>3 for a column of {@link Type#INTEGER}</li>
 	 *         <li>4.58 for a column of {@link Type#REAL}</li>
 	 *         </ul>
+	 *         except for the id column.
 	 */
 	@SuppressWarnings("rawtypes")
 	protected ContentValues getContentValues(Class contractClass) {
@@ -47,7 +49,8 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
 			for (Field field : fields) {
 
 				Column column = field.getAnnotation(Column.class);
-				if (column != null) {
+				Id id = field.getAnnotation(Id.class);
+				if (column != null && id == null) {
 
 					String columnName = (String) field.get(null);
 					String columnType = column.value();
