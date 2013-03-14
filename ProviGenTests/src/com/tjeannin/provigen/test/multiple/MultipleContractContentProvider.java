@@ -1,4 +1,4 @@
-package com.tjeannin.provigen.test.basis;
+package com.tjeannin.provigen.test.multiple;
 
 import android.net.Uri;
 
@@ -10,10 +10,10 @@ import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
 
-public class SimpleContentProvider extends ProviGenProvider {
+public class MultipleContractContentProvider extends ProviGenProvider {
 
-	public SimpleContentProvider() throws InvalidContractException {
-		super(ContractOne.class);
+	public MultipleContractContentProvider() throws InvalidContractException {
+		super(new Class[] { ContractOne.class, ContractTwo.class });
 	}
 
 	@Contract(version = 1)
@@ -27,20 +27,14 @@ public class SimpleContentProvider extends ProviGenProvider {
 
 	}
 
-	@Contract(version = 2)
+	@Contract(version = 1)
 	public static interface ContractTwo extends ProviGenBaseContract {
 
 		@Column(Type.INTEGER)
-		public static final String MY_INT = "int";
-
-		@Column(Type.TEXT)
-		public static final String MY_STRING = "string";
-
-		@Column(Type.REAL)
-		public static final String MY_REAL = "real";
+		public static final String ANOTHER_INT = "another_int";
 
 		@ContentUri
-		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple_2");
+		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/another_table_name");
 
 	}
 }

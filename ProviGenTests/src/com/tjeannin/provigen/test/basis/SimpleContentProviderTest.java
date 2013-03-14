@@ -10,7 +10,6 @@ import android.test.mock.MockContentResolver;
 import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractOne;
-import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractThree;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractTwo;
 
 public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleContentProvider> {
@@ -56,39 +55,14 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		assertEquals(0, getRowCount(Uri.withAppendedPath(ContractOne.CONTENT_URI, String.valueOf(3))));
 	}
 
-	public void testUpgradeFromDatabaseVersion1to2() throws InvalidContractException {
+	public void testUpgradeFromContractOneToTwo() throws InvalidContractException {
 
 		getProvider().setContractClasses(new Class[] { ContractOne.class });
-		validateSimpleContractVersionOne();
-		getProvider().setContractClasses(new Class[] { ContractTwo.class });
-		validateSimpleContractVersionTwo();
-	}
 
-	public void testUpgradingExistingContractWithMultipleTables() throws InvalidContractException {
-
-		getProvider().setContractClasses(new Class[] { ContractThree.class, ContractOne.class });
-		validateSimpleContractVersionOne();
-		getProvider().setContractClasses(new Class[] { ContractTwo.class, ContractThree.class });
-		validateSimpleContractVersionTwo();
-	}
-
-	private void validateSimpleContractVersionTwo() {
-		contentResolver.insert(ContractTwo.CONTENT_URI, getContentValues(ContractTwo.class));
-		Cursor cursor = contentResolver.query(ContractTwo.CONTENT_URI, null, "", null, "");
-
-		assertEquals(4, cursor.getColumnCount());
-		List<String> columnNameList = Arrays.asList(cursor.getColumnNames());
-		assertTrue(columnNameList.contains(ContractOne._ID));
-		assertTrue(columnNameList.contains(ContractOne.MY_INT));
-		assertTrue(columnNameList.contains(ContractTwo.MY_REAL));
-		assertTrue(columnNameList.contains(ContractTwo.MY_STRING));
-		cursor.close();
-	}
-
-	private void validateSimpleContractVersionOne() {
 		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
-		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 
+		// Check database fits ContractOne.
+		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 		assertEquals(2, cursor.getColumnCount());
 		List<String> columnNameList = Arrays.asList(cursor.getColumnNames());
 		assertTrue(columnNameList.contains(ContractOne._ID));
@@ -96,43 +70,18 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		assertFalse(columnNameList.contains(ContractTwo.MY_REAL));
 		assertFalse(columnNameList.contains(ContractTwo.MY_STRING));
 		cursor.close();
-	}
 
-	public void testMultipleTablesInsert() {
+		getProvider().setContractClasses(new Class[] { ContractTwo.class });
 
-		// Check there is no data.
-		assertEquals(0, getRowCount(ContractOne.CONTENT_URI));
-		assertEquals(0, getRowCount(ContractThree.CONTENT_URI));
-
-		contentResolver.insert(ContractThree.CONTENT_URI, getContentValues(ContractThree.class));
-
-		assertEquals(0, getRowCount(ContractOne.CONTENT_URI));
-		assertEquals(1, getRowCount(ContractThree.CONTENT_URI));
-
-		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
-
-		assertEquals(1, getRowCount(ContractOne.CONTENT_URI));
-		assertEquals(1, getRowCount(ContractThree.CONTENT_URI));
-	}
-
-	public void testAddingAnotherTableLater() throws InvalidContractException {
-
-		getProvider().setContractClasses(new Class[] { ContractOne.class });
-
-		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
-		assertEquals(1, getRowCount(ContractOne.CONTENT_URI));
-
-		getProvider().setContractClasses(new Class[] { ContractThree.class, ContractOne.class });
-		assertEquals(0, getRowCount(ContractThree.CONTENT_URI));
-		assertEquals(1, getRowCount(ContractOne.CONTENT_URI));
-
-		contentResolver.insert(ContractThree.CONTENT_URI, getContentValues(ContractThree.class));
-		assertEquals(1, getRowCount(ContractThree.CONTENT_URI));
-		assertEquals(1, getRowCount(ContractOne.CONTENT_URI));
-
-		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
-		assertEquals(1, getRowCount(ContractThree.CONTENT_URI));
-		assertEquals(2, getRowCount(ContractOne.CONTENT_URI));
+		// Check database fits ContractTwo.
+		cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
+		assertEquals(2, cursor.getColumnCount());
+		columnNameList = Arrays.asList(cursor.getColumnNames());
+		assertTrue(columnNameList.contains(ContractOne._ID));
+		assertTrue(columnNameList.contains(ContractOne.MY_INT));
+		assertFalse(columnNameList.contains(ContractTwo.MY_REAL));
+		assertFalse(columnNameList.contains(ContractTwo.MY_STRING));
+		cursor.close();
 	}
 
 	public void testGetMimeType() {
