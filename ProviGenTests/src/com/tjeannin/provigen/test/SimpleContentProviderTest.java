@@ -9,9 +9,8 @@ import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
 
 import com.tjeannin.provigen.InvalidContractException;
-import com.tjeannin.provigen.test.SimpleContentProvider.ContractFour;
-import com.tjeannin.provigen.test.SimpleContentProvider.ContractThree;
 import com.tjeannin.provigen.test.SimpleContentProvider.ContractOne;
+import com.tjeannin.provigen.test.SimpleContentProvider.ContractThree;
 import com.tjeannin.provigen.test.SimpleContentProvider.ContractTwo;
 
 public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentProvider> {
@@ -150,16 +149,6 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 		assertEquals("vnd.android.cursor.dir/vdn.table_name_simple", mimeType);
 	}
 
-	public void testUniqueAnnotation() throws InvalidContractException {
-		getProvider().setContractClasses(new Class[] { ContractFour.class });
-
-		contentResolver.insert(ContractFour.CONTENT_URI, getValues(4));
-		contentResolver.insert(ContractFour.CONTENT_URI, getValues(4));
-		contentResolver.insert(ContractFour.CONTENT_URI, getValues(4));
-
-		assertEquals(1, getCount(ContractFour.CONTENT_URI));
-	}
-
 	private int getCount(Uri uri) {
 		Cursor cursor = contentResolver.query(uri, null, "", null, "");
 		int count = cursor.getCount();
@@ -177,7 +166,6 @@ public class SimpleContentProviderTest extends ProviderTestCase2<SimpleContentPr
 			contentValues.put(ContractOne.MY_INT, 1);
 			break;
 		case 3:
-		case 4:
 			contentValues = new ContentValues(1);
 			contentValues.put(ContractThree.ANOTHER_INT, 48);
 			break;
