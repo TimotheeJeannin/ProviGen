@@ -1,6 +1,7 @@
 package com.tjeannin.provigen.test;
 
 import java.util.Arrays;
+import java.util.List;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -75,10 +76,11 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		Cursor cursor = contentResolver.query(ContractTwo.CONTENT_URI, null, "", null, "");
 
 		assertEquals(4, cursor.getColumnCount());
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(ContractOne._ID));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(ContractOne.MY_INT));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(ContractTwo.MY_REAL));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(ContractTwo.MY_STRING));
+		List<String> columnNameList = Arrays.asList(cursor.getColumnNames());
+		assertTrue(columnNameList.contains(ContractOne._ID));
+		assertTrue(columnNameList.contains(ContractOne.MY_INT));
+		assertTrue(columnNameList.contains(ContractTwo.MY_REAL));
+		assertTrue(columnNameList.contains(ContractTwo.MY_STRING));
 		cursor.close();
 	}
 
@@ -87,10 +89,11 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 
 		assertEquals(2, cursor.getColumnCount());
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(ContractOne._ID));
-		assertTrue(Arrays.asList(cursor.getColumnNames()).contains(ContractOne.MY_INT));
-		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(ContractTwo.MY_REAL));
-		assertFalse(Arrays.asList(cursor.getColumnNames()).contains(ContractTwo.MY_STRING));
+		List<String> columnNameList = Arrays.asList(cursor.getColumnNames());
+		assertTrue(columnNameList.contains(ContractOne._ID));
+		assertTrue(columnNameList.contains(ContractOne.MY_INT));
+		assertFalse(columnNameList.contains(ContractTwo.MY_REAL));
+		assertFalse(columnNameList.contains(ContractTwo.MY_STRING));
 		cursor.close();
 	}
 
