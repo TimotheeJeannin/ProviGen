@@ -25,12 +25,6 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		contentResolver = getMockContentResolver();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		getContext().deleteDatabase("ProviGenDatabase");
-		super.tearDown();
-	}
-
 	public void testProviderIsEmpty() {
 
 		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null,

@@ -18,6 +18,18 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
 		super(providerClass, providerAuthority);
 	}
 
+	@Override
+	protected void setUp() throws Exception {
+		getContext().deleteDatabase("ProviGenDatabase");
+		super.setUp();
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		getContext().deleteDatabase("ProviGenDatabase");
+		super.tearDown();
+	}
+
 	/**
 	 * @param uri The {@link Uri} where to count rows.
 	 * @return The number of rows matching the given {@link Uri}.
