@@ -74,13 +74,13 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		getProvider().setContractClasses(new Class[] { ContractTwo.class });
 
 		// Check database fits ContractTwo.
-		cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
-		assertEquals(2, cursor.getColumnCount());
+		cursor = contentResolver.query(ContractTwo.CONTENT_URI, null, "", null, "");
+		assertEquals(4, cursor.getColumnCount());
 		columnNameList = Arrays.asList(cursor.getColumnNames());
-		assertTrue(columnNameList.contains(ContractOne._ID));
-		assertTrue(columnNameList.contains(ContractOne.MY_INT));
-		assertFalse(columnNameList.contains(ContractTwo.MY_REAL));
-		assertFalse(columnNameList.contains(ContractTwo.MY_STRING));
+		assertTrue(columnNameList.contains(ContractTwo._ID));
+		assertTrue(columnNameList.contains(ContractTwo.MY_INT));
+		assertTrue(columnNameList.contains(ContractTwo.MY_REAL));
+		assertTrue(columnNameList.contains(ContractTwo.MY_STRING));
 		cursor.close();
 	}
 
