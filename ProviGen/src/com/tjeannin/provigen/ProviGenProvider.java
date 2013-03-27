@@ -1,9 +1,14 @@
 package com.tjeannin.provigen;
 
+import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.content.ContentProvider;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -306,5 +311,26 @@ public class ProviGenProvider extends ContentProvider {
 			return new String[] { element };
 		}
 	}
+	
+	
+	@Override
+    public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> operations) 
+            throws OperationApplicationException {
+        SQLiteDatabase db = openHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            int numOperations = operations.size();
+            ContentProviderResult[] results = new ContentProviderResult[numOperations];
+            for (int i = 0; i < numOperations; i++) {
+                results[i] = operations.get(i).apply(this, results, i);
+                db.yieldIfContendedSafely();
+            }
+            db.setTransactionSuccessful();
+            return results;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
 
 }
