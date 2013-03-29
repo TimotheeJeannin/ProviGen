@@ -311,26 +311,23 @@ public class ProviGenProvider extends ContentProvider {
 			return new String[] { element };
 		}
 	}
-	
-	
+
 	@Override
-    public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> operations) 
-            throws OperationApplicationException {
-        SQLiteDatabase db = openHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            int numOperations = operations.size();
-            ContentProviderResult[] results = new ContentProviderResult[numOperations];
-            for (int i = 0; i < numOperations; i++) {
-                results[i] = operations.get(i).apply(this, results, i);
-                db.yieldIfContendedSafely();
-            }
-            db.setTransactionSuccessful();
-            return results;
-        } finally {
-            db.endTransaction();
-        }
-    }
-
-
+	public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> operations)
+			throws OperationApplicationException {
+		SQLiteDatabase db = openHelper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			int numOperations = operations.size();
+			ContentProviderResult[] results = new ContentProviderResult[numOperations];
+			for (int i = 0; i < numOperations; i++) {
+				results[i] = operations.get(i).apply(this, results, i);
+				db.yieldIfContendedSafely();
+			}
+			db.setTransactionSuccessful();
+			return results;
+		} finally {
+			db.endTransaction();
+		}
+	}
 }
