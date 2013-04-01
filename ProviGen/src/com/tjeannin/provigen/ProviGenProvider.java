@@ -98,6 +98,15 @@ public class ProviGenProvider extends ContentProvider {
 		}
 	}
 
+	
+	/**
+	 * 
+	 * @return A readable SQLiteDatabase
+	 */
+	protected SQLiteDatabase getReadableDatabase() {
+		return openHelper.getReadableDatabase();
+	}
+	
 	/**
 	 * Creates a table in the database for the specified {@link Contract}.<br/>
 	 * This may be used if you're <b>not</b> calling {@code super.onCreateDatabase(database)}.
