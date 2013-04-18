@@ -98,7 +98,6 @@ public class ProviGenProvider extends ContentProvider {
 		}
 	}
 
-	
 	/**
 	 * 
 	 * @return A readable SQLiteDatabase
@@ -106,7 +105,7 @@ public class ProviGenProvider extends ContentProvider {
 	protected SQLiteDatabase getReadableDatabase() {
 		return openHelper.getReadableDatabase();
 	}
-	
+
 	/**
 	 * Creates a table in the database for the specified {@link Contract}.<br/>
 	 * This may be used if you're <b>not</b> calling {@code super.onCreateDatabase(database)}.
@@ -128,6 +127,10 @@ public class ProviGenProvider extends ContentProvider {
 	 * <ul>
 	 * <li>Automatically add columns if some are missing.</li>
 	 * <li>Automatically create tables and needed columns for new added {@link Contract}s.</li>
+<<<<<<< HEAD
+=======
+	 * <li>Does <b>not</b> add constraints to existing or newly added columns as SQLite ALTER TABLE doesn't support it.</li>
+>>>>>>> official-origin/master
 	 * </ul>
 	 * Anything else related to database upgrade should be done here.
 	 * <p>
