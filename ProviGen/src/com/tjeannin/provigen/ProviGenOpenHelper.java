@@ -37,11 +37,14 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 			if (field.getName().equals(contractHolder.getIdField())) {
 				builder.append(" PRIMARY KEY AUTOINCREMENT ");
 			}
+			if (field.isNotNull()) {
+				builder.append(" NOT NULL ON CONFLICT " + field.getConstraints().get(0).getOnConflict());
+			}
 			builder.append(", ");
 		}
 		builder.deleteCharAt(builder.length() - 2);
 
-		if (contractHolder.hasUniqueDatabaseFields()) {
+		if (contractHolder.hasColumnConstraint(Constraint.UNIQUE)) {
 
 			// , UNIQUE ( myInt, myString ) ON CONFLICT REPLACE
 			builder.append(" , UNIQUE( ");
@@ -50,7 +53,7 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 				DatabaseField field = contractHolder.getFields().get(i);
 				if (field.isUnique()) {
 					builder.append(field.getName() + ", ");
-					onConflict = field.getOnConflict();
+					onConflict = field.getConstraints().get(0).getOnConflict();
 				}
 			}
 			builder.deleteCharAt(builder.length() - 2);

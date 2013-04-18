@@ -2,8 +2,8 @@ package com.tjeannin.provigen.test.constraint;
 
 import android.net.Uri;
 
+import com.tjeannin.provigen.Constraint.OnConflict;
 import com.tjeannin.provigen.InvalidContractException;
-import com.tjeannin.provigen.OnConflict;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.annotation.Column;
