@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
  * <li>{@link OnConflict#IGNORE}</li>
  * <li>{@link OnConflict#REPLACE}</li>
  * </ul>
+ * This constraint is <b>only</b> applied on table creation. <br/>
+ * Adding this annotation to a {@link Contract} with an already created table will have <b>no effect</b>.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

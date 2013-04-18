@@ -1,16 +1,19 @@
 package com.tjeannin.provigen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class DatabaseField {
 
 	private String name;
 	private String type;
-	private boolean unique = false;
-	private String onConflict;
+	private List<Constraint> constraints;
 
 	public DatabaseField(String name, String type) {
 		super();
 		this.name = name;
 		this.type = type;
+		this.constraints = new ArrayList<Constraint>();
 	}
 
 	public String getName() {
@@ -29,19 +32,29 @@ class DatabaseField {
 		this.type = type;
 	}
 
+	public List<Constraint> getConstraints() {
+		return constraints;
+	}
+
+	public void setConstraints(List<Constraint> constraints) {
+		this.constraints = constraints;
+	}
+
 	public boolean isUnique() {
-		return unique;
+		for (Constraint constraint : constraints) {
+			if (constraint.isUnique()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	public void setUnique(boolean unique) {
-		this.unique = unique;
-	}
-
-	public String getOnConflict() {
-		return onConflict;
-	}
-
-	public void setOnConflict(String onConflict) {
-		this.onConflict = onConflict;
+	public boolean isNotNull() {
+		for (Constraint constraint : constraints) {
+			if (constraint.isNotNull()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
