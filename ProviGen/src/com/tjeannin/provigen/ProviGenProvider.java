@@ -119,6 +119,7 @@ public class ProviGenProvider extends ContentProvider {
 	 * <ul>
 	 * <li>Automatically add columns if some are missing.</li>
 	 * <li>Automatically create tables and needed columns for new added {@link Contract}s.</li>
+	 * <li>Does <b>not</b> add constraints to existing or newly added columns as SQLite ALTER TABLE doesn't support it.</li>
 	 * </ul>
 	 * Anything else related to database upgrade should be done here.
 	 * <p>
