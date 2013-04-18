@@ -148,6 +148,10 @@ public static final String MY_INT = "my_int";
 
 `CHECK` constraint is not supported yet.
 
+## License
+
+This content is released under the MIT License.
+
 [ContentObserver]: https://developer.android.com/reference/android/database/ContentObserver.html
 
 [CursorLoader]: http://developer.android.com/reference/android/content/CursorLoader.html
