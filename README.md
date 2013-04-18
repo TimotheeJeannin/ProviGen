@@ -148,7 +148,19 @@ You can apply a `UNIQUE` constraint to a column using the `@Unique` annotation.
 public static final String MY_INT = "my_int";
 ```
 
-`CHECK` and `NOT NULL` constraint are not supported yet.
+You can apply a `NOT_NULL` constraint to a column using the `@NotNull` annotation.
+
+```java
+@NotNull(OnConflict.ABORT)
+@Column(Type.INTEGER)
+public static final String MY_INT = "my_int";
+```
+
+`CHECK` constraint is not supported yet.
+
+## License
+
+This content is released under the MIT License.
 
 [ContentObserver]: https://developer.android.com/reference/android/database/ContentObserver.html
 

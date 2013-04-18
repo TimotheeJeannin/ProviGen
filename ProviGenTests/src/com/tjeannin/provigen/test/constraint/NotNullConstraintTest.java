@@ -6,10 +6,10 @@ import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.constraint.NotNullConstraintProvider.ContractClass;
 
-public class NotNullConstraintTest extends ExtendedProviderTestCase<UniqueConstraintProvider> {
+public class NotNullConstraintTest extends ExtendedProviderTestCase<NotNullConstraintProvider> {
 
 	public NotNullConstraintTest() {
-		super(UniqueConstraintProvider.class, "com.test.simple");
+		super(NotNullConstraintProvider.class, "com.test.simple");
 	}
 
 	public void testNotNullAnnotation() throws InvalidContractException {
