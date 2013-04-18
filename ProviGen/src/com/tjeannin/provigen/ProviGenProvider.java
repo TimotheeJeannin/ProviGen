@@ -312,7 +312,12 @@ public class ProviGenProvider extends ContentProvider {
 			return new String[] { element };
 		}
 	}
-	
+
+	/**
+	 * Apply a batch of uri's within a database transaction
+	 * @param operations
+	 * @return 
+	 */
 	@Override
     public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> operations) 
             throws OperationApplicationException {
