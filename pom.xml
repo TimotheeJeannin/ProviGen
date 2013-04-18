@@ -11,7 +11,7 @@
 
 	<groupId>com.github.TimotheeJeannin</groupId>
 	<artifactId>ProviGen-parent</artifactId>
-	<version>1.5.1-SNAPSHOT</version>
+	<version>1.6.0</version>
 	<packaging>pom</packaging>
 
 	<name>ProviGen - parent</name>
