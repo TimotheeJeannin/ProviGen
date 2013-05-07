@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
  * <li>{@link Type#BLOB}</li>
  * <li>{@link Type#REAL}</li>
  * <li>{@link Type#TEXT}</li>
+ * <li>{@link Type#DATETIME}</li>
  * </ul>
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -25,5 +26,6 @@ public @interface Column {
 		public static final String REAL = "REAL";
 		public static final String TEXT = "TEXT";
 		public static final String BLOB = "BLOB";
+		public static final String DATETIME = "DATETIME";
 	}
 }
