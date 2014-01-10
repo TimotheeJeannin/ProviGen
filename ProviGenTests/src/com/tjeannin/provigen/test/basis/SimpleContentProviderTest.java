@@ -28,8 +28,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 
 	public void testProviderIsEmpty() {
 
-		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null,
-				"", null, "");
+		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 		assertEquals(0, cursor.getCount());
 		cursor.close();
 	}

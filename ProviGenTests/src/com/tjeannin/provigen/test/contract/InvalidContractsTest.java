@@ -56,7 +56,7 @@ public class InvalidContractsTest extends AndroidTestCase {
 	}
 
 	@Contract(version = 1)
-	public static interface ContractWithDifferentsOnConflictClause extends ProviGenBaseContract {
+	public static interface ContractWithDifferentOnConflictClause extends ProviGenBaseContract {
 
 		@Unique(OnConflict.REPLACE)
 		@Column(Type.INTEGER)
@@ -76,7 +76,7 @@ public class InvalidContractsTest extends AndroidTestCase {
 			ContractWithMissingContentUri.class,
 			ContractWithMultipleContentUri.class,
 			ContractWithSeveralId.class,
-			ContractWithDifferentsOnConflictClause.class
+			ContractWithDifferentOnConflictClause.class
 	};
 
 	@SuppressWarnings("rawtypes")
@@ -88,7 +88,7 @@ public class InvalidContractsTest extends AndroidTestCase {
 				obj.getConstructors()[0].newInstance(clazz);
 				fail("No exception thrown.");
 			} catch (Exception exception) {
-				// We need to get the original cause exception as the reflection API wraps exctepions.
+				// We need to get the original cause exception as the reflection API wraps exceptions.
 				assertTrue(exception.getCause() instanceof InvalidContractException);
 			}
 		}
