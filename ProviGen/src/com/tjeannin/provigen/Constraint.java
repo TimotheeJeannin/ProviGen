@@ -81,16 +81,10 @@ public class Constraint {
 	}
 
 	boolean isUnique() {
-		if (type != null) {
-			return type.equals(UNIQUE);
-		}
-		return false;
-	}
+        return type != null && type.equals(UNIQUE);
+    }
 
 	boolean isNotNull() {
-		if (type != null) {
-			return type.equals(NOT_NULL);
-		}
-		return false;
-	}
+        return type != null && type.equals(NOT_NULL);
+    }
 }
