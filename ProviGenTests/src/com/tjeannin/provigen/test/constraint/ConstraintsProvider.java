@@ -12,7 +12,7 @@ import com.tjeannin.provigen.annotation.Column.Type;
 public class ConstraintsProvider extends ProviGenProvider {
 
 	public ConstraintsProvider() throws InvalidContractException {
-		super(new Class[] { NotNullContract.class, UniqueContract.class });
+		super(new Class[] { NotNullContract.class, UniqueContract.class, UniqueAndNotNullContract.class });
 	}
 
 	@Contract(version = 1)
@@ -36,6 +36,19 @@ public class ConstraintsProvider extends ProviGenProvider {
 
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/unique_constraint_test");
+
+	}
+
+	@Contract(version = 1)
+	public static interface UniqueAndNotNullContract extends ProviGenBaseContract {
+
+		@Unique(OnConflict.REPLACE)
+		@NotNull(OnConflict.ABORT)
+		@Column(Type.INTEGER)
+		public static final String AN_INT = "an_int";
+
+		@ContentUri
+		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/unique_and_not_null_constraint_test");
 
 	}
 }

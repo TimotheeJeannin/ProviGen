@@ -6,6 +6,7 @@ import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.constraint.ConstraintsProvider.NotNullContract;
 import com.tjeannin.provigen.test.constraint.ConstraintsProvider.UniqueContract;
+import com.tjeannin.provigen.test.constraint.ConstraintsProvider.UniqueAndNotNullContract;
 
 public class ConstraintsTest extends ExtendedProviderTestCase<ConstraintsProvider> {
 
@@ -36,5 +37,18 @@ public class ConstraintsTest extends ExtendedProviderTestCase<ConstraintsProvide
 		getMockContentResolver().insert(UniqueContract.CONTENT_URI, getContentValues(UniqueContract.class));
 
 		assertEquals(1, getRowCount(UniqueContract.CONTENT_URI));
+	}
+
+	public void testBothUniqueAndNotNullAnnotation() throws InvalidContractException {
+
+		getMockContentResolver().insert(UniqueAndNotNullContract.CONTENT_URI, new ContentValues());
+
+		assertEquals(0, getRowCount(UniqueAndNotNullContract.CONTENT_URI));
+
+		getMockContentResolver().insert(UniqueAndNotNullContract.CONTENT_URI, getContentValues(UniqueAndNotNullContract.class));
+		getMockContentResolver().insert(UniqueAndNotNullContract.CONTENT_URI, getContentValues(UniqueAndNotNullContract.class));
+		getMockContentResolver().insert(UniqueAndNotNullContract.CONTENT_URI, getContentValues(UniqueAndNotNullContract.class));
+
+		assertEquals(1, getRowCount(UniqueAndNotNullContract.CONTENT_URI));
 	}
 }
