@@ -3,11 +3,13 @@ package com.tjeannin.provigen.test.basis;
 import java.util.Arrays;
 import java.util.List;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.test.mock.MockContentResolver;
 
 import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractOne;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractTwo;
@@ -27,17 +29,29 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 	}
 
 	public void testProviderIsEmpty() {
-
-		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
-		assertEquals(0, cursor.getCount());
-		cursor.close();
+		assertEquals(0, getRowCount(ContractOne.CONTENT_URI));
 	}
 
-	public void testInsert() {
+	public void testInsertQueryUpdateDelete() {
+
+		// Insert
 		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
+		assertEquals(1, getRowCount(ContractOne.CONTENT_URI));
+
+		// Update
+		ContentValues contentValues = new ContentValues(2);
+		contentValues.put(ContractOne.MY_INT, 15);
+		contentResolver.update(ContractOne.CONTENT_URI, contentValues, "", null);
+
+		// Query
 		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
-		assertEquals(1, cursor.getCount());
+		cursor.moveToFirst();
+		assertEquals(cursor.getInt(cursor.getColumnIndex(ContractOne.MY_INT)), 15);
 		cursor.close();
+
+		// Delete
+		contentResolver.delete(Uri.withAppendedPath(ContractOne.CONTENT_URI, String.valueOf(1)), "", null);
+		assertEquals(0, getRowCount(ContractOne.CONTENT_URI));
 	}
 
 	public void testAutoIncrement() {
