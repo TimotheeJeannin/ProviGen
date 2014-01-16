@@ -28,17 +28,17 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 
 		// CREATE TABLE myTable (
 		StringBuilder builder = new StringBuilder("CREATE TABLE ");
-		builder.append(contractHolder.getTable() + " ( ");
+		builder.append(contractHolder.getTable()).append(" ( ");
 
 		// myInt INTEGER, myString TEXT
 		for (int i = 0; i < contractHolder.getFields().size(); i++) {
 			DatabaseField field = contractHolder.getFields().get(i);
-			builder.append(" " + field.getName() + " " + field.getType());
+			builder.append(" ").append(field.getName()).append(" ").append(field.getType());
 			if (field.getName().equals(contractHolder.getIdField())) {
 				builder.append(" PRIMARY KEY AUTOINCREMENT ");
 			}
 			for (Constraint constraint : field.getConstraints()) {
-				builder.append(" " + constraint.getType() + " ON CONFLICT " + constraint.getOnConflict());
+				builder.append(" ").append(constraint.getType()).append(" ON CONFLICT ").append(constraint.getOnConflict());
 			}
 			builder.append(", ");
 		}

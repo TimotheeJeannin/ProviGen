@@ -24,7 +24,7 @@ public class SampleContentProvider extends ProviGenProvider {
 		
 		ContentValues values = new ContentValues(2);
 		values.put(SampleContract.MY_INT, 8);
-		values.put(SampleContract.MY_STRING, "a super dingue string");
+		values.put(SampleContract.MY_STRING, "a super cool string");
 		database.insert("table_name", null, values);
 	}
 	

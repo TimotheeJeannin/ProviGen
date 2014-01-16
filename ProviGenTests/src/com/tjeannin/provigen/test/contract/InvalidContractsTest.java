@@ -55,28 +55,12 @@ public class InvalidContractsTest extends AndroidTestCase {
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/unique_constraint_test");
 	}
 
-	@Contract(version = 1)
-	public static interface ContractWithDifferentOnConflictClause extends ProviGenBaseContract {
-
-		@Unique(OnConflict.REPLACE)
-		@Column(Type.INTEGER)
-		public static final String AN_INT = "an_int";
-
-		@Unique(OnConflict.ABORT)
-		@Column(Type.INTEGER)
-		public static final String ANOTHER_INT = "another_int";
-
-		@ContentUri
-		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/unique_constraint_test");
-	}
-
 	@SuppressWarnings("rawtypes")
 	public static final Class[] INVALID_CONTRACTS = new Class[] {
-			ContractWithMissingContractAnnotation.class,
-			ContractWithMissingContentUri.class,
-			ContractWithMultipleContentUri.class,
-			ContractWithSeveralId.class,
-			ContractWithDifferentOnConflictClause.class
+	  ContractWithMissingContractAnnotation.class,
+	  ContractWithMissingContentUri.class,
+	  ContractWithMultipleContentUri.class,
+	  ContractWithSeveralId.class
 	};
 
 	@SuppressWarnings("rawtypes")

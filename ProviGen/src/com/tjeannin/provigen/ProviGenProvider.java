@@ -298,9 +298,7 @@ public class ProviGenProvider extends ContentProvider {
 	private static String[] appendToStringArray(String[] array, String element) {
 		if (array != null) {
 			String[] newArray = new String[array.length + 1];
-			for (int i = 0; i < array.length; i++) {
-				newArray[i] = array[i];
-			}
+			System.arraycopy(array, 0, newArray, 0, array.length);
 			newArray[array.length] = element;
 			return newArray;
 		} else {
