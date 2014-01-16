@@ -37,30 +37,12 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 			if (field.getName().equals(contractHolder.getIdField())) {
 				builder.append(" PRIMARY KEY AUTOINCREMENT ");
 			}
-			if (field.isNotNull()) {
-				builder.append(" NOT NULL ON CONFLICT " + field.getConstraints().get(0).getOnConflict());
+			for (Constraint constraint : field.getConstraints()) {
+				builder.append(" " + constraint.getType() + " ON CONFLICT " + constraint.getOnConflict());
 			}
 			builder.append(", ");
 		}
 		builder.deleteCharAt(builder.length() - 2);
-
-		if (contractHolder.hasColumnConstraint(Constraint.UNIQUE)) {
-
-			// , UNIQUE ( myInt, myString ) ON CONFLICT REPLACE
-			builder.append(" , UNIQUE( ");
-			String onConflict = null;
-			for (int i = 0; i < contractHolder.getFields().size(); i++) {
-				DatabaseField field = contractHolder.getFields().get(i);
-				if (field.isUnique()) {
-					builder.append(field.getName() + ", ");
-					onConflict = field.getConstraints().get(0).getOnConflict();
-				}
-			}
-			builder.deleteCharAt(builder.length() - 2);
-			builder.append(" ) ON CONFLICT " + onConflict);
-		}
-
-		// )
 		builder.append(" ) ");
 
 		database.execSQL(builder.toString());
@@ -79,8 +61,8 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 	public boolean hasTableInDatabase(SQLiteDatabase database, ContractHolder contractHolder) {
 
 		Cursor cursor = database.rawQuery(
-				"SELECT * FROM sqlite_master WHERE name = ? ",
-				new String[] { contractHolder.getTable() });
+		  "SELECT * FROM sqlite_master WHERE name = ? ",
+		  new String[] { contractHolder.getTable() });
 		boolean exists = cursor.getCount() != 0;
 		cursor.close();
 		return exists;

@@ -11,7 +11,7 @@ import com.tjeannin.provigen.Constraint.OnConflict;
 public class OnConflictProvider extends ProviGenProvider {
 
 	public OnConflictProvider() throws InvalidContractException {
-		super(new Class[] { ContractAbort.class, ContractReplace.class, ContractFail.class });
+		super(new Class[] { ContractAbort.class, ContractReplace.class, ContractFail.class, ContractMultipleResolution.class });
 	}
 
 	@Contract(version = 1)
@@ -19,7 +19,7 @@ public class OnConflictProvider extends ProviGenProvider {
 
 		@Unique(OnConflict.ABORT)
 		@Column(Type.INTEGER)
-		public static final String AN_INT = "another_int";
+		public static final String AN_INT = "an_int";
 
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/abort");
@@ -30,7 +30,7 @@ public class OnConflictProvider extends ProviGenProvider {
 
 		@Unique(OnConflict.REPLACE)
 		@Column(Type.INTEGER)
-		public static final String AN_INT = "another_int";
+		public static final String AN_INT = "an_int";
 
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/replace");
@@ -41,9 +41,24 @@ public class OnConflictProvider extends ProviGenProvider {
 
 		@Unique(OnConflict.FAIL)
 		@Column(Type.INTEGER)
-		public static final String AN_INT = "another_int";
+		public static final String AN_INT = "an_int";
 
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/fail");
+	}
+
+	@Contract(version = 1)
+	public static interface ContractMultipleResolution extends ProviGenBaseContract {
+
+		@Unique(OnConflict.REPLACE)
+		@Column(Type.INTEGER)
+		public static final String AN_INT = "an_int";
+
+		@Unique(OnConflict.ABORT)
+		@Column(Type.INTEGER)
+		public static final String ANOTHER_INT = "another_int";
+
+		@ContentUri
+		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/multiple");
 	}
 }

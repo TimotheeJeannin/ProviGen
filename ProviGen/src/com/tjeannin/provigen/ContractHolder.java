@@ -84,10 +84,6 @@ class ContractHolder {
 			}
 		}
 
-		if (!isOnConflictSameEverywhere()) {
-			throw new InvalidContractException("OnConflict parameter sould be the same for all @Unique annotations.");
-		}
-
 		if (authority == null || tableName == null) {
 			throw new InvalidContractException("The contract is missing a @ContentUri.");
 		}
@@ -102,22 +98,6 @@ class ContractHolder {
 			}
 		}
 		return false;
-	}
-
-	private boolean isOnConflictSameEverywhere() {
-		String onConflict = null;
-		for (DatabaseField field : databaseFields) {
-			for (Constraint constraint : field.getConstraints()) {
-				if (onConflict == null) {
-					onConflict = constraint.getOnConflict();
-				} else {
-					if (!onConflict.equals(constraint.getOnConflict())) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
 	}
 
 	public int getVersion() {

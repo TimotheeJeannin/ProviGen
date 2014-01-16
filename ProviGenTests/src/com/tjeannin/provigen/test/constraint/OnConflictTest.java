@@ -8,6 +8,7 @@ import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractAbort;
 import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractFail;
 import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractReplace;
+import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractMultipleResolution;
 
 public class OnConflictTest extends ExtendedProviderTestCase<OnConflictProvider> {
 
@@ -37,7 +38,7 @@ public class OnConflictTest extends ExtendedProviderTestCase<OnConflictProvider>
 	public int getRowInt(Uri contentUri, String rowId) {
 		Cursor cursor = contentResolver.query(Uri.withAppendedPath(contentUri, rowId), null, "", null, "");
 		cursor.moveToFirst();
-		int intValue = cursor.getInt(cursor.getColumnIndex("another_int"));
+		int intValue = cursor.getInt(cursor.getColumnIndex(ContractAbort.AN_INT));
 		cursor.close();
 		return intValue;
 	}
@@ -64,5 +65,38 @@ public class OnConflictTest extends ExtendedProviderTestCase<OnConflictProvider>
 		assertEquals(1, getRowCount(Uri.withAppendedPath(ContractFail.CONTENT_URI, "1")));
 		assertEquals(0, getRowCount(Uri.withAppendedPath(ContractFail.CONTENT_URI, "2")));
 		assertEquals(15, getRowInt(ContractFail.CONTENT_URI, "1"));
+	}
+
+	public void testMultipleConflictResolution() {
+
+		ContentValues contentValues = new ContentValues();
+		contentValues.put(ContractMultipleResolution._ID, 1);
+		contentValues.put(ContractMultipleResolution.AN_INT, 15);
+		contentValues.put(ContractMultipleResolution.ANOTHER_INT, 25);
+
+		ContentValues conflictingAbortContentValues = new ContentValues();
+		conflictingAbortContentValues.put(ContractMultipleResolution._ID, 2);
+		conflictingAbortContentValues.put(ContractMultipleResolution.AN_INT, 16);
+		conflictingAbortContentValues.put(ContractMultipleResolution.ANOTHER_INT, 25);
+
+		ContentValues conflictingReplaceContentValues = new ContentValues();
+		conflictingReplaceContentValues.put(ContractMultipleResolution._ID, 3);
+		conflictingReplaceContentValues.put(ContractMultipleResolution.AN_INT, 15);
+		conflictingReplaceContentValues.put(ContractMultipleResolution.ANOTHER_INT, 26);
+
+		contentResolver.insert(ContractMultipleResolution.CONTENT_URI, contentValues);
+		assertEquals(1, getRowCount(Uri.withAppendedPath(ContractMultipleResolution.CONTENT_URI, "1")));
+		assertEquals(0, getRowCount(Uri.withAppendedPath(ContractMultipleResolution.CONTENT_URI, "2")));
+		assertEquals(0, getRowCount(Uri.withAppendedPath(ContractMultipleResolution.CONTENT_URI, "3")));
+
+		contentResolver.insert(ContractMultipleResolution.CONTENT_URI, conflictingAbortContentValues);
+		assertEquals(1, getRowCount(Uri.withAppendedPath(ContractMultipleResolution.CONTENT_URI, "1")));
+		assertEquals(0, getRowCount(Uri.withAppendedPath(ContractMultipleResolution.CONTENT_URI, "2")));
+		assertEquals(0, getRowCount(Uri.withAppendedPath(ContractMultipleResolution.CONTENT_URI, "3")));
+
+		contentResolver.insert(ContractMultipleResolution.CONTENT_URI, conflictingReplaceContentValues);
+		assertEquals(0, getRowCount(Uri.withAppendedPath(ContractMultipleResolution.CONTENT_URI, "1")));
+		assertEquals(0, getRowCount(Uri.withAppendedPath(ContractMultipleResolution.CONTENT_URI, "2")));
+		assertEquals(1, getRowCount(Uri.withAppendedPath(ContractMultipleResolution.CONTENT_URI, "3")));
 	}
 }

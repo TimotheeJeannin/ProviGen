@@ -15,7 +15,7 @@ public class Constraint {
 	 * Not surprisingly, a NOT NULL constraint dictates that the associated column may not contain a NULL value.
 	 * Attempting to set the column value to NULL when inserting a new row or updating an existing one causes a constraint violation.
 	 */
-	public static final String NOT_NULL = "NOT_NULL";
+	public static final String NOT_NULL = "NOT NULL";
 
 	public class OnConflict {
 
