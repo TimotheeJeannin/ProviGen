@@ -2,12 +2,15 @@ package com.tjeannin.provigen.test.constraint;
 
 import android.net.Uri;
 
+import com.tjeannin.provigen.Constraint.OnConflict;
 import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
-import com.tjeannin.provigen.annotation.*;
+import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
-import com.tjeannin.provigen.annotation.OnConflict.Resolve;
+import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.annotation.Contract;
+import com.tjeannin.provigen.annotation.NotNull;
 
 public class NotNullConstraintProvider extends ProviGenProvider {
 
@@ -16,10 +19,9 @@ public class NotNullConstraintProvider extends ProviGenProvider {
 	}
 
 	@Contract(version = 1)
-	@OnConflict(Resolve.ABORT)
 	public static interface ContractClass extends ProviGenBaseContract {
 
-		@NotNull
+		@NotNull(OnConflict.ABORT)
 		@Column(Type.INTEGER)
 		public static final String AN_INT = "another_int";
 

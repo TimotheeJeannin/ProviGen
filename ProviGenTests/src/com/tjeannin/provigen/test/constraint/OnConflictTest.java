@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.test.mock.MockContentResolver;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
-import com.tjeannin.provigen.test.constraint.OnConflictProvider.BaseContract;
 import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractAbort;
 import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractFail;
 import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractReplace;
@@ -25,12 +24,12 @@ public class OnConflictTest extends ExtendedProviderTestCase<OnConflictProvider>
 		super.setUp();
 
 		contentValues = new ContentValues();
-		contentValues.put(BaseContract._ID, 1);
-		contentValues.put(BaseContract.AN_INT, 15);
+		contentValues.put(ContractAbort._ID, 1);
+		contentValues.put(ContractAbort.AN_INT, 15);
 
 		conflictingContentValues = new ContentValues();
-		conflictingContentValues.put(BaseContract._ID, 2);
-		conflictingContentValues.put(BaseContract.AN_INT, 15);
+		conflictingContentValues.put(ContractAbort._ID, 2);
+		conflictingContentValues.put(ContractAbort.AN_INT, 15);
 
 		contentResolver = getMockContentResolver();
 	}

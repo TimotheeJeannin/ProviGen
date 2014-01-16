@@ -6,7 +6,7 @@ import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.annotation.*;
 import com.tjeannin.provigen.annotation.Column.Type;
-import com.tjeannin.provigen.annotation.OnConflict.Resolve;
+import com.tjeannin.provigen.Constraint.OnConflict;
 
 public class OnConflictProvider extends ProviGenProvider {
 
@@ -14,29 +14,35 @@ public class OnConflictProvider extends ProviGenProvider {
 		super(new Class[] { ContractAbort.class, ContractReplace.class, ContractFail.class });
 	}
 
-	public static interface BaseContract extends ProviGenBaseContract {
-		@Unique
+	@Contract(version = 1)
+	public static interface ContractAbort extends ProviGenBaseContract {
+
+		@Unique(OnConflict.ABORT)
 		@Column(Type.INTEGER)
 		public static final String AN_INT = "another_int";
-	}
 
-	@Contract(version = 1)
-	@OnConflict(Resolve.ABORT)
-	public static interface ContractAbort extends BaseContract {
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/abort");
 	}
 
 	@Contract(version = 1)
-	@OnConflict(Resolve.REPLACE)
-	public static interface ContractReplace extends BaseContract {
+	public static interface ContractReplace extends ProviGenBaseContract {
+
+		@Unique(OnConflict.REPLACE)
+		@Column(Type.INTEGER)
+		public static final String AN_INT = "another_int";
+
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/replace");
 	}
 
 	@Contract(version = 1)
-	@OnConflict(Resolve.FAIL)
-	public static interface ContractFail extends BaseContract {
+	public static interface ContractFail extends ProviGenBaseContract {
+
+		@Unique(OnConflict.FAIL)
+		@Column(Type.INTEGER)
+		public static final String AN_INT = "another_int";
+
 		@ContentUri
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/fail");
 	}
