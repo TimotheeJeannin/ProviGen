@@ -6,12 +6,7 @@ import java.util.List;
 
 import android.net.Uri;
 
-import com.tjeannin.provigen.annotation.Column;
-import com.tjeannin.provigen.annotation.ContentUri;
-import com.tjeannin.provigen.annotation.Contract;
-import com.tjeannin.provigen.annotation.Id;
-import com.tjeannin.provigen.annotation.NotNull;
-import com.tjeannin.provigen.annotation.Unique;
+import com.tjeannin.provigen.annotation.*;
 
 class ContractHolder {
 
@@ -20,6 +15,7 @@ class ContractHolder {
 	private String idField;
 	private String tableName;
 	private List<DatabaseField> databaseFields;
+	private String conflictResolution;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ContractHolder(Class contractClass) throws InvalidContractException {
@@ -29,6 +25,11 @@ class ContractHolder {
 			version = contract.version();
 		} else {
 			throw new InvalidContractException("The given class does not have a @Contract annotation.");
+		}
+
+		OnConflict onConflict = (OnConflict) contractClass.getAnnotation(OnConflict.class);
+		if(onConflict != null){
+			conflictResolution = onConflict.value();
 		}
 
 		databaseFields = new ArrayList<DatabaseField>();
@@ -53,7 +54,7 @@ class ContractHolder {
 			Id id = field.getAnnotation(Id.class);
 			if (id != null) {
 				if (idField != null) {
-					throw new InvalidContractException("A contract can not have several fields annoted with @Id.");
+					throw new InvalidContractException("A contract can not have several fields annotated with @Id.");
 				}
 				try {
 					idField = (String) field.get(null);
@@ -69,12 +70,20 @@ class ContractHolder {
 
 					Unique unique = field.getAnnotation(Unique.class);
 					if (unique != null) {
-						databaseField.getConstraints().add(new Constraint(Constraint.UNIQUE, unique.value()));
+						if(conflictResolution != null){
+							databaseField.getConstraints().add(new Constraint(Constraint.UNIQUE, conflictResolution));
+						} else {
+							throw new InvalidContractException("Contract is missing an @OnConflict annotation for the @Unique constraint.");
+						}
 					}
 
 					NotNull notNull = field.getAnnotation(NotNull.class);
 					if (notNull != null) {
-						databaseField.getConstraints().add(new Constraint(Constraint.NOT_NULL, notNull.value()));
+						if(conflictResolution != null){
+							databaseField.getConstraints().add(new Constraint(Constraint.NOT_NULL, conflictResolution));
+						} else {
+							throw new InvalidContractException("Contract is missing an @OnConflict annotation for the @NotNull constraint.");
+						}
 					}
 
 					databaseFields.add(databaseField);
@@ -82,10 +91,6 @@ class ContractHolder {
 					e.printStackTrace();
 				}
 			}
-		}
-
-		if (!isOnConflictSameEverywhere()) {
-			throw new InvalidContractException("OnConflict parameter sould be the same for all @Unique annotations.");
 		}
 
 		if (authority == null || tableName == null) {
@@ -102,22 +107,6 @@ class ContractHolder {
 			}
 		}
 		return false;
-	}
-
-	private boolean isOnConflictSameEverywhere() {
-		String onConflict = null;
-		for (DatabaseField field : databaseFields) {
-			for (Constraint constraint : field.getConstraints()) {
-				if (onConflict == null) {
-					onConflict = constraint.getOnConflict();
-				} else {
-					if (!onConflict.equals(constraint.getOnConflict())) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
 	}
 
 	public int getVersion() {

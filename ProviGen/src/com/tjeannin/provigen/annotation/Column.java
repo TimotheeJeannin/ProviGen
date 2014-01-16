@@ -21,9 +21,25 @@ public @interface Column {
 	String value();
 
 	public class Type {
+
+		/**
+		 * The value is a signed integer, stored in 1, 2, 3, 4, 6, or 8 bytes depending on the magnitude of the value.
+		 */
 		public static final String INTEGER = "INTEGER";
+
+		/**
+		 * The value is a floating point value, stored as an 8-byte IEEE floating point number.
+		 */
 		public static final String REAL = "REAL";
+
+		/**
+		 * The value is a text string, stored using the database encoding (UTF-8, UTF-16BE or UTF-16LE).
+		 */
 		public static final String TEXT = "TEXT";
+
+		/**
+		 * The value is a blob of data, stored exactly as it was input.
+		 */
 		public static final String BLOB = "BLOB";
 	}
 }
