@@ -5,6 +5,15 @@
 # files for the dex VM
 *.dex
 
+# Eclipse files
+.project
+.classpath
+.settings
+
+# Idea files
+.idea
+*.iml
+
 # Java class files
 *.class
 
