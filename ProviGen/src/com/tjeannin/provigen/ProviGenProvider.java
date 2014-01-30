@@ -328,7 +328,7 @@ public class ProviGenProvider extends ContentProvider {
             ContentProviderResult[] results = new ContentProviderResult[numOperations];
             for (int i = 0; i < numOperations; i++) {
                 results[i] = operations.get(i).apply(this, results, i);
-                db.yieldIfContendedSafely();
+                //db.yieldIfContendedSafely();
             }
             db.setTransactionSuccessful();
             return results;
