@@ -47,16 +47,6 @@ public class MyContentProvider extends ProviGenProvider {
 
 * You're done.
 
-### Maven Users
-
-```xml
-<dependency> 
-	<groupId>com.github.TimotheeJeannin</groupId> 
-	<artifactId>ProviGen-lib</artifactId> 
-	<version>1.5.1-SNAPSHOT</version> 
-</dependency> 
-```
-
 ## Usage
 
 You can make the usual insert, update, delete and query using a [ContentResolver].    
