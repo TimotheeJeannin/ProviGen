@@ -30,8 +30,7 @@ public class ProviGenProvider extends ContentProvider {
 	 * @throws InvalidContractException
 	 */
 	@SuppressLint("Registered")
-	@SuppressWarnings("rawtypes")
-	public ProviGenProvider(Class contractClass) throws InvalidContractException {
+	public ProviGenProvider(final Class<? extends ProviGenBaseContract> contractClass) throws InvalidContractException {
 		contracts.add(new ContractHolder(contractClass));
 	}
 
@@ -41,8 +40,7 @@ public class ProviGenProvider extends ContentProvider {
 	 * @throws InvalidContractException
 	 */
 	@SuppressLint("Registered")
-	@SuppressWarnings("rawtypes")
-	public ProviGenProvider(Class contractClass, String databaseName) throws InvalidContractException {
+	public ProviGenProvider(final Class<? extends ProviGenBaseContract> contractClass, final String databaseName) throws InvalidContractException {
 		this(contractClass);
 		this.databaseName = databaseName;
 	}
@@ -52,9 +50,8 @@ public class ProviGenProvider extends ContentProvider {
 	 * @throws InvalidContractException
 	 */
 	@SuppressLint("Registered")
-	@SuppressWarnings("rawtypes")
-	public ProviGenProvider(Class[] contractClasses) throws InvalidContractException {
-        for (Class contractClass : contractClasses) {
+	public ProviGenProvider(final Class<? extends ProviGenBaseContract>[] contractClasses) throws InvalidContractException {
+        for (final Class<? extends ProviGenBaseContract> contractClass : contractClasses) {
             contracts.add(new ContractHolder(contractClass));
         }
 	}
@@ -65,8 +62,7 @@ public class ProviGenProvider extends ContentProvider {
 	 * @throws InvalidContractException
 	 */
 	@SuppressLint("Registered")
-	@SuppressWarnings("rawtypes")
-	public ProviGenProvider(Class[] contractClasses, String databaseName) throws InvalidContractException {
+	public ProviGenProvider(final Class<? extends ProviGenBaseContract>[] contractClasses, final String databaseName) throws InvalidContractException {
 		this(contractClasses);
 		this.databaseName = databaseName;
 	}
@@ -104,11 +100,10 @@ public class ProviGenProvider extends ContentProvider {
 	 * @param database The database.
 	 * @param contractClass A {@link Contract} class to create the table with.
 	 */
-	@SuppressWarnings("rawtypes")
-	public void createTable(SQLiteDatabase database, Class contractClass) {
+	public void createTable(final SQLiteDatabase database, final Class<? extends ProviGenBaseContract> contractClass) {
 		try {
 			openHelper.createTable(database, new ContractHolder(contractClass));
-		} catch (InvalidContractException exception) {
+		} catch (final InvalidContractException exception) {
 			exception.printStackTrace();
 		}
 	}
@@ -146,11 +141,10 @@ public class ProviGenProvider extends ContentProvider {
 	 * @param database The database.
 	 * @param contractClass A {@link Contract} class to use to create missing columns.
 	 */
-	@SuppressWarnings("rawtypes")
-	public void addMissingColumnsInTable(SQLiteDatabase database, Class contractClass) {
+	public void addMissingColumnsInTable(final SQLiteDatabase database, final Class<? extends ProviGenBaseContract> contractClass) {
 		try {
 			openHelper.addMissingColumnsInTable(database, new ContractHolder(contractClass));
-		} catch (InvalidContractException exception) {
+		} catch (final InvalidContractException exception) {
 			exception.printStackTrace();
 		}
 	}
@@ -162,10 +156,9 @@ public class ProviGenProvider extends ContentProvider {
 	 * @param contractClasses The set of {@link Contract}s to switch to.
 	 * @throws InvalidContractException
 	 */
-	@SuppressWarnings("rawtypes")
-	public void setContractClasses(Class[] contractClasses) throws InvalidContractException {
+	public void setContractClasses(final Class<? extends ProviGenBaseContract>[] contractClasses) throws InvalidContractException {
 		contracts.clear();
-        for (Class contractClass : contractClasses) {
+        for (final Class<? extends ProviGenBaseContract> contractClass : contractClasses) {
             contracts.add(new ContractHolder(contractClass));
         }
 		onCreate();

@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.test.ProviderTestCase2;
 
+import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
@@ -52,9 +53,7 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
 	 *         </ul>
 	 *         except for the id column.
 	 */
-	@SuppressWarnings("rawtypes")
-	protected ContentValues getContentValues(Class contractClass) {
-
+	protected static ContentValues getContentValues(final Class<? extends ProviGenBaseContract> contractClass) {
 		ContentValues contentValues = new ContentValues();
 		try {
 			Field[] fields = contractClass.getFields();

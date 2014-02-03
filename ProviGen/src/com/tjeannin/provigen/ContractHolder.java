@@ -21,10 +21,9 @@ class ContractHolder {
 	private String tableName;
 	private List<DatabaseField> databaseFields;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public ContractHolder(Class contractClass) throws InvalidContractException {
+	public ContractHolder(final Class<? extends ProviGenBaseContract> contractClass) throws InvalidContractException {
 
-		Contract contract = (Contract) contractClass.getAnnotation(Contract.class);
+		final Contract contract = contractClass.getAnnotation(Contract.class);
 		if (contract != null) {
 			version = contract.version();
 		} else {
@@ -33,7 +32,7 @@ class ContractHolder {
 
 		databaseFields = new ArrayList<DatabaseField>();
 
-		Field[] fields = contractClass.getFields();
+		final Field[] fields = contractClass.getFields();
 		for (Field field : fields) {
 
 			ContentUri contentUri = field.getAnnotation(ContentUri.class);
