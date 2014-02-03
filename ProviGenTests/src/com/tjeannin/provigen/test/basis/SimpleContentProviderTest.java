@@ -1,10 +1,14 @@
 package com.tjeannin.provigen.test.basis;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.mock.MockContentResolver;
 
@@ -38,12 +42,12 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		assertEquals(1, getRowCount(ContractOne.CONTENT_URI));
 
 		// Update
-		ContentValues contentValues = new ContentValues(2);
+		final ContentValues contentValues = new ContentValues(2);
 		contentValues.put(ContractOne.MY_INT, 15);
 		contentResolver.update(ContractOne.CONTENT_URI, contentValues, "", null);
 
 		// Query
-		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
+		final Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 		cursor.moveToFirst();
 		assertEquals(cursor.getInt(cursor.getColumnIndex(ContractOne.MY_INT)), 15);
 		cursor.close();
@@ -55,7 +59,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 
 	public void testBulkInsert() {
 
-		ContentValues[] contentValuesArray = new ContentValues[10];
+		final ContentValues[] contentValuesArray = new ContentValues[10];
 		for (int i = 0; i < 10; i++) {
 			contentValuesArray[i] = getContentValues(ContractOne.class);
 		}
@@ -65,7 +69,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 	}
 
 	public void testUpdateMultiple() {
-		ContentValues contentValues = new ContentValues();
+		final ContentValues contentValues = new ContentValues();
 		contentValues.put(ContractOne.MY_INT, 5);
 		contentResolver.insert(ContractOne.CONTENT_URI, contentValues);
 		contentValues.put(ContractOne.MY_INT, 7);
@@ -74,7 +78,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		contentValues.put(ContractOne.MY_INT, 9);
 		contentResolver.update(ContractOne.CONTENT_URI, contentValues, "", null);
 
-		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
+		final Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
 		assertEquals(2, getRowCount(ContractOne.CONTENT_URI));
 		while (cursor.moveToNext()) {
 			assertEquals(9, cursor.getInt(cursor.getColumnIndex(ContractOne.MY_INT)));
@@ -133,10 +137,31 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		assertTrue(columnNameList.contains(ContractTwo.MY_REAL));
 		assertTrue(columnNameList.contains(ContractTwo.MY_STRING));
 		cursor.close();
+
+		final Map<String, String> fieldInfosContractOne = fieldInfos(ContractOne.CONTENT_URI);
+		final Map<String, String> fieldInfosContractTwo = fieldInfos(ContractTwo.CONTENT_URI);
+		assertEquals(fieldInfosContractOne.size(), fieldInfosContractTwo.size());
+		for (final Map.Entry<String, String> entry : fieldInfosContractTwo.entrySet()) {
+			assertEquals(entry.getValue(), fieldInfosContractOne.get(entry.getKey()));
+		}
+	}
+
+	private Map<String, String> fieldInfos(final Uri contentUri) {
+		final SQLiteDatabase sqLiteDatabase = getMockContext().openOrCreateDatabase("ProviGenDatabase", Context.MODE_PRIVATE, null);
+		final String tableName = contentUri.getLastPathSegment();
+		final Cursor rawQuery = sqLiteDatabase.rawQuery("PRAGMA table_info(" + tableName + ')', null);
+		final Map<String, String> result = new HashMap<String, String>(rawQuery.getCount());
+		if (rawQuery.moveToFirst()) {
+			do {
+				result.put(rawQuery.getString(rawQuery.getColumnIndex("name")), rawQuery.getString(rawQuery.getColumnIndex("notnull")));
+			} while (rawQuery.moveToNext());
+		}
+		rawQuery.close();
+		return result;
 	}
 
 	public void testGetMimeType() {
-		String mimeType = getProvider().getType(ContractOne.CONTENT_URI);
+		final String mimeType = getProvider().getType(ContractOne.CONTENT_URI);
 		assertEquals("vnd.android.cursor.dir/vdn.table_name_simple", mimeType);
 	}
 }
