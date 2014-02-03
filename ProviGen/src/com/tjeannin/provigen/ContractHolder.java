@@ -62,23 +62,23 @@ class ContractHolder {
 				}
 			}
 
-			Column column = field.getAnnotation(Column.class);
+			final Column column = field.getAnnotation(Column.class);
 			if (column != null) {
 				try {
-					DatabaseField databaseField = new DatabaseField((String) field.get(null), column.value());
+					final DatabaseField databaseField = new DatabaseField((String) field.get(null), column.value());
 
-					Unique unique = field.getAnnotation(Unique.class);
+					final Unique unique = field.getAnnotation(Unique.class);
 					if (unique != null) {
-						databaseField.getConstraints().add(new Constraint(Constraint.UNIQUE, unique.value()));
+						databaseField.getConstraints().add(new Constraint(Constraint.Type.UNIQUE, unique.value()));
 					}
 
-					NotNull notNull = field.getAnnotation(NotNull.class);
+					final NotNull notNull = field.getAnnotation(NotNull.class);
 					if (notNull != null) {
-						databaseField.getConstraints().add(new Constraint(Constraint.NOT_NULL, notNull.value()));
+						databaseField.getConstraints().add(new Constraint(Constraint.Type.NOT_NULL, notNull.value()));
 					}
 
 					databaseFields.add(databaseField);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					e.printStackTrace();
 				}
 			}

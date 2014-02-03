@@ -65,15 +65,15 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
 				if (column != null && id == null) {
 
 					String columnName = (String) field.get(null);
-					String columnType = column.value();
+					final Type columnType = column.value();
 
-					if (columnType.equals(Type.BLOB)) {
+					if (columnType == Type.BLOB) {
 						contentValues.put(columnName, "blob");
-					} else if (columnType.equals(Type.INTEGER)) {
+					} else if (columnType == Type.INTEGER) {
 						contentValues.put(columnName, 3);
-					} else if (columnType.equals(Type.REAL)) {
+					} else if (columnType == Type.REAL) {
 						contentValues.put(columnName, 4.58);
-					} else if (columnType.equals(Type.TEXT)) {
+					} else if (columnType == Type.TEXT) {
 						contentValues.put(columnName, "aText");
 					}
 				}

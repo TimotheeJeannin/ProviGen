@@ -32,13 +32,13 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 
 		// myInt INTEGER, myString TEXT
 		for (int i = 0; i < contractHolder.getFields().size(); i++) {
-			DatabaseField field = contractHolder.getFields().get(i);
-			builder.append(" ").append(field.getName()).append(" ").append(field.getType());
+			final DatabaseField field = contractHolder.getFields().get(i);
+			builder.append(' ').append(field.getName()).append(' ').append(field.getType().getDBStorageClass());
 			if (field.getName().equals(contractHolder.getIdField())) {
 				builder.append(" PRIMARY KEY AUTOINCREMENT ");
 			}
-			for (Constraint constraint : field.getConstraints()) {
-				builder.append(" ").append(constraint.getType()).append(" ON CONFLICT ").append(constraint.getOnConflict());
+			for (final Constraint constraint : field.getConstraints()) {
+				builder.append(' ').append(constraint.getType().getDbConstraintName()).append(" ON CONFLICT ").append(constraint.getOnConflict().getDbConflictResolution());
 			}
 			builder.append(", ");
 		}
@@ -53,7 +53,7 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 		Cursor cursor = database.rawQuery("PRAGMA table_info(" + contractHolder.getTable() + ")", null);
 		for (DatabaseField field : contractHolder.getFields()) {
 			if (!fieldExistAsColumn(field.getName(), cursor)) {
-				database.execSQL("ALTER TABLE " + contractHolder.getTable() + " ADD COLUMN " + field.getName() + " " + field.getType() + ";");
+				database.execSQL("ALTER TABLE " + contractHolder.getTable() + " ADD COLUMN " + field.getName() + " " + field.getType().getDBStorageClass() + ";");
 			}
 		}
 	}

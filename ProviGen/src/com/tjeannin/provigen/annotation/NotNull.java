@@ -1,9 +1,12 @@
 package com.tjeannin.provigen.annotation;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.tjeannin.provigen.Constraint;
 
 /**
  * Identifies a field of a contract class that should not be null in the database.</br>
@@ -17,9 +20,11 @@ import java.lang.annotation.Target;
  * </ul>
  * This constraint is <b>only</b> applied on table creation. <br/>
  * Adding this annotation to a {@link Contract} with an already created table will have <b>no effect</b>.
+ * <p>The default conflict resolution algorithm is ABORT.</p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
+@Documented
 public @interface NotNull {
-	String value();
+	Constraint.OnConflict value() default Constraint.OnConflict.ABORT;
 }
