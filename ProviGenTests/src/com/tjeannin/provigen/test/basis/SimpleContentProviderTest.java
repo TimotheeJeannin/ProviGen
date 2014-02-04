@@ -101,6 +101,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		final Cursor cursor = contentResolver.query(Uri.withAppendedPath(ContractOne.CONTENT_URI, "2"), null, null, null, null);
 		assertNotNull(cursor);
 		assertEquals(1, cursor.getCount());
+		cursor.moveToFirst();
 		assertEquals(2, cursor.getInt(cursor.getColumnIndex(ContractOne._ID)));
 		cursor.close();
 	}
