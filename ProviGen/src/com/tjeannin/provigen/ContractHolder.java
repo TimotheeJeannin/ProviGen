@@ -11,6 +11,7 @@ import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.annotation.Id;
 import com.tjeannin.provigen.annotation.NotNull;
+import com.tjeannin.provigen.annotation.SortOrder;
 import com.tjeannin.provigen.annotation.Unique;
 
 class ContractHolder {
@@ -75,6 +76,11 @@ class ContractHolder {
 					NotNull notNull = field.getAnnotation(NotNull.class);
 					if (notNull != null) {
 						databaseField.getConstraints().add(new Constraint(Constraint.NOT_NULL, notNull.value()));
+					}
+
+					final SortOrder sortOrder = field.getAnnotation(SortOrder.class);
+					if (sortOrder != null) {
+						databaseField.setSortOrder(sortOrder);
 					}
 
 					databaseFields.add(databaseField);

@@ -92,6 +92,19 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		assertEquals(0, getRowCount(ContractOne.CONTENT_URI));
 	}
 
+	public void testSelectOneRow() {
+		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
+		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
+		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
+
+		assertEquals(3, getRowCount(ContractOne.CONTENT_URI));
+		final Cursor cursor = contentResolver.query(Uri.withAppendedPath(ContractOne.CONTENT_URI, "2"), null, null, null, null);
+		assertNotNull(cursor);
+		assertEquals(1, cursor.getCount());
+		assertEquals(2, cursor.getInt(cursor.getColumnIndex(ContractOne._ID)));
+		cursor.close();
+	}
+
 	public void testAutoIncrement() {
 
 		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));

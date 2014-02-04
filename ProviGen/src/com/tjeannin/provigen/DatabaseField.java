@@ -1,13 +1,19 @@
 package com.tjeannin.provigen;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+
+import com.tjeannin.provigen.annotation.SortOrder;
 
 class DatabaseField {
 
 	private String name;
 	private String type;
+	private SortOrder sortOrder;
 	private List<Constraint> constraints;
+
+	public static final SortOrderComparator SORT_ORDER_COMPARATOR = new SortOrderComparator();
 
 	public DatabaseField(String name, String type) {
 		super();
@@ -40,6 +46,14 @@ class DatabaseField {
 		this.constraints = constraints;
 	}
 
+	public SortOrder getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(final SortOrder sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
 	public boolean isUnique() {
 		for (Constraint constraint : constraints) {
 			if (constraint.isUnique()) {
@@ -56,5 +70,12 @@ class DatabaseField {
 			}
 		}
 		return false;
+	}
+
+	private static class SortOrderComparator implements Comparator<DatabaseField> {
+		@Override
+		public int compare(final DatabaseField lhs, final DatabaseField rhs) {
+			return Integer.valueOf(lhs.getSortOrder().weight()).compareTo(rhs.getSortOrder().weight());
+		}
 	}
 }

@@ -1,5 +1,8 @@
 package com.tjeannin.provigen;
 
+import java.util.Iterator;
+import java.util.TreeSet;
+
 import android.annotation.SuppressLint;
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -11,6 +14,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.tjeannin.provigen.annotation.Contract;
+import com.tjeannin.provigen.annotation.SortOrder;
 
 /**
  * Behaves as a {@link ContentProvider} for the given {@link Contract} class.
@@ -231,23 +235,30 @@ public class ProviGenProvider extends ContentProvider {
 	}
 
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-		SQLiteDatabase database = openHelper.getReadableDatabase();
+	public Cursor query(final Uri uri, final String[] projection, final String selection, final String[] selectionArgs, final String sortOrder) {
+		final SQLiteDatabase database = openHelper.getReadableDatabase();
 
-		ContractHolder contractHolder = contracts.findMatching(uri);
-		Cursor cursor = null;
+		final ContractHolder contractHolder = contracts.findMatching(uri);
+		final Cursor cursor;
+
+		final String sort;
+		if(sortOrder == null) {
+			sort = getSortOrder(contractHolder);
+		} else {
+			sort = sortOrder;
+		}
 
 		switch (uriMatcher.match(uri)) {
 		case ITEM:
-			cursor = database.query(contractHolder.getTable(), projection, selection, selectionArgs, "", "", sortOrder);
+			cursor = database.query(contractHolder.getTable(), projection, selection, selectionArgs, "", "", sort);
 			break;
 		case ITEM_ID:
-			String itemId = String.valueOf(ContentUris.parseId(uri));
+			final String itemId = String.valueOf(ContentUris.parseId(uri));
 			if (TextUtils.isEmpty(selection)) {
-				cursor = database.query(contractHolder.getTable(), projection, contractHolder.getIdField() + " = ? ", new String[] { itemId }, "", "", sortOrder);
+				cursor = database.query(contractHolder.getTable(), projection, contractHolder.getIdField() + " = ? ", new String[] { itemId }, "", "", sort);
 			} else {
 				cursor = database.query(contractHolder.getTable(), projection, selection + " AND " + contractHolder.getIdField() + " = ? ",
-						appendToStringArray(selectionArgs, itemId), "", "", sortOrder);
+						appendToStringArray(selectionArgs, itemId), "", "", sort);
 			}
 			break;
 		default:
@@ -304,6 +315,27 @@ public class ProviGenProvider extends ContentProvider {
 		} else {
 			return new String[] { element };
 		}
+	}
+
+	public String getSortOrder(final ContractHolder contractHolder) {
+		final TreeSet<DatabaseField> fields = new TreeSet<DatabaseField>(DatabaseField.SORT_ORDER_COMPARATOR);
+		for (final DatabaseField field : contractHolder.getFields()) {
+			if (field.getSortOrder() != null && field.getSortOrder().order() != SortOrder.Order.UNSORTED) {
+				fields.add(field);
+			}
+		}
+		if (fields.isEmpty()) {
+			return null;
+		}
+		final StringBuilder orderQueryPart = new StringBuilder("");
+		for (final Iterator<DatabaseField> it = fields.iterator(); it.hasNext(); ) {
+			final DatabaseField field = it.next();
+			orderQueryPart.append(field.getName()).append(' ').append(field.getSortOrder().order());
+			if (it.hasNext()) {
+				orderQueryPart.append(", ");
+			}
+		}
+		return orderQueryPart.toString().trim();
 	}
 
 }
