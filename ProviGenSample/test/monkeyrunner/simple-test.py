@@ -12,7 +12,7 @@ def screenshot(n, deviceName, device):
     # Takes a screenshot
     result = device.takeSnapshot()
     # Writes the screenshot to a file
-    screenshotName = 'target/monkeyrunner/'+deviceName+'/monkeyrunner-shot%d.png' % (n,)
+    screenshotName = 'ProviGenSample/target/monkeyrunner/'+deviceName+'/monkeyrunner-shot%d.png' % (n,)
     ensure_dir(screenshotName)
     result.writeToFile(screenshotName,'png')
 
@@ -27,13 +27,16 @@ def main():
     deviceName = 'defaultDevice'
     device = MonkeyRunner.waitForConnection(timeOut)
 
-  # Installs the Android package. Notice that this method returns a boolean, so you can test
-  # to see if the installation worked.
-  device.installPackage('target/ProviGen-sample-1.6.0-SNAPSHOT.apk')
-  
   # sets a variable with the package's internal name
   package = 'com.tjeannin.provigen.sample'
 
+  #remove initial package if present to get a clean working set
+  device.removePackage(package)
+
+  # Installs the Android package. Notice that this method returns a boolean, so you can test
+  # to see if the installation worked.
+  device.installPackage('ProviGenSample/target/ProviGen-sample-1.6.0-SNAPSHOT.apk')
+  
   # sets a variable with the name of an Activity in the package
   activity = 'com.tjeannin.provigen.sample.MainActivity'
 
