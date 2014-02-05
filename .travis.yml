@@ -23,7 +23,6 @@ before_install:
     - mv $ANDROID_HOME/android-4.4.2 $ANDROID_HOME/build-tools/19.0.1
 
     # Install required Android components.
-    - echo yes | android update sdk --filter build-tools --no-ui --force > /dev/null
     - echo yes | android update sdk --filter platform-tools --no-ui --force > /dev/null
     - echo yes | android update sdk --filter $ANDROID_SDKS --no-ui --force > /dev/null
     - echo yes | android update sdk --filter extra-android-support --no-ui --force > /dev/null
