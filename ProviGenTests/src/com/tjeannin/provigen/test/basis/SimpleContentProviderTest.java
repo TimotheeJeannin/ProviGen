@@ -124,7 +124,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		assertFalse(columnNameListContractOne.contains(ContractTwo.MY_STRING));
 		cursorOne.close();
 
-		final List<String> columnsContractOne = fieldInfos(ContractOne.CONTENT_URI);
+		final List<String> columnsContractOne = getTableFields(ContractOne.CONTENT_URI);
 		assertEquals(2, columnsContractOne.size());
 		assertTrue(columnsContractOne.contains(ContractOne._ID));
 		assertTrue(columnsContractOne.contains(ContractOne.MY_INT));
@@ -143,7 +143,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		assertTrue(columnNameListContractTwo.contains(ContractTwo.MY_STRING));
 		cursorTwo.close();
 
-		final List<String> columnsContractTwo = fieldInfos(ContractTwo.CONTENT_URI);
+		final List<String> columnsContractTwo = getTableFields(ContractTwo.CONTENT_URI);
 		assertEquals(4, columnsContractTwo.size());
 		assertTrue(columnsContractTwo.contains(ContractTwo._ID));
 		assertTrue(columnsContractTwo.contains(ContractTwo.MY_INT));
@@ -154,7 +154,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		assertTrue(columnsContractTwo.containsAll(columnsContractOne));
 	}
 
-	private List<String> fieldInfos(final Uri contentUri) {
+	private List<String> getTableFields(final Uri contentUri) {
 		final SQLiteDatabase sqLiteDatabase = getMockContext().openOrCreateDatabase("ProviGenDatabase", Context.MODE_PRIVATE, null);
 		final String tableName = contentUri.getLastPathSegment();
 		final Cursor rawQuery = sqLiteDatabase.rawQuery("PRAGMA table_info(" + tableName + ')', null);
