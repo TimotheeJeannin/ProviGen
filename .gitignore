@@ -26,4 +26,4 @@ local.properties
 /.settings
 
 # Maven files
-/target
+target
