@@ -1,9 +1,8 @@
 package com.tjeannin.provigen.test.basis;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -111,49 +110,58 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 	}
 
 	public void testUpgradeFromContractOneToTwo() throws InvalidContractException {
-
 		getProvider().setContractClasses(new Class[] { ContractOne.class });
 
 		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
 
 		// Check database fits ContractOne.
-		Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
-		assertEquals(2, cursor.getColumnCount());
-		List<String> columnNameList = Arrays.asList(cursor.getColumnNames());
-		assertTrue(columnNameList.contains(ContractOne._ID));
-		assertTrue(columnNameList.contains(ContractOne.MY_INT));
-		assertFalse(columnNameList.contains(ContractTwo.MY_REAL));
-		assertFalse(columnNameList.contains(ContractTwo.MY_STRING));
-		cursor.close();
+		final Cursor cursorOne = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
+		assertEquals(2, cursorOne.getColumnCount());
+		final List<String> columnNameListContractOne = Arrays.asList(cursorOne.getColumnNames());
+		assertTrue(columnNameListContractOne.contains(ContractOne._ID));
+		assertTrue(columnNameListContractOne.contains(ContractOne.MY_INT));
+		assertFalse(columnNameListContractOne.contains(ContractTwo.MY_REAL));
+		assertFalse(columnNameListContractOne.contains(ContractTwo.MY_STRING));
+		cursorOne.close();
+
+		final List<String> columnsContractOne = fieldInfos(ContractOne.CONTENT_URI);
+		assertEquals(2, columnsContractOne.size());
+		assertTrue(columnsContractOne.contains(ContractOne._ID));
+		assertTrue(columnsContractOne.contains(ContractOne.MY_INT));
+		assertFalse(columnsContractOne.contains(ContractTwo.MY_REAL));
+		assertFalse(columnsContractOne.contains(ContractTwo.MY_STRING));
 
 		getProvider().setContractClasses(new Class[] { ContractTwo.class });
 
 		// Check database fits ContractTwo.
-		cursor = contentResolver.query(ContractTwo.CONTENT_URI, null, "", null, "");
-		assertEquals(4, cursor.getColumnCount());
-		columnNameList = Arrays.asList(cursor.getColumnNames());
-		assertTrue(columnNameList.contains(ContractTwo._ID));
-		assertTrue(columnNameList.contains(ContractTwo.MY_INT));
-		assertTrue(columnNameList.contains(ContractTwo.MY_REAL));
-		assertTrue(columnNameList.contains(ContractTwo.MY_STRING));
-		cursor.close();
+		final Cursor cursorTwo = contentResolver.query(ContractTwo.CONTENT_URI, null, "", null, "");
+		assertEquals(4, cursorTwo.getColumnCount());
+		final List<String> columnNameListContractTwo = Arrays.asList(cursorTwo.getColumnNames());
+		assertTrue(columnNameListContractTwo.contains(ContractTwo._ID));
+		assertTrue(columnNameListContractTwo.contains(ContractTwo.MY_INT));
+		assertTrue(columnNameListContractTwo.contains(ContractTwo.MY_REAL));
+		assertTrue(columnNameListContractTwo.contains(ContractTwo.MY_STRING));
+		cursorTwo.close();
 
-		final Map<String, String> fieldInfosContractOne = fieldInfos(ContractOne.CONTENT_URI);
-		final Map<String, String> fieldInfosContractTwo = fieldInfos(ContractTwo.CONTENT_URI);
-		assertEquals(fieldInfosContractOne.size(), fieldInfosContractTwo.size());
-		for (final Map.Entry<String, String> entry : fieldInfosContractTwo.entrySet()) {
-			assertEquals(entry.getValue(), fieldInfosContractOne.get(entry.getKey()));
-		}
+		final List<String> columnsContractTwo = fieldInfos(ContractTwo.CONTENT_URI);
+		assertEquals(4, columnsContractTwo.size());
+		assertTrue(columnsContractTwo.contains(ContractTwo._ID));
+		assertTrue(columnsContractTwo.contains(ContractTwo.MY_INT));
+		assertTrue(columnsContractTwo.contains(ContractTwo.MY_REAL));
+		assertTrue(columnsContractTwo.contains(ContractTwo.MY_STRING));
+
+		assertEquals(ContractOne.CONTENT_URI.getLastPathSegment(), ContractTwo.CONTENT_URI.getLastPathSegment());
+		assertTrue(columnsContractTwo.containsAll(columnsContractOne));
 	}
 
-	private Map<String, String> fieldInfos(final Uri contentUri) {
+	private List<String> fieldInfos(final Uri contentUri) {
 		final SQLiteDatabase sqLiteDatabase = getMockContext().openOrCreateDatabase("ProviGenDatabase", Context.MODE_PRIVATE, null);
 		final String tableName = contentUri.getLastPathSegment();
 		final Cursor rawQuery = sqLiteDatabase.rawQuery("PRAGMA table_info(" + tableName + ')', null);
-		final Map<String, String> result = new HashMap<String, String>(rawQuery.getCount());
+		final List<String> result = new ArrayList<String>(rawQuery.getCount());
 		if (rawQuery.moveToFirst()) {
 			do {
-				result.put(rawQuery.getString(rawQuery.getColumnIndex("name")), rawQuery.getString(rawQuery.getColumnIndex("notnull")));
+				result.add(rawQuery.getString(rawQuery.getColumnIndex("name")));
 			} while (rawQuery.moveToNext());
 		}
 		rawQuery.close();
