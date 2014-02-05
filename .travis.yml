@@ -37,4 +37,6 @@ before_script:
     - chmod +x wait_for_emulator
     - ./wait_for_emulator
 
+install: /bin/true # always succeeds
+
 script: mvn install -Dandroid.device=test -Dandroid.platform=$PLATFORM
