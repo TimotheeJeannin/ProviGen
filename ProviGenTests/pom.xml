@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.TimotheeJeannin</groupId>
         <artifactId>ProviGen-parent</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ProviGen-tests</artifactId>
@@ -23,6 +23,7 @@
             <groupId>com.google.android</groupId>
             <artifactId>android-test</artifactId>
             <version>4.1.1.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.TimotheeJeannin</groupId>

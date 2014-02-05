@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.TimotheeJeannin</groupId>
         <artifactId>ProviGen-parent</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ProviGen-sample</artifactId>
@@ -23,24 +23,62 @@
             <groupId>com.google.android</groupId>
             <artifactId>support-v4</artifactId>
             <version>r7</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.TimotheeJeannin</groupId>
             <artifactId>ProviGen-lib</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <build>
         <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
 
         <plugins>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
                 <extensions>true</extensions>
+                <configuration>
+                    <monkeyrunner>
+                        <skip>false</skip>
+                        <injectDeviceSerialNumberIntoScript>true</injectDeviceSerialNumberIntoScript>
+                        <createReport>true</createReport>
+                        <programs>
+                            <program>
+                                <filename>test/monkeyrunner/simple-test.py</filename>
+                            </program>
+                        </programs>
+                    </monkeyrunner>
+                    <monkey>
+                        <skip>false</skip>
+                        <packages>
+                            <package>com.tjeannin.provigen.sample</package>
+                        </packages>
+                        <eventCount>2000</eventCount>
+                        <createReport>true</createReport>
+                        <ignoreCrashes>true</ignoreCrashes>
+                    </monkey>
+                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-app</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>run-monkey-exerciser</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>monkey</goal>
+                            <goal>monkeyrunner</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
