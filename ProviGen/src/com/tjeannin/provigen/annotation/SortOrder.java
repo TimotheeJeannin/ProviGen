@@ -24,7 +24,10 @@ public @interface SortOrder {
 	Order order() default Order.UNSORTED;
 
 	/**
-	 * Weighting for the column, if more than one column has a {@link SortOrder}.
+	 * Weighting for the column, if more than one column has a SortOrder.
+	 * Higher numbers mean that this column will be sorted before the others with lower numbers.
+	 * Have both columns the same weight (will be default when no weight is given but more than one column
+	 * has a sort annotation) the field order of the contract specify the sort order between these columns.
 	 *
 	 * @return weighting
 	 */

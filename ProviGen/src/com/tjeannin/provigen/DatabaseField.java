@@ -75,7 +75,7 @@ class DatabaseField {
 	private static class SortOrderComparator implements Comparator<DatabaseField> {
 		@Override
 		public int compare(final DatabaseField lhs, final DatabaseField rhs) {
-			return Integer.valueOf(lhs.getSortOrder().weight()).compareTo(rhs.getSortOrder().weight());
+			return Integer.valueOf(rhs.getSortOrder().weight()).compareTo(lhs.getSortOrder().weight());
 		}
 	}
 }

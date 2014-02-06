@@ -1,7 +1,9 @@
 package com.tjeannin.provigen;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.ContentProvider;
@@ -317,9 +319,10 @@ public class ProviGenProvider extends ContentProvider {
 		}
 	}
 
-	public String getSortOrder(final ContractHolder contractHolder) {
-		final TreeSet<DatabaseField> fields = new TreeSet<DatabaseField>(DatabaseField.SORT_ORDER_COMPARATOR);
-		for (final DatabaseField field : contractHolder.getFields()) {
+	private String getSortOrder(final ContractHolder contractHolder) {
+		final List<DatabaseField> databaseFields = contractHolder.getFields();
+		final List<DatabaseField> fields = new ArrayList<DatabaseField>(databaseFields.size());
+		for (final DatabaseField field : databaseFields) {
 			if (field.getSortOrder() != null && field.getSortOrder().order() != SortOrder.Order.UNSORTED) {
 				fields.add(field);
 			}
@@ -327,6 +330,7 @@ public class ProviGenProvider extends ContentProvider {
 		if (fields.isEmpty()) {
 			return null;
 		}
+		Collections.sort(fields, DatabaseField.SORT_ORDER_COMPARATOR);
 		final StringBuilder orderQueryPart = new StringBuilder("");
 		for (final Iterator<DatabaseField> it = fields.iterator(); it.hasNext(); ) {
 			final DatabaseField field = it.next();
