@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Provigen by TimotheeJeannin</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Provigen</h1>
+        <h2>Generates content providers from annotated contract classes.</h2>
+        <a href="https://github.com/TimotheeJeannin/ProviGen" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="provigen" class="anchor" href="#provigen"><span class="octicon octicon-link"></span></a>ProviGen</h1>
+
+<p>Easily make a <a href="https://developer.android.com/reference/android/content/ContentProvider.html">ContentProvider</a> from a <a href="http://developer.android.com/guide/topics/providers/content-provider-basics.html#ContractClasses">ContractClass</a>.    </p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<ul>
+<li><p>Put the ProviGen <a href="https://github.com/TimotheeJeannin/ProviGen/tree/master/ProviGenDownloads">jar</a> in your <code>libs</code> folder or add ProviGen as a library project.</p></li>
+<li><p>Annotate your ContractClass.</p></li>
+</ul><div class="highlight highlight-java"><pre><span class="nd">@Contract</span><span class="o">(</span><span class="n">version</span> <span class="o">=</span> <span class="mi">1</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyContract</span> <span class="kd">extends</span> <span class="n">ProviGenBaseContract</span> <span class="o">{</span>
+
+    <span class="nd">@Column</span><span class="o">(</span><span class="n">Type</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MY_INT_COLUMN</span> <span class="o">=</span> <span class="s">"int"</span><span class="o">;</span>
+
+    <span class="nd">@Column</span><span class="o">(</span><span class="n">Type</span><span class="o">.</span><span class="na">TEXT</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MY_STRING_COLUMN</span> <span class="o">=</span> <span class="s">"string"</span><span class="o">;</span>
+
+    <span class="nd">@ContentUri</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Uri</span> <span class="n">CONTENT_URI</span> <span class="o">=</span> <span class="n">Uri</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="s">"content://com.myapp/table_name"</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+
+<ul>
+<li>Extend the ProviGenProvider.</li>
+</ul><div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyContentProvider</span> <span class="kd">extends</span> <span class="n">ProviGenProvider</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="nf">MyContentProvider</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InvalidContractException</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<ul>
+<li>Add your provider in your manifest.</li>
+</ul><div class="highlight highlight-xml"><pre><span class="nt">&lt;provider</span>
+    <span class="na">android:name=</span><span class="s">"com.myapp.MyContentProvider"</span>
+    <span class="na">android:authorities=</span><span class="s">"com.myapp"</span> <span class="nt">&gt;</span>
+<span class="nt">&lt;/provider&gt;</span>
+</pre></div>
+
+<ul>
+<li>You're done.</li>
+</ul><h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>You can make the usual insert, update, delete and query using a <a href="https://developer.android.com/reference/android/content/ContentResolver.html">ContentResolver</a>.<br>
+For example querying a single row boils down to:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">getContentResolver</span><span class="o">().</span><span class="na">query</span><span class="o">(</span> 
+    <span class="n">Uri</span><span class="o">.</span><span class="na">withAppendedPath</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">CONTENT_URI</span><span class="o">,</span> <span class="n">myId</span><span class="o">),</span>
+    <span class="kc">null</span><span class="o">,</span> <span class="s">""</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="s">""</span><span class="o">);</span>
+</pre></div>
+
+<p>or </p>
+
+<div class="highlight highlight-java"><pre><span class="n">getContentResolver</span><span class="o">().</span><span class="na">query</span><span class="o">(</span>
+    <span class="n">MyContract</span><span class="o">.</span><span class="na">CONTENT_URI</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> 
+    <span class="n">MyContract</span><span class="o">.</span><span class="na">_ID</span> <span class="o">+</span> <span class="s">" = ? "</span><span class="o">,</span> <span class="k">new</span> <span class="n">String</span><span class="o">[]{</span> <span class="n">myId</span> <span class="o">},</span> <span class="s">""</span><span class="o">);</span>
+</pre></div>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<h3>
+<a name="multiple-contact-classes" class="anchor" href="#multiple-contact-classes"><span class="octicon octicon-link"></span></a>Multiple contact classes</h3>
+
+<p>You can use ProviGen with several <a href="http://developer.android.com/guide/topics/providers/content-provider-basics.html#ContractClasses">ContractClass</a> just by passing an array of contract classes to the ProviGenProvider constructor.</p>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyContentProvider</span> <span class="kd">extends</span> <span class="n">ProviGenProvider</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="nf">MyContentProvider</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InvalidContractException</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="k">new</span> <span class="n">Class</span><span class="o">[]</span> <span class="o">{</span> <span class="n">FirstContract</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">SecondContract</span><span class="o">.</span><span class="na">class</span> <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>ProviGen will create a table for each contract class.<br>
+The table name will be the last path segment of the contract's content uri.</p>
+
+<h3>
+<a name="notifications-and-observers" class="anchor" href="#notifications-and-observers"><span class="octicon octicon-link"></span></a>Notifications and observers</h3>
+
+<p>ProviGen fully supports the uri notification mechanism.<br>
+You can safely use it with <a href="http://developer.android.com/reference/android/content/CursorLoader.html">CursorLoader</a>s and <a href="https://developer.android.com/reference/android/database/ContentObserver.html">ContentObserver</a>s.</p>
+
+<h3>
+<a name="initial-population" class="anchor" href="#initial-population"><span class="octicon octicon-link"></span></a>Initial population</h3>
+
+<p>ProviGen will automatically create the needed table for you.<br>
+Initial population can be done overriding the <code>onCreateDatabase</code> method.</p>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyContentProvider</span> <span class="kd">extends</span> <span class="n">ProviGenProvider</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="nf">MyContentProvider</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InvalidContractException</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreateDatabase</span><span class="o">(</span><span class="n">SQLiteDatabase</span> <span class="n">database</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Automatically creates table and needed columns.</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreateDatabase</span><span class="o">(</span><span class="n">database</span><span class="o">);</span> 
+
+        <span class="c1">// If needed, populate table here.</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>If you want to create the table yourself, just don't call <code>super.onCreateDatabase(database)</code>.</p>
+
+<h3>
+<a name="contract-upgrades" class="anchor" href="#contract-upgrades"><span class="octicon octicon-link"></span></a>Contract upgrades</h3>
+
+<p>If you increase the version of a contract class, ProviGen will automatically add missing columns for you.<br>
+Any other changes should be done overriding the <code>onUpgradeDatabase</code> method.</p>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyContentProvider</span> <span class="kd">extends</span> <span class="n">ProviGenProvider</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="nf">MyContentProvider</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InvalidContractException</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onUpgradeDatabase</span><span class="o">(</span><span class="n">SQLiteDatabase</span> <span class="n">database</span><span class="o">,</span> <span class="kt">int</span> <span class="n">oldVersion</span><span class="o">,</span> <span class="kt">int</span> <span class="n">newVersion</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Automatically adds new columns.</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onUpgradeDatabase</span><span class="o">(</span><span class="n">database</span><span class="o">,</span> <span class="n">oldVersion</span><span class="o">,</span> <span class="n">newVersion</span><span class="o">);</span>
+
+        <span class="c1">// Anything else related to database upgrade should be done here. </span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>If you want to add missing columns yourself, just don't call <code>super.onUpgradeDatabase(database, oldVersion, newVersion)</code></p>
+
+<h3>
+<a name="data-constraint" class="anchor" href="#data-constraint"><span class="octicon octicon-link"></span></a>Data constraint</h3>
+
+<p>You can apply a <code>UNIQUE</code> constraint to a column using the <code>@Unique</code> annotation.</p>
+
+<div class="highlight highlight-java"><pre><span class="nd">@Unique</span><span class="o">(</span><span class="n">OnConflict</span><span class="o">.</span><span class="na">REPLACE</span><span class="o">)</span>
+<span class="nd">@Column</span><span class="o">(</span><span class="n">Type</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MY_INT</span> <span class="o">=</span> <span class="s">"my_int"</span><span class="o">;</span>
+</pre></div>
+
+<p>You can apply a <code>NOT_NULL</code> constraint to a column using the <code>@NotNull</code> annotation.</p>
+
+<div class="highlight highlight-java"><pre><span class="nd">@NotNull</span><span class="o">(</span><span class="n">OnConflict</span><span class="o">.</span><span class="na">ABORT</span><span class="o">)</span>
+<span class="nd">@Column</span><span class="o">(</span><span class="n">Type</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MY_INT</span> <span class="o">=</span> <span class="s">"my_int"</span><span class="o">;</span>
+</pre></div>
+
+<p><code>CHECK</code> constraint is not supported yet.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>This content is released under the MIT License.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/TimotheeJeannin/ProviGen/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/TimotheeJeannin/ProviGen/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/TimotheeJeannin/ProviGen"></a> is maintained by <a href="https://github.com/TimotheeJeannin">TimotheeJeannin</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-47830197-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
