@@ -1,5 +1,7 @@
 package com.tjeannin.provigen;
 
+import java.util.Iterator;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,15 +26,13 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 		provigenProvider.onUpgradeDatabase(database, oldVersion, newVersion);
 	}
 
-	void createTable(SQLiteDatabase database, ContractHolder contractHolder) {
-
+	void createTable(final SQLiteDatabase database, final ContractHolder contractHolder) {
 		// CREATE TABLE myTable (
-		StringBuilder builder = new StringBuilder("CREATE TABLE ");
+		final StringBuilder builder = new StringBuilder("CREATE TABLE ");
 		builder.append(contractHolder.getTable()).append(" ( ");
-
 		// myInt INTEGER, myString TEXT
-		for (int i = 0; i < contractHolder.getFields().size(); i++) {
-			final DatabaseField field = contractHolder.getFields().get(i);
+		for (final Iterator<DatabaseField> iterator = contractHolder.getFields().iterator(); iterator.hasNext(); ) {
+			final DatabaseField field = iterator.next();
 			builder.append(' ').append(field.getName()).append(' ').append(field.getType().getDBStorageClass());
 			if (field.getName().equals(contractHolder.getIdField())) {
 				builder.append(" PRIMARY KEY AUTOINCREMENT ");
@@ -40,12 +40,17 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 			for (final Constraint constraint : field.getConstraints()) {
 				builder.append(' ').append(constraint.getType().getDbConstraintName()).append(" ON CONFLICT ").append(constraint.getOnConflict().getDbConflictResolution());
 			}
-			builder.append(", ");
+			if (iterator.hasNext()) {
+				builder.append(", ");
+			}
 		}
-		builder.deleteCharAt(builder.length() - 2);
-		builder.append(" ) ");
-
+		builder.append(" );");
 		database.execSQL(builder.toString());
+		try {
+			IndexUtils.addConstraints(database, contractHolder);
+		} catch (final InvalidContractException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	void addMissingColumnsInTable(SQLiteDatabase database, ContractHolder contractHolder) {

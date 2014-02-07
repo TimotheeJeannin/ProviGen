@@ -2,6 +2,7 @@ package com.tjeannin.provigen;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.net.Uri;
@@ -10,6 +11,7 @@ import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.annotation.Id;
+import com.tjeannin.provigen.annotation.Index;
 import com.tjeannin.provigen.annotation.NotNull;
 import com.tjeannin.provigen.annotation.Unique;
 
@@ -19,7 +21,7 @@ class ContractHolder {
 	private String authority;
 	private String idField;
 	private String tableName;
-	private List<DatabaseField> databaseFields;
+	private final List<DatabaseField> databaseFields = new ArrayList<DatabaseField>(0);
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ContractHolder(Class contractClass) throws InvalidContractException {
@@ -30,8 +32,6 @@ class ContractHolder {
 		} else {
 			throw new InvalidContractException("The given class does not have a @Contract annotation.");
 		}
-
-		databaseFields = new ArrayList<DatabaseField>();
 
 		Field[] fields = contractClass.getFields();
 		for (Field field : fields) {
@@ -77,6 +77,11 @@ class ContractHolder {
 						databaseField.getConstraints().add(new Constraint(Constraint.Type.NOT_NULL, notNull.value()));
 					}
 
+					final Index index = field.getAnnotation(Index.class);
+					if (index != null) {
+						databaseField.setIndex(index);
+					}
+
 					databaseFields.add(databaseField);
 				} catch (final Exception e) {
 					e.printStackTrace();
@@ -106,6 +111,6 @@ class ContractHolder {
 	}
 
 	public List<DatabaseField> getFields() {
-		return databaseFields;
+		return Collections.unmodifiableList(databaseFields);
 	}
 }
