@@ -1,4 +1,4 @@
-# ProviGen
+# ProviGen [![Build Status](https://travis-ci.org/TimotheeJeannin/ProviGen.png?branch=master)](https://travis-ci.org/TimotheeJeannin/ProviGen)
 
 Easily make a [ContentProvider] from a [ContractClass].    
 
