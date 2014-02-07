@@ -23,4 +23,38 @@
     <build>
         <sourceDirectory>src</sourceDirectory>
     </build>
+
+    <profiles>
+        <profile>
+            <id>emma</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <artifactId>android-maven-plugin</artifactId>
+                        <configuration>
+                            <emma>
+                                <enable>true</enable>
+                                <classFolders>${project.basedir}/target/classes/</classFolders>
+                                <outputMetaFile>${project.basedir}/target/emma/coverage.em</outputMetaFile>
+                            </emma>
+                            <dex>
+                                <noLocals>true</noLocals>
+                            </dex>
+                        </configuration>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>emma</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>emma</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -12,6 +12,9 @@
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="com.tjeannin.provigen.test" />
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"

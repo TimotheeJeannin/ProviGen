@@ -41,4 +41,10 @@ before_script:
 
 install: /bin/true # always succeeds
 
+before_script:
+    - mvn clean
+
 script: mvn install -Dandroid.device=test
+
+after_success:
+    - mvn clean install site:site site:stage -Pemma

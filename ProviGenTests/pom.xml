@@ -35,6 +35,7 @@
 
     <build>
         <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
 
         <plugins>
             <plugin>
@@ -44,4 +45,74 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>emma</id>
+            <dependencies>
+                <dependency>
+                    <groupId>emma</groupId>
+                    <artifactId>emma</artifactId>
+                    <type>jar</type>
+                    <scope>compile</scope>
+                    <version>2.0.5312</version>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <artifactId>android-maven-plugin</artifactId>
+                        <configuration>
+                            <test>
+                                <coverage>true</coverage>
+                                <createReport>true</createReport>
+                            </test>
+                        </configuration>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>pull-coverage</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>pull</goal>
+                                </goals>
+                                <configuration>
+                                    <pullSource>/data/data/com.tjeannin.provigen.test/files/coverage.ec</pullSource>
+                                    <pullDestination>ProviGen/target/emma/coverage.ec</pullDestination>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.maven.plugin</groupId>
+                        <artifactId>emma4it-maven-plugin</artifactId>
+                        <version>1.3</version>
+                        <configuration>
+                            <metadatas>
+                                <file>../ProviGen/target/emma/coverage.em</file>
+                            </metadatas>
+                            <instrumentations>
+                                <file>../ProviGen/target/emma/coverage.ec</file>
+                            </instrumentations>
+                            <reportDirectory>../target/emma/</reportDirectory>
+                            <searchPath>../ProviGen/target/</searchPath>
+                            <sourceFolders>
+                                <sourceFolder>../ProviGen/src</sourceFolder>
+                            </sourceFolders>
+                            <formats>
+                                <format>xml</format>
+                                <format>html</format>
+                            </formats>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+    </profiles>
 </project>

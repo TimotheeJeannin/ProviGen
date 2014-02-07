@@ -105,6 +105,8 @@
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <android-maven-plugin.version>3.8.2</android-maven-plugin.version>
         <versions-maven-plugin.version>2.1</versions-maven-plugin.version>
+        <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
+        <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
     </properties>
 
 	<dependencyManagement>
@@ -220,6 +222,16 @@
                 </plugin>
 
                 <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven-antrun-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                </plugin>
+
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>${versions-maven-plugin.version}</version>
@@ -286,6 +298,9 @@
         <plugins>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <configuration>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-report-plugin</artifactId>
