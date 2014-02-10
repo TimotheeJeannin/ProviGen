@@ -11,6 +11,7 @@ import java.util.Map;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 import com.tjeannin.provigen.annotation.Index;
 import com.tjeannin.provigen.annotation.IndexType;
@@ -36,7 +37,7 @@ final class IndexUtils {
 			if (allConstraints.containsKey(type)) {
 				for (final Map.Entry<String, List<DatabaseField>> constraint : allConstraints.get(type).entrySet()) {
 					final StringBuilder builder = new StringBuilder("CREATE ").append(type.getSqlPart()).append(' ');
-					builder.append(getConstraintName(database, constraint.getKey()));
+					builder.append(getConstraintName(database, constraint.getKey().trim()));
 					builder.append(" ON ").append(holder.getTable()).append('(');
 					final List<DatabaseField> columns = constraint.getValue();
 					if (columns.size() > 1) {
@@ -46,8 +47,8 @@ final class IndexUtils {
 					for (final Iterator<DatabaseField> iterator = columns.iterator(); iterator.hasNext(); ) {
 						final DatabaseField field = iterator.next();
 						builder.append(field.getName());
-						final String expr = field.getIndex().expr();
-						if (expr != null && !expr.trim().isEmpty()) {
+						final String expr = field.getIndex().expr().trim();
+						if (!TextUtils.isEmpty(expr)) {
 							expressions.add(expr.trim());
 						}
 						if (iterator.hasNext()) {
@@ -75,7 +76,7 @@ final class IndexUtils {
 	}
 
 	private static String getConstraintName(final SQLiteDatabase database, final String constraintName) throws IndexException {
-		if (constraintName != null && !constraintName.trim().isEmpty()) {
+		if (!TextUtils.isEmpty(constraintName)) {
 			final Cursor cursor = database.rawQuery("SELECT type, tbl_name FROM sqlite_master WHERE name = ?", new String[] { constraintName.trim() });
 			final boolean exists = cursor.getCount() != 0;
 			if (exists) {
@@ -121,8 +122,8 @@ final class IndexUtils {
 					map = new HashMap<String, List<DatabaseField>>(1);
 					indexList.put(type, map);
 				}
-				final String indexName = index.name();
-				if (!indexName.trim().isEmpty() && isNameInOtherTypesDefined(indexName, type, indexList)) {
+				final String indexName = index.name().trim();
+				if (!TextUtils.isEmpty(indexName) && isNameInOtherTypesDefined(indexName, type, indexList)) {
 					throw new IndexException(String.format("Index with name %s was allready defined with another index type. Actual type: %s", indexName, type));
 				}
 				if (map.containsKey(indexName)) {
