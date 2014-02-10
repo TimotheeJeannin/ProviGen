@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.mock.MockContentResolver;
+import com.tjeannin.provigen.exceptions.InvalidContractException;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.index.IndexProvider.IndexContract;
 
@@ -34,6 +35,24 @@ public class IndexTest extends ExtendedProviderTestCase<IndexProvider> {
 		assertTrue(indexNames.contains("INDEX_3"));
 		assertTrue(indexNames.contains("INDEX_4"));
 		assertTrue(indexNames.contains("INDEX_5"));
+	}
+
+	public void testUniqueAndIndex() throws InvalidContractException {
+		getProvider().setContractClasses(new Class[] { IndexProvider.UniqueAndUniqueIndexContract.class});
+		contentResolver.insert(IndexProvider.UniqueAndUniqueIndexContract.CONTENT_URI, getContentValues(IndexProvider.UniqueAndUniqueIndexContract.class));
+
+		final List<String> indexNames = loadIndexForTable(IndexProvider.UniqueAndUniqueIndexContract.CONTENT_URI.getLastPathSegment());
+		assertEquals(1, indexNames.size());
+		assertTrue(indexNames.contains("provigen_index_1"));
+	}
+
+	public void testPartialIndex() throws InvalidContractException {
+		getProvider().setContractClasses(new Class[] { IndexProvider.PartialIndexContract.class});
+		contentResolver.insert(IndexProvider.PartialIndexContract.CONTENT_URI, getContentValues(IndexProvider.PartialIndexContract.class));
+
+		final List<String> indexNames = loadIndexForTable(IndexProvider.PartialIndexContract.CONTENT_URI.getLastPathSegment());
+		assertEquals(1, indexNames.size());
+		assertTrue(indexNames.contains("provigen_index_1"));
 	}
 
 	private List<String> loadIndexForTable(final String tableName) {

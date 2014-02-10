@@ -11,16 +11,26 @@ import java.util.Map;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import com.tjeannin.provigen.annotation.Index;
 import com.tjeannin.provigen.annotation.IndexType;
+import com.tjeannin.provigen.exceptions.IndexException;
+import com.tjeannin.provigen.utils.DataBaseHelper;
 
 final class IndexUtils {
+	/**
+	 * Logging tag.
+	 */
+	public static final String TAG = "PROVIGEN_INDEX";
+	/**
+	 * Prefix for autmatic created index names.
+	 */
 	private static final String PROVIGEN_INDEX_PREFIX = "provigen_index_";
 
 	private IndexUtils() {
 	}
 
-	static void addConstraints(final SQLiteDatabase database, final ContractHolder holder) throws InvalidContractException {
+	static void addConstraints(final SQLiteDatabase database, final ContractHolder holder) throws IndexException {
 		final Map<IndexType, Map<String, List<DatabaseField>>> allConstraints = getIndexList(holder);
 		for (final IndexType type : IndexType.values()) {
 			if (allConstraints.containsKey(type)) {
@@ -45,7 +55,7 @@ final class IndexUtils {
 						}
 					}
 					builder.append(')');
-					if (!expressions.isEmpty()) {
+					if (!expressions.isEmpty() && DataBaseHelper.sqLiteVersionGreaterOrEqual(database, "3.8.0")) {
 						builder.append(" WHERE ");
 						for (final Iterator<String> iterator = expressions.iterator(); iterator.hasNext(); ) {
 							final String expr = iterator.next();
@@ -54,14 +64,17 @@ final class IndexUtils {
 								builder.append(" OR ");
 							}
 						}
+					} else {
+						Log.i(TAG, "Database doesn't support partial index.");
 					}
+					Log.v(TAG, builder.toString());
 					database.execSQL(builder.toString());
 				}
 			}
 		}
 	}
 
-	private static String getConstraintName(final SQLiteDatabase database, final String constraintName) throws InvalidContractException {
+	private static String getConstraintName(final SQLiteDatabase database, final String constraintName) throws IndexException {
 		if (constraintName != null && !constraintName.trim().isEmpty()) {
 			final Cursor cursor = database.rawQuery("SELECT type, tbl_name FROM sqlite_master WHERE name = ?", new String[] { constraintName.trim() });
 			final boolean exists = cursor.getCount() != 0;
@@ -71,7 +84,7 @@ final class IndexUtils {
 				final String type = cursor.getString(cursor.getColumnIndex("type"));
 				final String message = String.format("There is allready an object (%s) with the name %s  on table %s in the database", type, constraintName, tableName);
 				cursor.close();
-				throw new InvalidContractException(message);
+				throw new IndexException(message);
 			}
 			cursor.close();
 			return constraintName;
@@ -95,7 +108,7 @@ final class IndexUtils {
 		}
 	}
 
-	public static Map<IndexType, Map<String, List<DatabaseField>>> getIndexList(final ContractHolder holder) throws InvalidContractException {
+	public static Map<IndexType, Map<String, List<DatabaseField>>> getIndexList(final ContractHolder holder) throws IndexException {
 		final Map<IndexType, Map<String, List<DatabaseField>>> indexList = new EnumMap<IndexType, Map<String, List<DatabaseField>>>(IndexType.class);
 		for (final DatabaseField field : holder.getFields()) {
 			final Index index = field.getIndex();
@@ -110,7 +123,7 @@ final class IndexUtils {
 				}
 				final String indexName = index.name();
 				if (!indexName.trim().isEmpty() && isNameInOtherTypesDefined(indexName, type, indexList)) {
-					throw new InvalidContractException(String.format("Index with name %s was allready defined with another index type. Actual type: %s", indexName, type));
+					throw new IndexException(String.format("Index with name %s was allready defined with another index type. Actual type: %s", indexName, type));
 				}
 				if (map.containsKey(indexName)) {
 					map.get(indexName).add(field);

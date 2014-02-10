@@ -46,32 +46,32 @@ def main():
   # Runs the component
   device.startActivity(component=runComponent)
 
-  MonkeyRunner.sleep(2)
+  MonkeyRunner.sleep(1)
   screenshot(1, deviceName, device)
 
   device.press('DPAD_RIGHT', MonkeyDevice.DOWN_AND_UP)
   device.press('DPAD_CENTER', MonkeyDevice.DOWN_AND_UP)
 
-  MonkeyRunner.sleep(2)
+  MonkeyRunner.sleep(1)
   screenshot(2, deviceName, device)
   
   device.press('DPAD_LEFT', MonkeyDevice.DOWN_AND_UP)
   device.press('DPAD_CENTER', MonkeyDevice.DOWN_AND_UP)
   device.press('DPAD_CENTER', MonkeyDevice.DOWN_AND_UP)
   
-  MonkeyRunner.sleep(2)
+  MonkeyRunner.sleep(1)
   screenshot(3, deviceName, device)
 
   device.press('DPAD_RIGHT', MonkeyDevice.DOWN_AND_UP)
   device.press('DPAD_CENTER', MonkeyDevice.DOWN_AND_UP)
   
-  MonkeyRunner.sleep(2)
+  MonkeyRunner.sleep(1)
   screenshot(4, deviceName, device)
 
   device.press('DPAD_LEFT', MonkeyDevice.DOWN_AND_UP)
   device.press('DPAD_CENTER', MonkeyDevice.DOWN_AND_UP)
   
-  MonkeyRunner.sleep(2)
+  MonkeyRunner.sleep(1)
   screenshot(5, deviceName, device)
   
   device.removePackage(package)

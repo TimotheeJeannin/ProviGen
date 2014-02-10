@@ -1,7 +1,7 @@
 package com.tjeannin.provigen.test.index;
 
 import android.net.Uri;
-import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.exceptions.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.annotation.Column;
@@ -10,6 +10,7 @@ import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.annotation.Index;
 import com.tjeannin.provigen.annotation.IndexType;
+import com.tjeannin.provigen.annotation.Unique;
 
 public class IndexProvider extends ProviGenProvider {
 
@@ -46,4 +47,26 @@ public class IndexProvider extends ProviGenProvider {
 		@ContentUri
 		Uri CONTENT_URI = Uri.parse("content://com.test.simple/index_test");
 	}
+
+	@Contract(version = 1)
+	public interface UniqueAndUniqueIndexContract extends ProviGenBaseContract {
+		@Column(Type.INTEGER)
+		@Unique
+		@Index(type = IndexType.UNIQUE)
+		String INDEX_COLUMN = "idx_1";
+
+		@ContentUri
+		Uri CONTENT_URI = Uri.parse("content://com.test.simple/unique_and_unique_index_test");
+	}
+
+	@Contract(version = 1)
+	public interface PartialIndexContract extends ProviGenBaseContract {
+		@Column(Type.INTEGER)
+		@Index(type = IndexType.UNIQUE, expr = "idx_1 > 2")
+		String INDEX_COLUMN = "idx_1";
+
+		@ContentUri
+		Uri CONTENT_URI = Uri.parse("content://com.test.simple/partial_index_test");
+	}
+
 }

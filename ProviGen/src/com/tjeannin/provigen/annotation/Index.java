@@ -38,7 +38,8 @@ public @interface Index {
 	int weight() default 0;
 
 	/**
-	 * Defines an expression for creating an "partial index"
+	 * Defines an expression for creating an "partial index".<p><b>This will only work with SQLite version greater or equal
+	 * 3.8.0.</b> All other versions ignore these expression silently</p>
 	 *
 	 * @see <a href="http://www.sqlite.org/lang_createindex.html">SQLite Query Language: CREATE INDEX</a>
 	 */

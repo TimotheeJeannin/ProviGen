@@ -6,9 +6,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+import com.tjeannin.provigen.exceptions.IndexException;
+import com.tjeannin.provigen.exceptions.InvalidContractException;
 
 class ProviGenOpenHelper extends SQLiteOpenHelper {
-
+	/**
+	 * Logging tag.
+	 */
+	public static final String TAG = "PROVIGEN_TABLE";
 	private ProviGenProvider provigenProvider;
 
 	ProviGenOpenHelper(Context context, ProviGenProvider proviGenProvider, String databaseName, int version) {
@@ -29,13 +35,13 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 	void createTable(final SQLiteDatabase database, final ContractHolder contractHolder) {
 		// CREATE TABLE myTable (
 		final StringBuilder builder = new StringBuilder("CREATE TABLE ");
-		builder.append(contractHolder.getTable()).append(" ( ");
+		builder.append(contractHolder.getTable()).append(" (");
 		// myInt INTEGER, myString TEXT
 		for (final Iterator<DatabaseField> iterator = contractHolder.getFields().iterator(); iterator.hasNext(); ) {
 			final DatabaseField field = iterator.next();
-			builder.append(' ').append(field.getName()).append(' ').append(field.getType().getDBStorageClass());
+			builder.append(field.getName()).append(' ').append(field.getType().getDBStorageClass());
 			if (field.getName().equals(contractHolder.getIdField())) {
-				builder.append(" PRIMARY KEY AUTOINCREMENT ");
+				builder.append(" PRIMARY KEY AUTOINCREMENT");
 			}
 			for (final Constraint constraint : field.getConstraints()) {
 				builder.append(' ').append(constraint.getType().getDbConstraintName()).append(" ON CONFLICT ").append(constraint.getOnConflict().getDbConflictResolution());
@@ -44,12 +50,13 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 				builder.append(", ");
 			}
 		}
-		builder.append(" );");
+		builder.append(')');
+		Log.v(TAG, builder.toString());
 		database.execSQL(builder.toString());
 		try {
 			IndexUtils.addConstraints(database, contractHolder);
-		} catch (final InvalidContractException e) {
-			throw new RuntimeException(e);
+		} catch (final IndexException e) {
+			Log.e(TAG, "Could not create Index", e);
 		}
 	}
 
@@ -58,7 +65,9 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 		Cursor cursor = database.rawQuery("PRAGMA table_info(" + contractHolder.getTable() + ")", null);
 		for (DatabaseField field : contractHolder.getFields()) {
 			if (!fieldExistAsColumn(field.getName(), cursor)) {
-				database.execSQL("ALTER TABLE " + contractHolder.getTable() + " ADD COLUMN " + field.getName() + " " + field.getType().getDBStorageClass() + ";");
+				final StringBuilder sql = new StringBuilder("ALTER TABLE ").append(contractHolder.getTable()).append(" ADD COLUMN ").append(field.getName()).append(' ').append(field.getType().getDBStorageClass());
+				Log.v(TAG, sql.toString());
+				database.execSQL(sql.toString());
 			}
 		}
 	}

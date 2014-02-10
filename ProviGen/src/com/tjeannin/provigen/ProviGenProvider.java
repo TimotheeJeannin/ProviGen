@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.tjeannin.provigen.annotation.Contract;
+import com.tjeannin.provigen.exceptions.InvalidContractException;
 
 /**
  * Behaves as a {@link ContentProvider} for the given {@link Contract} class.
@@ -27,7 +28,7 @@ public class ProviGenProvider extends ContentProvider {
 
 	/**
 	 * @param contractClass A {@link Contract} class to build the {@link ContentProvider} with.
-	 * @throws InvalidContractException
+	 * @throws com.tjeannin.provigen.exceptions.InvalidContractException
 	 */
 	@SuppressLint("Registered")
 	@SuppressWarnings("rawtypes")

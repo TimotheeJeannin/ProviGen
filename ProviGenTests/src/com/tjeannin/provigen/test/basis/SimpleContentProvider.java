@@ -3,7 +3,7 @@ package com.tjeannin.provigen.test.basis;
 import android.net.Uri;
 
 import com.tjeannin.provigen.Constraint;
-import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.exceptions.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.annotation.Column;
