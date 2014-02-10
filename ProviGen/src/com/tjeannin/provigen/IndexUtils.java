@@ -56,17 +56,19 @@ final class IndexUtils {
 						}
 					}
 					builder.append(')');
-					if (!expressions.isEmpty() && DataBaseHelper.sqLiteVersionGreaterOrEqual(database, "3.8.0")) {
-						builder.append(" WHERE ");
-						for (final Iterator<String> iterator = expressions.iterator(); iterator.hasNext(); ) {
-							final String expr = iterator.next();
-							builder.append('(').append(expr).append(')');
-							if (iterator.hasNext()) {
-								builder.append(" OR ");
+					if (!expressions.isEmpty()) {
+						if (DataBaseHelper.isRunningSQLiteVersionGreaterOrEqual(database, "3.8.0")) {
+							builder.append(" WHERE ");
+							for (final Iterator<String> iterator = expressions.iterator(); iterator.hasNext(); ) {
+								final String expr = iterator.next();
+								builder.append('(').append(expr).append(')');
+								if (iterator.hasNext()) {
+									builder.append(" OR ");
+								}
 							}
+						} else {
+							Log.i(TAG, "Database doesn't support partial index.");
 						}
-					} else {
-						Log.i(TAG, "Database doesn't support partial index.");
 					}
 					Log.v(TAG, builder.toString());
 					database.execSQL(builder.toString());

@@ -69,4 +69,17 @@ public class IndexProvider extends ProviGenProvider {
 		Uri CONTENT_URI = Uri.parse("content://com.test.simple/partial_index_test");
 	}
 
+	@Contract(version = 1)
+	public interface WeightedIndexContract extends ProviGenBaseContract {
+		@Column(Type.INTEGER)
+		@Index(weight = 1, name = "INDEX_8")
+		String COMBIND_INDEX_1 = "idx_1";
+
+		@Column(Type.INTEGER)
+		@Index(weight = 9, name = "INDEX_8")
+		String COMBIND_INDEX_2 = "idx_2";
+
+		@ContentUri
+		Uri CONTENT_URI = Uri.parse("content://com.test.simple/partial_index_test");
+	}
 }

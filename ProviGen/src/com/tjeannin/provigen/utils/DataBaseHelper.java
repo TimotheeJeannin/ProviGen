@@ -1,5 +1,9 @@
 package com.tjeannin.provigen.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -47,7 +51,7 @@ public final class DataBaseHelper {
 	 * @param version  version that should be compared
 	 * @return {@code true} if the version is greater or equal the given one; {@code false} otherwise
 	 */
-	public static boolean sqLiteVersionGreaterOrEqual(final SQLiteDatabase database, final String version) {
+	public static boolean isRunningSQLiteVersionGreaterOrEqual(final SQLiteDatabase database, final String version) {
 		try {
 			final String currentVersion = getSQLiteVersion(database);
 			return VersionComparator.VERSION_COMPARATOR.compare(currentVersion, version) >= 0;
@@ -55,5 +59,55 @@ public final class DataBaseHelper {
 			Log.e(TAG, "Unable to read SQLite version", e);
 		}
 		return false;
+	}
+
+	/**
+	 * Load all index information for a table.
+	 *
+	 * @param database  database where the table is searched
+	 * @param tableName name of the table
+	 * @return an unmodifiable list with all index information
+	 */
+	public static List<IndexInformation> getIndexInformationForTable(final SQLiteDatabase database, final String tableName) {
+		final Cursor cursor = database.rawQuery(String.format("PRAGMA INDEX_LIST(%s)", tableName), null);
+		final int count = cursor.getCount();
+		if (count > 0) {
+			cursor.moveToFirst();
+			final List<IndexInformation> result = new ArrayList<IndexInformation>(count);
+			do {
+				final String indexName = cursor.getString(cursor.getColumnIndex("name"));
+				final boolean isUnique = "1".equals(cursor.getString(cursor.getColumnIndex("unique")));
+				final List<IndexColumn> indexColumnses = getIndexInformation(database, indexName);
+				result.add(new IndexInformation(indexName, isUnique, indexColumnses));
+			} while (cursor.moveToNext());
+			return Collections.unmodifiableList(result);
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	/**
+	 * Load information from database about an index. The result is ordered by the column order in the index.
+	 *
+	 * @param database  database where the index is searched
+	 * @param indexName name of the index
+	 * @return an unmodifiable ordered list of the columns for the given index
+	 */
+	public static List<IndexColumn> getIndexInformation(final SQLiteDatabase database, final String indexName) {
+		final Cursor cursor = database.rawQuery(String.format("PRAGMA INDEX_INFO(%s)", indexName), null);
+		final int count = cursor.getCount();
+		if (count > 0) {
+			cursor.moveToFirst();
+			final List<IndexColumn> result = new ArrayList<IndexColumn>(count);
+			do {
+				final int weight = cursor.getInt(cursor.getColumnIndex("seqno"));
+				final String columnName = cursor.getString(cursor.getColumnIndex("name"));
+				result.add(new IndexColumn(columnName, weight));
+			} while (cursor.moveToNext());
+			Collections.sort(result);
+			return Collections.unmodifiableList(result);
+		} else {
+			return Collections.emptyList();
+		}
 	}
 }
