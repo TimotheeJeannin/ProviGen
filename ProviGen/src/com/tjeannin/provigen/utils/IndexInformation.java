@@ -11,6 +11,11 @@ import com.tjeannin.provigen.annotation.IndexType;
 /**
  * This class holds all information about an index.
  *
+ * <p>This class implements an {@link #equals(Object)} and {@link #hashCode()} methode that compare
+ * all fields except the expression, because at this time there is no simple way to read the
+ * expression back from the database. Order of the index columns are also checked in the
+ * {@link #equals(Object)} method.</p>
+ *
  * @author Michael Cramer <michael@bigmichi1.de>
  * @since 1.6
  */
@@ -109,9 +114,42 @@ public class IndexInformation implements Serializable {
 				'}';
 	}
 
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		final IndexInformation that = (IndexInformation) o;
+		if("".equals(that.m_indexName)) {
+			return false;
+		}
+		if (!m_indexName.equals(that.m_indexName)) {
+			return false;
+		}
+		if (!m_indexColumns.equals(that.m_indexColumns)) {
+			return false;
+		}
+		return m_type == that.m_type;
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = m_indexName.hashCode();
+		result = 31 * result + m_indexColumns.hashCode();
+		result = 31 * result + m_type.hashCode();
+		return result;
+	}
+
 	/**
-	 * This class holds the information about a column in an index. This class also implements the {@link Comparable}
-	 * interface for sorting the IndexColumns by their position in the index.
+	 * This class holds the information about a column in an index.
+	 *
+	 * <p>This class also implements the {@link Comparable} interface for sorting the IndexColumns by their position
+	 * in the index. The {@link #equals(Object)} and {@link #hashCode()} methods only use the name, position field
+	 * is only used for sorting, but not for comparing.</p>
 	 *
 	 * @author Michael Cramer <michael@bigmichi1.de>
 	 * @since 1.6
@@ -149,6 +187,23 @@ public class IndexInformation implements Serializable {
 		@Override
 		public int compareTo(final IndexColumn another) {
 			return m_position > another.m_position ? 1 : m_position < another.m_position ? -1 : 0;
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
+			final IndexColumn that = (IndexColumn) o;
+			return m_name.equals(that.m_name);
+		}
+
+		@Override
+		public int hashCode() {
+			return m_name.hashCode();
 		}
 
 		@Override
