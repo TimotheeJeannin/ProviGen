@@ -82,4 +82,44 @@ public class IndexProvider extends ProviGenProvider {
 		@ContentUri
 		Uri CONTENT_URI = Uri.parse("content://com.test.simple/partial_index_test");
 	}
+
+	@Contract(version = 1)
+	public interface UpdateIndexContract1 extends ProviGenBaseContract {
+		@Column(Type.INTEGER)
+		@Index(name = "INDEX_9")
+		String FIELD_1 = "idx_1";
+
+		@Column(Type.INTEGER)
+		String FIELD_2 = "idx_2";
+
+		@ContentUri
+		Uri CONTENT_URI = Uri.parse("content://com.test.simple/update_index_test");
+	}
+
+	@Contract(version = 2)
+	public interface UpdateIndexContract2 extends ProviGenBaseContract {
+		@Column(Type.INTEGER)
+		@Index(name = "INDEX_9")
+		String FIELD_1 = "idx_1";
+
+		@Column(Type.INTEGER)
+		@Index(name = "INDEX_10")
+		String FIELD_2 = "idx_2";
+
+		@ContentUri
+		Uri CONTENT_URI = Uri.parse("content://com.test.simple/update_index_test");
+	}
+
+	@Contract(version = 3)
+	public interface UpdateIndexContract3 extends ProviGenBaseContract {
+		@Column(Type.INTEGER)
+		@Index(name = "INDEX_9")
+		String FIELD_1 = "idx_1";
+
+		@Column(Type.INTEGER)
+		String FIELD_2 = "idx_2";
+
+		@ContentUri
+		Uri CONTENT_URI = Uri.parse("content://com.test.simple/update_index_test");
+	}
 }

@@ -1,13 +1,11 @@
 package com.tjeannin.provigen.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import com.tjeannin.provigen.annotation.IndexType;
 import com.tjeannin.provigen.exceptions.DatabaseException;
 
 /**
@@ -17,10 +15,6 @@ import com.tjeannin.provigen.exceptions.DatabaseException;
  * @since 1.6
  */
 public final class DataBaseHelper {
-	/**
-	 * Logging tag.
-	 */
-	public static final String TAG = "PROVIGEN_DATABASE";
 
 	private DataBaseHelper() {
 	}
@@ -34,10 +28,9 @@ public final class DataBaseHelper {
 	 */
 	public static String getSQLiteVersion(final SQLiteDatabase database) throws DatabaseException {
 		final Cursor cursor = database.rawQuery("SELECT sqlite_version() AS sqlite_version", null);
-		if (cursor.getCount() == 1) {
-			cursor.moveToFirst();
+		if (cursor.getCount() == 1 && cursor.moveToFirst()) {
 			final String version = cursor.getString(cursor.getColumnIndex("sqlite_version"));
-			Log.d(TAG, String.format("Using SQLite version '%s'", version));
+			Log.d(IndexUtils.TAG, String.format("Using SQLite version '%s'", version));
 			return version;
 		} else {
 			throw new DatabaseException("Unknown SQLite version");
@@ -57,56 +50,27 @@ public final class DataBaseHelper {
 			final String currentVersion = getSQLiteVersion(database);
 			return VersionComparator.VERSION_COMPARATOR.compare(currentVersion, version) >= 0;
 		} catch (final DatabaseException e) {
-			Log.e(TAG, "Unable to read SQLite version", e);
+			Log.e(IndexUtils.TAG, "Unable to read SQLite version", e);
 		}
 		return false;
 	}
 
 	/**
-	 * Load all index information for a table.
+	 * Generate a list of the columns in an existing table.
 	 *
-	 * @param database  database where the table is searched
+	 * @param database  database where the table should be searched
 	 * @param tableName name of the table
-	 * @return an unmodifiable list with all index information
+	 * @return list of column names
 	 */
-	public static List<IndexInformation> getIndexInformationForTable(final SQLiteDatabase database, final String tableName) {
-		final Cursor cursor = database.rawQuery(String.format("PRAGMA INDEX_LIST(%s)", tableName), null);
-		final int count = cursor.getCount();
-		if (count > 0) {
-			cursor.moveToFirst();
-			final List<IndexInformation> result = new ArrayList<IndexInformation>(count);
+	public static List<String> getColumnInformation(final SQLiteDatabase database, final String tableName) {
+		final Cursor cursor = database.rawQuery(String.format("PRAGMA table_info(%s)", tableName), null);
+		final List<String> result = new ArrayList<String>(cursor.getCount());
+		if (cursor.moveToFirst()) {
 			do {
-				final String indexName = cursor.getString(cursor.getColumnIndex("name"));
-				final boolean isUnique = "1".equals(cursor.getString(cursor.getColumnIndex("unique")));
-				final IndexInformation indexInformation = new IndexInformation(indexName, isUnique ? IndexType.UNIQUE : IndexType.INDEX);
-				getIndexInformation(database, indexInformation);
-				result.add(indexInformation);
-			} while (cursor.moveToNext());
-			return Collections.unmodifiableList(result);
-		} else {
-			return Collections.emptyList();
-		}
-	}
-
-	/**
-	 * Load information about an index from database.
-	 *
-	 * @param database  database where the index is searched
-	 * @param indexInformation name of the index
-	 */
-	public static void getIndexInformation(final SQLiteDatabase database, final IndexInformation indexInformation) {
-		final String indexName = indexInformation.getIndexName();
-		final Cursor cursor = database.rawQuery(String.format("PRAGMA INDEX_INFO(%s)", indexName), null);
-		final int count = cursor.getCount();
-		if (count > 0) {
-			cursor.moveToFirst();
-			do {
-				final int position = cursor.getInt(cursor.getColumnIndex("seqno"));
 				final String columnName = cursor.getString(cursor.getColumnIndex("name"));
-				indexInformation.addNewIndexColumn(columnName, position, "");
+				result.add(columnName);
 			} while (cursor.moveToNext());
-		} else {
-			Log.i(TAG, String.format("No index information found for index with name '%s'", indexName));
 		}
+		return result;
 	}
 }

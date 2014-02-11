@@ -136,7 +136,7 @@ public class ProviGenProvider extends ContentProvider {
 			if (!openHelper.hasTableInDatabase(database, contract)) {
 				openHelper.createTable(database, contract);
 			} else {
-				openHelper.addMissingColumnsInTable(database, contract);
+				openHelper.updateTable(database, contract);
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public class ProviGenProvider extends ContentProvider {
 	@SuppressWarnings("rawtypes")
 	public void addMissingColumnsInTable(SQLiteDatabase database, Class contractClass) {
 		try {
-			openHelper.addMissingColumnsInTable(database, new ContractHolder(contractClass));
+			openHelper.updateTable(database, new ContractHolder(contractClass));
 		} catch (InvalidContractException exception) {
 			exception.printStackTrace();
 		}

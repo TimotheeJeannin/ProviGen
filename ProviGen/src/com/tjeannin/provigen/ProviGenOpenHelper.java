@@ -1,6 +1,7 @@
 package com.tjeannin.provigen;
 
 import java.util.Iterator;
+import java.util.List;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,7 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import com.tjeannin.provigen.exceptions.IndexException;
-import com.tjeannin.provigen.exceptions.InvalidContractException;
+import com.tjeannin.provigen.utils.DataBaseHelper;
+import com.tjeannin.provigen.utils.IndexUtils;
 
 class ProviGenOpenHelper extends SQLiteOpenHelper {
 	/**
@@ -33,9 +35,10 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 	}
 
 	void createTable(final SQLiteDatabase database, final ContractHolder contractHolder) {
+		final String tableName = contractHolder.getTable();
 		// CREATE TABLE myTable (
 		final StringBuilder builder = new StringBuilder("CREATE TABLE ");
-		builder.append(contractHolder.getTable()).append(" (");
+		builder.append(tableName).append(" (");
 		// myInt INTEGER, myString TEXT
 		for (final Iterator<DatabaseField> iterator = contractHolder.getFields().iterator(); iterator.hasNext(); ) {
 			final DatabaseField field = iterator.next();
@@ -54,21 +57,27 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 		Log.v(TAG, builder.toString());
 		database.execSQL(builder.toString());
 		try {
-			IndexUtils.addConstraints(database, contractHolder);
+			IndexUtils.addConstraints(database, tableName, contractHolder.getIndexInformation());
 		} catch (final IndexException e) {
 			Log.e(TAG, "Could not create Index", e);
 		}
 	}
 
-	void addMissingColumnsInTable(SQLiteDatabase database, ContractHolder contractHolder) {
-
-		Cursor cursor = database.rawQuery("PRAGMA table_info(" + contractHolder.getTable() + ")", null);
-		for (DatabaseField field : contractHolder.getFields()) {
-			if (!fieldExistAsColumn(field.getName(), cursor)) {
-				final StringBuilder sql = new StringBuilder("ALTER TABLE ").append(contractHolder.getTable()).append(" ADD COLUMN ").append(field.getName()).append(' ').append(field.getType().getDBStorageClass());
+	void updateTable(final SQLiteDatabase database, final ContractHolder contractHolder) {
+		final String tableName = contractHolder.getTable();
+		final List<String> columnNames = DataBaseHelper.getColumnInformation(database, tableName);
+		for (final DatabaseField field : contractHolder.getFields()) {
+			final String columnName = field.getName();
+			if (!columnNames.contains(columnName)) {
+				final StringBuilder sql = new StringBuilder("ALTER TABLE ").append(tableName).append(" ADD COLUMN ").append(columnName).append(' ').append(field.getType().getDBStorageClass());
 				Log.v(TAG, sql.toString());
 				database.execSQL(sql.toString());
 			}
+		}
+		try {
+			IndexUtils.addConstraints(database, tableName, contractHolder.getIndexInformation());
+		} catch (final IndexException e) {
+			Log.e(TAG, "Could not update Index", e);
 		}
 	}
 
@@ -81,16 +90,4 @@ class ProviGenOpenHelper extends SQLiteOpenHelper {
 		cursor.close();
 		return exists;
 	}
-
-	private boolean fieldExistAsColumn(String field, Cursor columnCursor) {
-		if (columnCursor.moveToFirst()) {
-			do {
-				if (field.equals(columnCursor.getString(1))) {
-					return true;
-				}
-			} while (columnCursor.moveToNext());
-		}
-		return false;
-	}
-
 }

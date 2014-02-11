@@ -13,9 +13,9 @@ public final class ContractHelper {
 	public static void addIndexInformation(final Collection<IndexInformation> indexInformation, final String columnName, final Index index) throws IndexException {
 		final String indexName = index.name();
 		if (indexName.trim().length() == 0 || !hasIndexDefinition(indexInformation, index)) {
-			indexInformation.add(createNewInformation(columnName, index));
+			indexInformation.add(createIndexInformation(columnName, index));
 		} else {
-			extendInformation(indexInformation, columnName, index);
+			extendIndexInformation(indexInformation, columnName, index);
 		}
 	}
 
@@ -34,7 +34,7 @@ public final class ContractHelper {
 		return false;
 	}
 
-	private static void extendInformation(final Iterable<IndexInformation> indexInformation, final String columnName, final Index index) {
+	private static void extendIndexInformation(final Iterable<IndexInformation> indexInformation, final String columnName, final Index index) {
 		for (final IndexInformation information : indexInformation) {
 			if (information.getIndexName().equals(index.name())) {
 				information.addNewIndexColumn(columnName, index.position(), index.expr());
@@ -42,7 +42,7 @@ public final class ContractHelper {
 		}
 	}
 
-	private static IndexInformation createNewInformation(final String columnName, final Index index) {
+	private static IndexInformation createIndexInformation(final String columnName, final Index index) {
 		final IndexInformation indexInformation = new IndexInformation(index.name(), index.type());
 		indexInformation.addNewIndexColumn(columnName, index.position(), index.expr());
 		return indexInformation;
