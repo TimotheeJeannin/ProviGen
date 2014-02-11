@@ -7,6 +7,7 @@ import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import com.tjeannin.provigen.annotation.IndexType;
 import com.tjeannin.provigen.exceptions.DatabaseException;
 
 /**
@@ -77,8 +78,9 @@ public final class DataBaseHelper {
 			do {
 				final String indexName = cursor.getString(cursor.getColumnIndex("name"));
 				final boolean isUnique = "1".equals(cursor.getString(cursor.getColumnIndex("unique")));
-				final List<IndexColumn> indexColumnses = getIndexInformation(database, indexName);
-				result.add(new IndexInformation(indexName, isUnique, indexColumnses));
+				final IndexInformation indexInformation = new IndexInformation(indexName, isUnique ? IndexType.UNIQUE : IndexType.INDEX);
+				getIndexInformation(database, indexInformation);
+				result.add(indexInformation);
 			} while (cursor.moveToNext());
 			return Collections.unmodifiableList(result);
 		} else {
@@ -87,27 +89,24 @@ public final class DataBaseHelper {
 	}
 
 	/**
-	 * Load information from database about an index. The result is ordered by the column order in the index.
+	 * Load information about an index from database.
 	 *
 	 * @param database  database where the index is searched
-	 * @param indexName name of the index
-	 * @return an unmodifiable ordered list of the columns for the given index
+	 * @param indexInformation name of the index
 	 */
-	public static List<IndexColumn> getIndexInformation(final SQLiteDatabase database, final String indexName) {
+	public static void getIndexInformation(final SQLiteDatabase database, final IndexInformation indexInformation) {
+		final String indexName = indexInformation.getIndexName();
 		final Cursor cursor = database.rawQuery(String.format("PRAGMA INDEX_INFO(%s)", indexName), null);
 		final int count = cursor.getCount();
 		if (count > 0) {
 			cursor.moveToFirst();
-			final List<IndexColumn> result = new ArrayList<IndexColumn>(count);
 			do {
-				final int weight = cursor.getInt(cursor.getColumnIndex("seqno"));
+				final int position = cursor.getInt(cursor.getColumnIndex("seqno"));
 				final String columnName = cursor.getString(cursor.getColumnIndex("name"));
-				result.add(new IndexColumn(columnName, weight));
+				indexInformation.addNewIndexColumn(columnName, position, "");
 			} while (cursor.moveToNext());
-			Collections.sort(result);
-			return Collections.unmodifiableList(result);
 		} else {
-			return Collections.emptyList();
+			Log.i(TAG, String.format("No index information found for index with name '%s'", indexName));
 		}
 	}
 }

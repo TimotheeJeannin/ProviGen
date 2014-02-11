@@ -30,12 +30,11 @@ public @interface Index {
 	String name() default "";
 
 	/**
-	 * Weighting of the field in the unique constraint. Higher value weight means column is ordered
-	 * befor columns with lower weight.
+	 * Position of the field in the index. Higher value means column is ordered after columns with lower value.
 	 *
 	 * @return weighting of the column in the index.
 	 */
-	int weight() default 0;
+	int position() default 0;
 
 	/**
 	 * Defines an expression for creating an "partial index".<p><b>This will only work with SQLite version greater or equal

@@ -72,11 +72,11 @@ public class IndexProvider extends ProviGenProvider {
 	@Contract(version = 1)
 	public interface WeightedIndexContract extends ProviGenBaseContract {
 		@Column(Type.INTEGER)
-		@Index(weight = 1, name = "INDEX_8")
+		@Index(position = 9, name = "INDEX_8")
 		String COMBIND_INDEX_1 = "idx_1";
 
 		@Column(Type.INTEGER)
-		@Index(weight = 9, name = "INDEX_8")
+		@Index(position = 1, name = "INDEX_8")
 		String COMBIND_INDEX_2 = "idx_2";
 
 		@ContentUri

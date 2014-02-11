@@ -12,7 +12,6 @@ import com.tjeannin.provigen.exceptions.InvalidContractException;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.index.IndexProvider.IndexContract;
 import com.tjeannin.provigen.utils.DataBaseHelper;
-import com.tjeannin.provigen.utils.IndexColumn;
 import com.tjeannin.provigen.utils.IndexInformation;
 
 public class IndexTest extends ExtendedProviderTestCase<IndexProvider> {
@@ -66,20 +65,21 @@ public class IndexTest extends ExtendedProviderTestCase<IndexProvider> {
 		final List<String> indexNames = loadIndexForTable(IndexProvider.WeightedIndexContract.CONTENT_URI);
 		assertEquals(1, indexNames.size());
 		assertTrue(indexNames.contains("INDEX_8"));
-		final List<String> columnNames = loadIndexInformation("INDEX_8");
+		final List<String> columnNames = loadIndexInformation(IndexProvider.WeightedIndexContract.CONTENT_URI, "INDEX_8");
 		assertEquals(2, columnNames.size());
 		assertEquals(IndexProvider.WeightedIndexContract.COMBIND_INDEX_2, columnNames.get(0));
 		assertEquals(IndexProvider.WeightedIndexContract.COMBIND_INDEX_1, columnNames.get(1));
 	}
 
-	private List<String> loadIndexInformation(final String indexName) {
+	private List<String> loadIndexInformation(final Uri uri, final String indexName) {
 		final SQLiteDatabase sqLiteDatabase = getMockContext().openOrCreateDatabase("ProviGenDatabase", Context.MODE_PRIVATE, null);
-		final List<IndexColumn> information = DataBaseHelper.getIndexInformation(sqLiteDatabase, indexName);
-		final List<String> result = new ArrayList<String>(information.size());
-		for (final IndexColumn column : information) {
-			result.add(column.getName());
+		final List<IndexInformation> information = DataBaseHelper.getIndexInformationForTable(sqLiteDatabase, uri.getLastPathSegment());
+		for (final IndexInformation indexInformation : information) {
+			if( indexInformation.getIndexName().equals(indexName)) {
+				return indexInformation.getIndexColumnNames();
+			}
 		}
-		return Collections.unmodifiableList(result);
+		return Collections.emptyList();
 	}
 
 	private List<String> loadIndexForTable(final Uri uri) {

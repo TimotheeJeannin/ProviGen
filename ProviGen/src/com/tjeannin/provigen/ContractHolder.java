@@ -14,7 +14,10 @@ import com.tjeannin.provigen.annotation.Id;
 import com.tjeannin.provigen.annotation.Index;
 import com.tjeannin.provigen.annotation.NotNull;
 import com.tjeannin.provigen.annotation.Unique;
+import com.tjeannin.provigen.exceptions.IndexException;
 import com.tjeannin.provigen.exceptions.InvalidContractException;
+import com.tjeannin.provigen.utils.ContractHelper;
+import com.tjeannin.provigen.utils.IndexInformation;
 
 class ContractHolder {
 
@@ -23,6 +26,7 @@ class ContractHolder {
 	private String idField;
 	private String tableName;
 	private final List<DatabaseField> databaseFields = new ArrayList<DatabaseField>(0);
+	private final List<IndexInformation> indexInformation = new ArrayList<IndexInformation>(0);
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ContractHolder(Class contractClass) throws InvalidContractException {
@@ -34,39 +38,40 @@ class ContractHolder {
 			throw new InvalidContractException("The given class does not have a @Contract annotation.");
 		}
 
-		Field[] fields = contractClass.getFields();
-		for (Field field : fields) {
-
-			ContentUri contentUri = field.getAnnotation(ContentUri.class);
+		final Field[] fields = contractClass.getFields();
+		for (final Field field : fields) {
+			final ContentUri contentUri = field.getAnnotation(ContentUri.class);
 			if (contentUri != null) {
 				if (authority != null || tableName != null) {
 					throw new InvalidContractException("A contract can not have several @ContentUri.");
 				}
 				try {
-					Uri uri = (Uri) field.get(null);
+					final Uri uri = (Uri) field.get(null);
 					authority = uri.getAuthority();
 					tableName = uri.getLastPathSegment();
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (final IllegalAccessException e) {
+					throw new InvalidContractException("Getting information from @ContentUri annotation failed", e);
 				}
-			}
-
-			Id id = field.getAnnotation(Id.class);
-			if (id != null) {
-				if (idField != null) {
-					throw new InvalidContractException("A contract can not have several fields annotated with @Id.");
-				}
+			} else {
+				final String columnName;
 				try {
-					idField = (String) field.get(null);
-				} catch (Exception e) {
-					e.printStackTrace();
+					columnName = (String) field.get(null);
+				} catch (final IllegalAccessException e) {
+					throw new InvalidContractException(String.format("Could not read from field %s", field.getName()), e);
 				}
-			}
 
-			final Column column = field.getAnnotation(Column.class);
-			if (column != null) {
-				try {
-					final DatabaseField databaseField = new DatabaseField((String) field.get(null), column.value());
+				final Id id = field.getAnnotation(Id.class);
+				if (id != null) {
+					if (idField != null) {
+						throw new InvalidContractException("A contract can not have several fields annotated with @Id.");
+					} else {
+						idField = columnName;
+					}
+				}
+
+				final Column column = field.getAnnotation(Column.class);
+				if (column != null) {
+					final DatabaseField databaseField = new DatabaseField(columnName, column.value());
 
 					final Unique unique = field.getAnnotation(Unique.class);
 					if (unique != null) {
@@ -80,12 +85,13 @@ class ContractHolder {
 
 					final Index index = field.getAnnotation(Index.class);
 					if (index != null) {
-						databaseField.setIndex(index);
+						try {
+							ContractHelper.addIndexInformation(indexInformation, databaseField.getName(), index);
+						} catch (final IndexException e) {
+							throw new InvalidContractException("Index information creation failed.", e);
+						}
 					}
-
 					databaseFields.add(databaseField);
-				} catch (final Exception e) {
-					e.printStackTrace();
 				}
 			}
 		}
@@ -113,5 +119,9 @@ class ContractHolder {
 
 	public List<DatabaseField> getFields() {
 		return Collections.unmodifiableList(databaseFields);
+	}
+
+	public List<IndexInformation> getIndexInformation() {
+		return Collections.unmodifiableList(indexInformation);
 	}
 }

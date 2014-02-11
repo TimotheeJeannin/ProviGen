@@ -1,22 +1,14 @@
 package com.tjeannin.provigen;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
-import com.tjeannin.provigen.annotation.Index;
-import com.tjeannin.provigen.annotation.IndexType;
 import com.tjeannin.provigen.exceptions.IndexException;
 import com.tjeannin.provigen.utils.DataBaseHelper;
+import com.tjeannin.provigen.utils.IndexInformation;
 
 final class IndexUtils {
 	/**
@@ -32,48 +24,24 @@ final class IndexUtils {
 	}
 
 	static void addConstraints(final SQLiteDatabase database, final ContractHolder holder) throws IndexException {
-		final Map<IndexType, Map<String, List<DatabaseField>>> allConstraints = getIndexList(holder);
-		for (final IndexType type : IndexType.values()) {
-			if (allConstraints.containsKey(type)) {
-				for (final Map.Entry<String, List<DatabaseField>> constraint : allConstraints.get(type).entrySet()) {
-					final StringBuilder builder = new StringBuilder("CREATE ").append(type.getSqlPart()).append(' ');
-					builder.append(getConstraintName(database, constraint.getKey().trim()));
-					builder.append(" ON ").append(holder.getTable()).append('(');
-					final List<DatabaseField> columns = constraint.getValue();
-					if (columns.size() > 1) {
-						Collections.sort(columns, DatabaseField.INDEX_COMPARATOR);
-					}
-					final Collection<String> expressions = new ArrayList<String>(0);
-					for (final Iterator<DatabaseField> iterator = columns.iterator(); iterator.hasNext(); ) {
-						final DatabaseField field = iterator.next();
-						builder.append(field.getName());
-						final String expr = field.getIndex().expr().trim();
-						if (!TextUtils.isEmpty(expr)) {
-							expressions.add(expr.trim());
-						}
-						if (iterator.hasNext()) {
-							builder.append(", ");
-						}
-					}
-					builder.append(')');
-					if (!expressions.isEmpty()) {
-						if (DataBaseHelper.isRunningSQLiteVersionGreaterOrEqual(database, "3.8.0")) {
-							builder.append(" WHERE ");
-							for (final Iterator<String> iterator = expressions.iterator(); iterator.hasNext(); ) {
-								final String expr = iterator.next();
-								builder.append('(').append(expr).append(')');
-								if (iterator.hasNext()) {
-									builder.append(" OR ");
-								}
-							}
-						} else {
-							Log.i(TAG, "Database doesn't support partial index.");
-						}
-					}
-					Log.v(TAG, builder.toString());
-					database.execSQL(builder.toString());
+		final List<IndexInformation> indexInformation = holder.getIndexInformation();
+		for (final IndexInformation index : indexInformation) {
+			final StringBuilder builder = new StringBuilder("CREATE ").append(index.getType().getSqlPart()).append(' ');
+			builder.append(getConstraintName(database, index.getIndexName().trim()));
+			builder.append(" ON ").append(holder.getTable());
+			builder.append('(');
+			builder.append(TextUtils.join(", ", index.getIndexColumnNames()));
+			builder.append(')');
+			if(!index.getExpressions().isEmpty()) {
+				if (DataBaseHelper.isRunningSQLiteVersionGreaterOrEqual(database, "3.8.0")) {
+					builder.append(" WHERE ");
+					builder.append(TextUtils.join(" OR ", index.getExpressions()));
+				} else {
+					Log.i(TAG, "Database doesn't support partial index.");
 				}
 			}
+			Log.v(TAG, builder.toString());
+			database.execSQL(builder.toString());
 		}
 	}
 
@@ -109,43 +77,5 @@ final class IndexUtils {
 				return String.format("%s%d", PROVIGEN_INDEX_PREFIX, counter + 1);
 			}
 		}
-	}
-
-	public static Map<IndexType, Map<String, List<DatabaseField>>> getIndexList(final ContractHolder holder) throws IndexException {
-		final Map<IndexType, Map<String, List<DatabaseField>>> indexList = new EnumMap<IndexType, Map<String, List<DatabaseField>>>(IndexType.class);
-		for (final DatabaseField field : holder.getFields()) {
-			final Index index = field.getIndex();
-			if (index != null) {
-				final IndexType type = index.type();
-				final Map<String, List<DatabaseField>> map;
-				if (indexList.containsKey(type)) {
-					map = indexList.get(type);
-				} else {
-					map = new HashMap<String, List<DatabaseField>>(1);
-					indexList.put(type, map);
-				}
-				final String indexName = index.name().trim();
-				if (!TextUtils.isEmpty(indexName) && isNameInOtherTypesDefined(indexName, type, indexList)) {
-					throw new IndexException(String.format("Index with name %s was allready defined with another index type. Actual type: %s", indexName, type));
-				}
-				if (map.containsKey(indexName)) {
-					map.get(indexName).add(field);
-				} else {
-					final List<DatabaseField> fields = new ArrayList<DatabaseField>(1);
-					fields.add(field);
-					map.put(indexName, fields);
-				}
-			}
-		}
-		return indexList;
-	}
-
-	private static boolean isNameInOtherTypesDefined(final String indexName, final IndexType type, final Map<IndexType, Map<String, List<DatabaseField>>> indexList) {
-		for (final Map.Entry<IndexType, Map<String, List<DatabaseField>>> entry : indexList.entrySet()) {
-			if (entry.getKey() != type && entry.getValue().keySet().contains(indexName)) {
-				return true;
-			}
-		}
-		return false;
 	}
 }
