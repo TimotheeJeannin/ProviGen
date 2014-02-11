@@ -21,27 +21,27 @@ public class IndexProvider extends ProviGenProvider {
 	@Contract(version = 1)
 	public interface IndexContract extends ProviGenBaseContract {
 		@Column(Type.INTEGER)
-		@Index
+		@Index("INDEX_1")
 		String INDEX_COLUMN = "idx_1";
 
 		@Column(Type.INTEGER)
-		@Index(type = IndexType.UNIQUE)
+		@Index(value = "INDEX_2",type = IndexType.UNIQUE)
 		String UNIQUE_INDEX_COLUMN = "idx_2";
 
 		@Column(Type.INTEGER)
-		@Index(name = "INDEX_3")
+		@Index("INDEX_3")
 		String INDEX_WITH_NAME = "idx_3";
 
 		@Column(Type.INTEGER)
-		@Index(type = IndexType.UNIQUE, name = "INDEX_4")
+		@Index(type = IndexType.UNIQUE, value = "INDEX_4")
 		String UNIQUE_INDEX_WITH_NAME = "idx_4";
 
 		@Column(Type.INTEGER)
-		@Index(name = "INDEX_5")
+		@Index("INDEX_5")
 		String COMBIND_INDEX_1 = "idx_5";
 
 		@Column(Type.INTEGER)
-		@Index(name = "INDEX_5")
+		@Index("INDEX_5")
 		String COMBINED_INDEX_2 = "idx_6";
 
 		@ContentUri
@@ -52,7 +52,7 @@ public class IndexProvider extends ProviGenProvider {
 	public interface UniqueAndUniqueIndexContract extends ProviGenBaseContract {
 		@Column(Type.INTEGER)
 		@Unique
-		@Index(type = IndexType.UNIQUE)
+		@Index(value = "INDEX_1", type = IndexType.UNIQUE)
 		String INDEX_COLUMN = "idx_1";
 
 		@ContentUri
@@ -62,7 +62,7 @@ public class IndexProvider extends ProviGenProvider {
 	@Contract(version = 1)
 	public interface PartialIndexContract extends ProviGenBaseContract {
 		@Column(Type.INTEGER)
-		@Index(type = IndexType.UNIQUE, expr = "idx_1 > 2")
+		@Index(value = "INDEX_1", type = IndexType.UNIQUE, expr = "idx_1 > 2")
 		String INDEX_COLUMN = "idx_1";
 
 		@ContentUri
@@ -72,11 +72,11 @@ public class IndexProvider extends ProviGenProvider {
 	@Contract(version = 1)
 	public interface WeightedIndexContract extends ProviGenBaseContract {
 		@Column(Type.INTEGER)
-		@Index(position = 9, name = "INDEX_8")
+		@Index(position = 9, value = "INDEX_8")
 		String COMBIND_INDEX_1 = "idx_1";
 
 		@Column(Type.INTEGER)
-		@Index(position = 1, name = "INDEX_8")
+		@Index(position = 1, value = "INDEX_8")
 		String COMBIND_INDEX_2 = "idx_2";
 
 		@ContentUri
@@ -86,7 +86,7 @@ public class IndexProvider extends ProviGenProvider {
 	@Contract(version = 1)
 	public interface UpdateIndexContract1 extends ProviGenBaseContract {
 		@Column(Type.INTEGER)
-		@Index(name = "INDEX_9")
+		@Index("INDEX_9")
 		String FIELD_1 = "idx_1";
 
 		@Column(Type.INTEGER)
@@ -99,11 +99,11 @@ public class IndexProvider extends ProviGenProvider {
 	@Contract(version = 2)
 	public interface UpdateIndexContract2 extends ProviGenBaseContract {
 		@Column(Type.INTEGER)
-		@Index(name = "INDEX_9")
+		@Index("INDEX_9")
 		String FIELD_1 = "idx_1";
 
 		@Column(Type.INTEGER)
-		@Index(name = "INDEX_10")
+		@Index("INDEX_10")
 		String FIELD_2 = "idx_2";
 
 		@ContentUri
@@ -113,7 +113,7 @@ public class IndexProvider extends ProviGenProvider {
 	@Contract(version = 3)
 	public interface UpdateIndexContract3 extends ProviGenBaseContract {
 		@Column(Type.INTEGER)
-		@Index(name = "INDEX_9")
+		@Index("INDEX_9")
 		String FIELD_1 = "idx_1";
 
 		@Column(Type.INTEGER)

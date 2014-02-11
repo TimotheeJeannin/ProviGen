@@ -33,8 +33,8 @@ public class IndexTest extends ExtendedProviderTestCase<IndexProvider> {
 
 		final List<String> indexNames = loadIndexNames(IndexContract.CONTENT_URI);
 		assertEquals(5, indexNames.size());
-		assertTrue(indexNames.contains("provigen_index_1"));
-		assertTrue(indexNames.contains("provigen_index_2"));
+		assertTrue(indexNames.contains("INDEX_1"));
+		assertTrue(indexNames.contains("INDEX_2"));
 		assertTrue(indexNames.contains("INDEX_3"));
 		assertTrue(indexNames.contains("INDEX_4"));
 		assertTrue(indexNames.contains("INDEX_5"));
@@ -46,7 +46,7 @@ public class IndexTest extends ExtendedProviderTestCase<IndexProvider> {
 
 		final List<String> indexNames = loadIndexNames(IndexProvider.UniqueAndUniqueIndexContract.CONTENT_URI);
 		assertEquals(1, indexNames.size());
-		assertTrue(indexNames.contains("provigen_index_1"));
+		assertTrue(indexNames.contains("INDEX_1"));
 	}
 
 	public void testPartialIndex() throws InvalidContractException {
@@ -55,7 +55,7 @@ public class IndexTest extends ExtendedProviderTestCase<IndexProvider> {
 
 		final List<String> indexNames = loadIndexNames(IndexProvider.PartialIndexContract.CONTENT_URI);
 		assertEquals(1, indexNames.size());
-		assertTrue(indexNames.contains("provigen_index_1"));
+		assertTrue(indexNames.contains("INDEX_1"));
 	}
 
 	public void testWeightedIndex() throws InvalidContractException {

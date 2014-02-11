@@ -27,7 +27,7 @@ public @interface Index {
 	 *
 	 * @return name
 	 */
-	String name() default "";
+	String value();
 
 	/**
 	 * Position of the field in the index. Higher value means column is ordered after columns with lower value.

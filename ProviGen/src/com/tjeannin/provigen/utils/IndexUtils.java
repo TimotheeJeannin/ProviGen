@@ -17,10 +17,6 @@ public final class IndexUtils {
 	 * Logging tag.
 	 */
 	public static final String TAG = "PROVIGEN_INDEX";
-	/**
-	 * Prefix for autmatic created index names.
-	 */
-	public static final String PROVIGEN_INDEX_PREFIX = "provigen_index_";
 
 	private IndexUtils() {
 	}
@@ -39,7 +35,7 @@ public final class IndexUtils {
 
 		for (final IndexInformation index : toAdd) {
 			final StringBuilder builder = new StringBuilder("CREATE ").append(index.getType().getSqlPart()).append(' ');
-			builder.append(getConstraintName(database, index.getIndexName().trim()));
+			builder.append(getIndexName(database, index.getIndexName()));
 			builder.append(" ON ").append(tableName);
 			builder.append('(');
 			builder.append(TextUtils.join(", ", index.getIndexColumnNames()));
@@ -57,37 +53,23 @@ public final class IndexUtils {
 		}
 	}
 
-	private static String getConstraintName(final SQLiteDatabase database, final String constraintName) throws IndexException {
-		if (!TextUtils.isEmpty(constraintName)) {
-			final Cursor cursor = database.rawQuery("SELECT type, tbl_name FROM sqlite_master WHERE name = ?", new String[] { constraintName.trim() });
+	private static String getIndexName(final SQLiteDatabase database, final String indexName) throws IndexException {
+		if (indexName == null || indexName.trim().length() == 0) {
+			throw new IndexException("Index name can not be empty");
+		} else {
+			final String index = indexName.trim();
+			final Cursor cursor = database.rawQuery("SELECT type, tbl_name FROM sqlite_master WHERE name = ?", new String[] { index });
 			final boolean exists = cursor.getCount() != 0;
 			if (exists) {
 				cursor.moveToFirst();
 				final String tableName = cursor.getString(cursor.getColumnIndex("tbl_name"));
 				final String type = cursor.getString(cursor.getColumnIndex("type"));
-				final String message = String.format("There is allready an object (%s) with the name %s  on table %s in the database", type, constraintName, tableName);
+				final String message = String.format("There is allready an object (%s) with the name %s  on table %s in the database", type, index, tableName);
 				cursor.close();
 				throw new IndexException(message);
 			}
 			cursor.close();
-			return constraintName;
-		} else {
-			final Cursor cursor = database.rawQuery("SELECT name FROM sqlite_master WHERE name like ?", new String[] { PROVIGEN_INDEX_PREFIX + '%' });
-			if (cursor.getCount() == 0) {
-				return String.format("%s%d", PROVIGEN_INDEX_PREFIX, 1);
-			} else {
-				cursor.moveToFirst();
-				int counter = 0;
-				do {
-					final String name = cursor.getString(cursor.getColumnIndex("name"));
-					final String number = name.replace(PROVIGEN_INDEX_PREFIX, "");
-					final int cnt = Integer.parseInt(number);
-					if (counter < cnt) {
-						counter = cnt;
-					}
-				} while (cursor.moveToNext());
-				return String.format("%s%d", PROVIGEN_INDEX_PREFIX, counter + 1);
-			}
+			return index;
 		}
 	}
 

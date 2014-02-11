@@ -220,7 +220,7 @@ public class ContractHelperTest {
 		}
 
 		@Override
-		public String name() {
+		public String value() {
 			return m_name;
 		}
 
