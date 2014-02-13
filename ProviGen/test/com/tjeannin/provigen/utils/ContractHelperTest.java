@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import com.tjeannin.provigen.annotation.Index;
 import com.tjeannin.provigen.annotation.IndexType;
@@ -195,9 +194,9 @@ public class ContractHelperTest {
 		final Collection<IndexInformation> set = new HashSet<IndexInformation>(2);
 		set.add(idx27);
 		set.add(idx28);
-		Assert.assertNotEquals(idx27, idx28);
-		Assert.assertEquals(set.size(), 2);
-	}
+        Assert.assertEquals(idx27, idx28);
+        Assert.assertEquals(set.size(), 1);
+    }
 	private static class Testee implements Index {
 		private final IndexType m_type;
 		private final String m_name;
