@@ -8,6 +8,7 @@ import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
+import com.tjeannin.provigen.annotation.Order;
 import com.tjeannin.provigen.annotation.SortOrder;
 
 public class SortContentProvider extends ProviGenProvider {
@@ -19,8 +20,8 @@ public class SortContentProvider extends ProviGenProvider {
 	@Contract(version = 1)
 	public interface ContractOne extends ProviGenBaseContract {
 		@Column(Type.INTEGER)
-		@SortOrder(order = SortOrder.Order.ASC)
-		String MY_INT = "integer";
+        @SortOrder(Order.ASC)
+        String MY_INT = "integer";
 
 		@ContentUri
 		Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_sort");
@@ -29,12 +30,12 @@ public class SortContentProvider extends ProviGenProvider {
 	@Contract(version = 1)
 	public interface ContractTwo extends ProviGenBaseContract {
 		@Column(Type.INTEGER)
-		@SortOrder(order = SortOrder.Order.ASC, weight = 2)
-		String MY_INT = "integer";
+        @SortOrder(value = Order.ASC, weight = 2)
+        String MY_INT = "integer";
 
 		@Column(Type.TEXT)
-		@SortOrder(order = SortOrder.Order.ASC, weight = 1)
-		String MY_STRING = "string";
+        @SortOrder(value = Order.ASC, weight = 1)
+        String MY_STRING = "string";
 
 		@ContentUri
 		Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_sort_2");
@@ -46,16 +47,16 @@ public class SortContentProvider extends ProviGenProvider {
 		String MY_BLOB = "blob";
 
 		@Column(Type.REAL)
-		@SortOrder(order = SortOrder.Order.DESC)
-		String MY_REAL = "real";
+        @SortOrder(Order.DESC)
+        String MY_REAL = "real";
 
 		@Column(Type.INTEGER)
-		@SortOrder(order = SortOrder.Order.ASC, weight = 1)
-		String MY_INT = "integer";
+        @SortOrder(value = Order.ASC, weight = 1)
+        String MY_INT = "integer";
 
 		@Column(Type.TEXT)
-		@SortOrder(order = SortOrder.Order.DESC, weight = 1)
-		String MY_STRING = "string";
+        @SortOrder(value = Order.DESC, weight = 1)
+        String MY_STRING = "string";
 
 		@ContentUri
 		Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_sort_3");

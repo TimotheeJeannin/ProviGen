@@ -21,9 +21,9 @@ public @interface SortOrder {
 	 *
 	 * @return Ordering
 	 */
-	Order order() default Order.UNSORTED;
+    Order value() default Order.UNSORTED;
 
-	/**
+    /**
 	 * Weighting for the column, if more than one column has a SortOrder.
 	 * Higher numbers mean that this column will be sorted before the others with lower numbers.
 	 * Have both columns the same weight (will be default when no weight is given but more than one column
@@ -32,19 +32,4 @@ public @interface SortOrder {
 	 * @return weighting
 	 */
 	int weight() default 0;
-
-	enum Order {
-		/**
-		 * The query result has no specific order.
-		 */
-		UNSORTED,
-		/**
-		 * The query result is ordered ascending.
-		 */
-		ASC,
-		/**
-		 * The query result is ordered descending.
-		 */
-		DESC
-	}
 }

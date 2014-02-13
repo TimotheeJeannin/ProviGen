@@ -14,9 +14,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
-
 import com.tjeannin.provigen.annotation.Contract;
-import com.tjeannin.provigen.annotation.SortOrder;
+import com.tjeannin.provigen.annotation.Order;
 
 /**
  * Behaves as a {@link ContentProvider} for the given {@link Contract} class.
@@ -292,8 +291,8 @@ public class ProviGenProvider extends ContentProvider {
 				numberOfRowsAffected = database.update(contractHolder.getTable(), values, contractHolder.getIdField() + " = ? ", new String[] { itemId });
 			} else {
 				numberOfRowsAffected = database.update(contractHolder.getTable(), values, selection + " AND " + contractHolder.getIdField() + " = ? ",
-						appendToStringArray(selectionArgs, itemId));
-			}
+                        appendToStringArray(selectionArgs, itemId));
+            }
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown uri " + uri);
@@ -323,8 +322,8 @@ public class ProviGenProvider extends ContentProvider {
 		final List<DatabaseField> databaseFields = contractHolder.getFields();
 		final List<DatabaseField> fields = new ArrayList<DatabaseField>(databaseFields.size());
 		for (final DatabaseField field : databaseFields) {
-			if (field.getSortOrder() != null && field.getSortOrder().order() != SortOrder.Order.UNSORTED) {
-				fields.add(field);
+            if (field.getSortOrder() != null && field.getSortOrder().value() != Order.UNSORTED) {
+                fields.add(field);
 			}
 		}
 		if (fields.isEmpty()) {
@@ -334,8 +333,8 @@ public class ProviGenProvider extends ContentProvider {
 		final StringBuilder orderQueryPart = new StringBuilder("");
 		for (final Iterator<DatabaseField> it = fields.iterator(); it.hasNext(); ) {
 			final DatabaseField field = it.next();
-			orderQueryPart.append(field.getName()).append(' ').append(field.getSortOrder().order());
-			if (it.hasNext()) {
+            orderQueryPart.append(field.getName()).append(' ').append(field.getSortOrder().value());
+            if (it.hasNext()) {
 				orderQueryPart.append(", ");
 			}
 		}
