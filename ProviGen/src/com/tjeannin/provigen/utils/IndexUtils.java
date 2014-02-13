@@ -64,8 +64,8 @@ public final class IndexUtils {
 				cursor.moveToFirst();
 				final String tableName = cursor.getString(cursor.getColumnIndex("tbl_name"));
 				final String type = cursor.getString(cursor.getColumnIndex("type"));
-				final String message = String.format("There is allready an object (%s) with the name %s  on table %s in the database", type, index, tableName);
-				cursor.close();
+                final String message = String.format("There is allready an object '%s' with the name '%s' on table '%s' in the database", type, index, tableName);
+                cursor.close();
 				throw new IndexException(message);
 			}
 			cursor.close();

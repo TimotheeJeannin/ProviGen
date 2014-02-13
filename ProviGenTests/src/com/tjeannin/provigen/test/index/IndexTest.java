@@ -2,6 +2,7 @@ package com.tjeannin.provigen.test.index;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import android.content.Context;
@@ -15,6 +16,8 @@ import com.tjeannin.provigen.utils.IndexUtils;
 
 import static com.tjeannin.provigen.test.index.IndexProvider.ChangeIndexColumnsContract1;
 import static com.tjeannin.provigen.test.index.IndexProvider.ChangeIndexColumnsContract2;
+import static com.tjeannin.provigen.test.index.IndexProvider.FailingDuplicateNameContract;
+import static com.tjeannin.provigen.test.index.IndexProvider.FailingEmptyNameContract;
 import static com.tjeannin.provigen.test.index.IndexProvider.INDEX_1;
 import static com.tjeannin.provigen.test.index.IndexProvider.INDEX_2;
 import static com.tjeannin.provigen.test.index.IndexProvider.INDEX_3;
@@ -43,6 +46,7 @@ public class IndexTest extends ExtendedProviderTestCase<IndexProvider> {
     private static final String MSG_COUNT_OF_INDEX = "expected count of index does not match";
     private static final String MSG_COLUMN_COUNT = "column count in index does not match";
     private static final String MSG_COLUMN_POSITION = "column position in index is wrong";
+    public static final String DUPLICATE_INDEX_READ_FROM_TABLE = "duplicate index read from table";
 
     private MockContentResolver contentResolver;
 
@@ -227,9 +231,24 @@ public class IndexTest extends ExtendedProviderTestCase<IndexProvider> {
         assertEquals(MSG_COLUMN_POSITION, ChangeIndexColumnsContract2.FIELD_2, contract2Idx1Columns.get(1));
     }
 
+    public void testDuplicateName() throws InvalidContractException {
+        getProvider().setContractClasses(new Class[] { FailingDuplicateNameContract.class });
+        contentResolver.insert(FailingDuplicateNameContract.CONTENT_URI, getContentValues(FailingDuplicateNameContract.class));
+        final List<String> contract2IndexNames = loadIndexNames(FailingDuplicateNameContract.CONTENT_URI);
+        assertEquals(MSG_COUNT_OF_INDEX, 0, contract2IndexNames.size());
+    }
+
+    public void testEmptyName() throws InvalidContractException {
+        getProvider().setContractClasses(new Class[] { FailingEmptyNameContract.class });
+        contentResolver.insert(FailingEmptyNameContract.CONTENT_URI, getContentValues(FailingEmptyNameContract.class));
+        final List<String> contract2IndexNames = loadIndexNames(FailingEmptyNameContract.CONTENT_URI);
+        assertEquals(MSG_COUNT_OF_INDEX, 0, contract2IndexNames.size());
+    }
+
     private List<String> loadIndexColumns(final Uri uri, final String indexName) {
         final SQLiteDatabase sqLiteDatabase = getMockContext().openOrCreateDatabase("ProviGenDatabase", Context.MODE_PRIVATE, null);
         final List<IndexInformation> information = IndexUtils.getIndexInformationForTable(sqLiteDatabase, uri.getLastPathSegment());
+        assertEquals(DUPLICATE_INDEX_READ_FROM_TABLE, information.size(), new HashSet<IndexInformation>(information).size());
         for (final IndexInformation indexInformation : information) {
             if (indexInformation.getIndexName().equals(indexName)) {
                 return indexInformation.getIndexColumnNames();
@@ -241,6 +260,7 @@ public class IndexTest extends ExtendedProviderTestCase<IndexProvider> {
     private List<String> loadIndexNames(final Uri uri) {
         final SQLiteDatabase sqLiteDatabase = getMockContext().openOrCreateDatabase("ProviGenDatabase", Context.MODE_PRIVATE, null);
         final List<IndexInformation> information = IndexUtils.getIndexInformationForTable(sqLiteDatabase, uri.getLastPathSegment());
+        assertEquals(DUPLICATE_INDEX_READ_FROM_TABLE, information.size(), new HashSet<IndexInformation>(information).size());
         final List<String> result = new ArrayList<String>(information.size());
         for (final IndexInformation indexInformation : information) {
             result.add(indexInformation.getIndexName());

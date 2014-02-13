@@ -202,4 +202,24 @@ public class IndexProvider extends ProviGenProvider {
         @ContentUri
         Uri CONTENT_URI = Uri.parse("content://com.test.simple/order_index_test");
     }
+
+    @Contract(version = 1)
+    public interface FailingDuplicateNameContract extends ProviGenBaseContract {
+        @Column(Type.INTEGER)
+        @Index("f_duplicate_name_index_test")
+        String FIELD_1 = "idx_1";
+
+        @ContentUri
+        Uri CONTENT_URI = Uri.parse("content://com.test.simple/f_duplicate_name_index_test");
+    }
+
+    @Contract(version = 1)
+    public interface FailingEmptyNameContract extends ProviGenBaseContract {
+        @Column(Type.INTEGER)
+        @Index("")
+        String FIELD_1 = "idx_1";
+
+        @ContentUri
+        Uri CONTENT_URI = Uri.parse("content://com.test.simple/f_empty_name_index_test");
+    }
 }
