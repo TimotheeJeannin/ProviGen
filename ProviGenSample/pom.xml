@@ -25,7 +25,7 @@
             <version>r7</version>
         </dependency>
         <dependency>
-            <groupId>com.github.TimotheeJeannin</groupId>
+            <groupId>com.github.provigen</groupId>
             <artifactId>ProviGen-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
