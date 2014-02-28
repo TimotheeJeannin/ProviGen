@@ -5,7 +5,7 @@
 
 	<groupId>com.github.provigen</groupId>
 	<artifactId>ProviGen-parent</artifactId>
-	<version>1.7.0</version>
+	<version>1.7.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
     <inceptionYear>2012</inceptionYear>
 
@@ -61,7 +61,7 @@
 		<url>https://github.com/TimotheeJeannin/ProviGen</url>
 		<connection>scm:git:https://github.com/TimotheeJeannin/ProviGen.git</connection>
 		<developerConnection>scm:git:https://github.com/TimotheeJeannin/ProviGen.git</developerConnection>
-	  <tag>1.7.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<issueManagement>
