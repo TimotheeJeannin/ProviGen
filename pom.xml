@@ -59,8 +59,8 @@
 
 	<scm>
 		<url>https://github.com/TimotheeJeannin/ProviGen</url>
-		<connection>scm:git:git://github.com/TimotheeJeannin/ProviGen.git</connection>
-		<developerConnection>scm:git:git://github.com/TimotheeJeannin/ProviGen.git</developerConnection>
+		<connection>scm:git:https://github.com/TimotheeJeannin/ProviGen.git</connection>
+		<developerConnection>scm:git:https://github.com/TimotheeJeannin/ProviGen.git</developerConnection>
 	</scm>
 
 	<issueManagement>
