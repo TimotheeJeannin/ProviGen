@@ -2,11 +2,9 @@
 
 Easily make a [ContentProvider] from a [ContractClass].    
 
-## Installation
+## Setup
 
-* Put the ProviGen [jar] in your `libs` folder or add ProviGen as a library project.
-
-[jar]: https://github.com/TimotheeJeannin/ProviGen/tree/master/ProviGenDownloads
+* Follow the [installation guide](https://github.com/TimotheeJeannin/ProviGen/wiki/Installation-Guide).
 
 * Annotate your ContractClass.
 
