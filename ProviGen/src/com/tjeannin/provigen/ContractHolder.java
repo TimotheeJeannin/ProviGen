@@ -12,6 +12,7 @@ import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.annotation.Id;
 import com.tjeannin.provigen.annotation.NotNull;
 import com.tjeannin.provigen.annotation.Unique;
+import com.tjeannin.provigen.exception.InvalidContractException;
 
 class ContractHolder {
 

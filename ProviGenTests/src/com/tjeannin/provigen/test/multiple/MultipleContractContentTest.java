@@ -2,7 +2,7 @@ package com.tjeannin.provigen.test.multiple;
 
 import android.test.mock.MockContentResolver;
 
-import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.exception.InvalidContractException;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.multiple.MultipleContractContentProvider.ContractOne;
 import com.tjeannin.provigen.test.multiple.MultipleContractContentProvider.ContractTwo;

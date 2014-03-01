@@ -3,15 +3,13 @@ package com.tjeannin.provigen.test.contract;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.tjeannin.provigen.Constraint.OnConflict;
-import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.exception.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.annotation.Id;
-import com.tjeannin.provigen.annotation.Unique;
 
 public class InvalidContractsTest extends AndroidTestCase {
 

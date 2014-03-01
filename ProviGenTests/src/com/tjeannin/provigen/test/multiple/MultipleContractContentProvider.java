@@ -2,7 +2,7 @@ package com.tjeannin.provigen.test.multiple;
 
 import android.net.Uri;
 
-import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.exception.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.annotation.Column;

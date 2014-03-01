@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.mock.MockContentResolver;
 
-import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.exception.InvalidContractException;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractOne;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractTwo;

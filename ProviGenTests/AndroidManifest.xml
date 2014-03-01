@@ -17,6 +17,12 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <uses-library android:name="android.test.runner" />
+
+        <provider
+            android:exported="false"
+            android:authorities="com.test.entity"
+            android:name=".entity.EntityContentProvider"/>
+
     </application>
 
 </manifest>

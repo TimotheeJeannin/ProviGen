@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.tjeannin.provigen.annotation.Contract;
+import com.tjeannin.provigen.exception.InvalidContractException;
 
 /**
  * Behaves as a {@link ContentProvider} for the given {@link Contract} class.

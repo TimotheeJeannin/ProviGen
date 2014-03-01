@@ -1,4 +1,4 @@
-package com.tjeannin.provigen;
+package com.tjeannin.provigen.exception;
 
 public class InvalidContractException extends Exception {
 
