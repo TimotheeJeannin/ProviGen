@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.github.TimotheeJeannin</groupId>
+        <groupId>com.github.provigen</groupId>
         <artifactId>ProviGen-parent</artifactId>
-        <version>1.6.0</version>
+        <version>1.7.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>ProviGen-sample</artifactId>
@@ -23,13 +23,11 @@
             <groupId>com.google.android</groupId>
             <artifactId>support-v4</artifactId>
             <version>r7</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.TimotheeJeannin</groupId>
+            <groupId>com.github.provigen</groupId>
             <artifactId>ProviGen-lib</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

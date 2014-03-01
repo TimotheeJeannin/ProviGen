@@ -2,6 +2,7 @@ package com.tjeannin.provigen.test.basis;
 
 import android.net.Uri;
 
+import com.tjeannin.provigen.Constraint;
 import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
@@ -9,6 +10,7 @@ import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.Contract;
+import com.tjeannin.provigen.annotation.NotNull;
 
 public class SimpleContentProvider extends ProviGenProvider {
 
@@ -17,30 +19,31 @@ public class SimpleContentProvider extends ProviGenProvider {
 	}
 
 	@Contract(version = 1)
-	public static interface ContractOne extends ProviGenBaseContract {
+	public interface ContractOne extends ProviGenBaseContract {
 
 		@Column(Type.INTEGER)
-		public static final String MY_INT = "int";
+		String MY_INT = "int";
 
 		@ContentUri
-		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
+		Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
 
 	}
 
 	@Contract(version = 2)
-	public static interface ContractTwo extends ProviGenBaseContract {
+	public interface ContractTwo extends ProviGenBaseContract {
 
 		@Column(Type.INTEGER)
-		public static final String MY_INT = "int";
+		String MY_INT = "int";
 
 		@Column(Type.TEXT)
-		public static final String MY_STRING = "string";
+		@NotNull(Constraint.OnConflict.ABORT)
+		String MY_STRING = "string";
 
 		@Column(Type.REAL)
-		public static final String MY_REAL = "real";
+		String MY_REAL = "real";
 
 		@ContentUri
-		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple_2");
+		Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
 
 	}
 }
