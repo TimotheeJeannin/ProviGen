@@ -6,6 +6,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -244,10 +245,10 @@ public class ProviGenProvider extends ContentProvider {
 		case ITEM_ID:
 			String itemId = String.valueOf(ContentUris.parseId(uri));
 			if (TextUtils.isEmpty(selection)) {
-				cursor = database.query(contractHolder.getTable(), projection, contractHolder.getIdField() + " = ? ", new String[] { itemId }, "", "", sortOrder);
+				cursor = database.query(contractHolder.getTable(), projection, contractHolder.getIdField() + " = ? ", new String[]{itemId}, "", "", sortOrder);
 			} else {
 				cursor = database.query(contractHolder.getTable(), projection, selection + " AND " + contractHolder.getIdField() + " = ? ",
-						appendToStringArray(selectionArgs, itemId), "", "", sortOrder);
+                        appendToStringArray(selectionArgs, itemId), "", "", sortOrder);
 			}
 			break;
 		default:
@@ -305,5 +306,35 @@ public class ProviGenProvider extends ContentProvider {
 			return new String[] { element };
 		}
 	}
+
+    /**
+     * Efficient bulk insert using sql transaction
+     * @param uri
+     * @param values
+     * @return the number of rows inserted
+     */
+    public int bulkInsert(Uri uri, ContentValues[] values){
+        int numInserted = 0;
+
+        ContractHolder contractHolder = contracts.findMatching(uri);
+        String table = contractHolder.getTable();
+
+        SQLiteDatabase sqlDB = openHelper.getWritableDatabase();
+        sqlDB.beginTransaction();
+        try {
+            for (ContentValues cv : values) {
+                long newID = sqlDB.insertOrThrow(table, null, cv);
+                if (newID <= 0) {
+                    throw new SQLException("Failed to insert row into " + uri);
+                }
+            }
+            sqlDB.setTransactionSuccessful();
+            getContext().getContentResolver().notifyChange(uri, null);
+            numInserted = values.length;
+        } finally {
+            sqlDB.endTransaction();
+        }
+        return numInserted;
+    }
 
 }
