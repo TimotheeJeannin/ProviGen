@@ -1,18 +1,27 @@
 package com.tjeannin.provigen.test.constraint;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
+import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.*;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.Constraint.OnConflict;
 
 public class OnConflictProvider extends ProviGenProvider {
 
-	public OnConflictProvider() throws InvalidContractException {
-		super(new Class[] { ContractAbort.class, ContractReplace.class, ContractFail.class, ContractMultipleResolution.class });
-	}
+    @Override
+    public SQLiteOpenHelper createOpenHelper(Context context) {
+        return new ProviGenSimpleSQLiteOpenHelper(context, new Class[] { ContractAbort.class, ContractReplace.class, ContractFail.class, ContractMultipleResolution.class }, 1);
+    }
+
+    @Override
+    public Class[] getContractClasses() {
+        return new Class[] { ContractAbort.class, ContractReplace.class, ContractFail.class, ContractMultipleResolution.class };
+    }
 
 	@Contract(version = 1)
 	public static interface ContractAbort extends ProviGenBaseContract {

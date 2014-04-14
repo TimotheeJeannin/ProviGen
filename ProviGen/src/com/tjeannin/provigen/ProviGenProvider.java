@@ -1,80 +1,40 @@
 package com.tjeannin.provigen;
 
-import android.annotation.SuppressLint;
-import android.content.ContentProvider;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.UriMatcher;
+import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
-
 import com.tjeannin.provigen.annotation.Contract;
 
 /**
  * Behaves as a {@link ContentProvider} for the given {@link Contract} class.
  */
-public class ProviGenProvider extends ContentProvider {
+public abstract class ProviGenProvider extends ContentProvider {
 
 	private ContractHolderList contracts = new ContractHolderList();
-	private String databaseName = "ProviGenDatabase";
-	private ProviGenOpenHelper openHelper;
 
 	private UriMatcher uriMatcher;
 	private static final int ITEM = 1;
 	private static final int ITEM_ID = 2;
+    private SQLiteOpenHelper openHelper;
 
-	/**
-	 * @param contractClass A {@link Contract} class to build the {@link ContentProvider} with.
-	 * @throws InvalidContractException
-	 */
-	@SuppressLint("Registered")
-	@SuppressWarnings("rawtypes")
-	public ProviGenProvider(Class contractClass) throws InvalidContractException {
-		contracts.add(new ContractHolder(contractClass));
-	}
+    public abstract SQLiteOpenHelper createOpenHelper(Context context);
 
-	/**
-	 * @param contractClass A {@link Contract} class to build the {@link ContentProvider} with.
-	 * @param databaseName The name of the database to work with.
-	 * @throws InvalidContractException
-	 */
-	@SuppressLint("Registered")
-	@SuppressWarnings("rawtypes")
-	public ProviGenProvider(Class contractClass, String databaseName) throws InvalidContractException {
-		this(contractClass);
-		this.databaseName = databaseName;
-	}
-
-	/**
-	 * @param contractClasses An array of {@link Contract} classes to build the {@link ContentProvider} with.
-	 * @throws InvalidContractException
-	 */
-	@SuppressLint("Registered")
-	@SuppressWarnings("rawtypes")
-	public ProviGenProvider(Class[] contractClasses) throws InvalidContractException {
-        for (Class contractClass : contractClasses) {
-            contracts.add(new ContractHolder(contractClass));
-        }
-	}
-
-	/**
-	 * @param contractClasses An array of {@link Contract} classes to build the {@link ContentProvider} with.
-	 * @param databaseName The name of the database to work with.
-	 * @throws InvalidContractException
-	 */
-	@SuppressLint("Registered")
-	@SuppressWarnings("rawtypes")
-	public ProviGenProvider(Class[] contractClasses, String databaseName) throws InvalidContractException {
-		this(contractClasses);
-		this.databaseName = databaseName;
-	}
+    public abstract Class[] getContractClasses();
 
 	@Override
 	public boolean onCreate() {
 
-		openHelper = new ProviGenOpenHelper(getContext(), this, databaseName, contracts.getVersionSum());
+        openHelper = createOpenHelper(getContext());
+        for(Class contract : getContractClasses()){
+            try {
+                contracts.add(new ContractHolder(contract));
+            } catch (InvalidContractException e) {
+                e.printStackTrace();
+            }
+        }
 
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		for (ContractHolder contract : contracts) {
@@ -83,92 +43,6 @@ public class ProviGenProvider extends ContentProvider {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Called when the database is created for the first time. </br>
-	 * The {@link ProviGenProvider} automatically creates database tables and the needed columns
-	 * if {@code super.onCreateDatabase(database)} is called.</br>
-	 * The initial population of the tables should happen here.
-	 * @param database The database.
-	 */
-	public void onCreateDatabase(SQLiteDatabase database) {
-		for (ContractHolder contract : contracts) {
-			openHelper.createTable(database, contract);
-		}
-	}
-
-	/**
-	 * Creates a table in the database for the specified {@link Contract}.<br/>
-	 * This may be used if you're <b>not</b> calling {@code super.onCreateDatabase(database)}.
-	 * @param database The database.
-	 * @param contractClass A {@link Contract} class to create the table with.
-	 */
-	@SuppressWarnings("rawtypes")
-	public void createTable(SQLiteDatabase database, Class contractClass) {
-		try {
-			openHelper.createTable(database, new ContractHolder(contractClass));
-		} catch (InvalidContractException exception) {
-			exception.printStackTrace();
-		}
-	}
-
-	/**
-	 * Called when the database needs to be upgraded. </br></br>
-	 * Call {@code super.onUpgradeDatabase(database, oldVersion, newVersion)} to:
-	 * <ul>
-	 * <li>Automatically add columns if some are missing.</li>
-	 * <li>Automatically create tables and needed columns for new added {@link Contract}s.</li>
-	 * <li>Does <b>not</b> add constraints to existing or newly added columns as SQLite ALTER TABLE doesn't support it.</li>
-	 * </ul>
-	 * Anything else related to database upgrade should be done here.
-	 * <p>
-	 * This method executes within a transaction. If an exception is thrown, all changes
-	 * will automatically be rolled back.
-	 * </p>
-	 * @param database The database.
-	 * @param oldVersion The old database version (same as contract old version).
-	 * @param newVersion The new database version (same as contract new version).
-	 */
-	public void onUpgradeDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
-		for (ContractHolder contract : contracts) {
-			if (!openHelper.hasTableInDatabase(database, contract)) {
-				openHelper.createTable(database, contract);
-			} else {
-				openHelper.addMissingColumnsInTable(database, contract);
-			}
-		}
-	}
-
-	/**
-	 * Adds missing table columns for the specified {@link Contract}.<br/>
-	 * This may be used if you're <b>not</b> calling {@code super.onCreateDatabase(database)}.
-	 * @param database The database.
-	 * @param contractClass A {@link Contract} class to use to create missing columns.
-	 */
-	@SuppressWarnings("rawtypes")
-	public void addMissingColumnsInTable(SQLiteDatabase database, Class contractClass) {
-		try {
-			openHelper.addMissingColumnsInTable(database, new ContractHolder(contractClass));
-		} catch (InvalidContractException exception) {
-			exception.printStackTrace();
-		}
-	}
-
-	/**
-	 * Used to switch from a set of {@link Contract}s to an other dynamically.<br/>
-	 * Note that this may change the database schema.
-	 * May be used for testing purpose. <br/>
-	 * @param contractClasses The set of {@link Contract}s to switch to.
-	 * @throws InvalidContractException
-	 */
-	@SuppressWarnings("rawtypes")
-	public void setContractClasses(Class[] contractClasses) throws InvalidContractException {
-		contracts.clear();
-        for (Class contractClass : contractClasses) {
-            contracts.add(new ContractHolder(contractClass));
-        }
-		onCreate();
 	}
 
 	@Override

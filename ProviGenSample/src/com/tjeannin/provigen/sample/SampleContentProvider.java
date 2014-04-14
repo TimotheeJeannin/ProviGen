@@ -1,57 +1,46 @@
 package com.tjeannin.provigen.sample;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-
-import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.ProviGenProvider;
-import com.tjeannin.provigen.ProviGenDatabaseHelpers;
+import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.annotation.Id;
+
 
 public class SampleContentProvider extends ProviGenProvider {
 
-	public SampleContentProvider() throws InvalidContractException {
-		super(SampleContract.class, SampleOpenHelper.class);
-	}
+    @Override
+    public SQLiteOpenHelper createOpenHelper(Context context) {
+        return new ProviGenSimpleSQLiteOpenHelper(context, new Class[]{SampleContract.class}, 1);
+    }
 
-	public static class SampleOpenHelper extends SQLiteOpenHelper {
+    @Override
+    public Class[] getContractClasses() {
+        return new Class[]{SampleContract.class};
+    }
 
-		public SampleOpenHelper(Context context) {
-			super(context, "sampleDatabase", null, 1);
-		}
+    @Contract(version = 1)
+    public static interface SampleContract {
 
-		@Override
-		public void onCreate(SQLiteDatabase database) {
-			ProviGenDatabaseHelpers.createTable(database, SampleContract.class);
-		}
+        @Id
+        @Column(Type.INTEGER)
+        public static final String _ID = "_id";
 
-		@Override
-		public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-			ProviGenDatabaseHelpers.addMissingColumns(database, SampleContract.class);
-		}
-	}
+        @Column(Type.INTEGER)
+        public static final String MY_INT = "int";
 
-	public static interface SampleContract {
+        @Column(Type.TEXT)
+        public static final String MY_STRING = "string";
 
-		@Id
-		@Column(Type.INTEGER)
-		public static final String _ID = "_id";
+        @Column(Type.REAL)
+        public static final String MY_REAL = "hour";
 
-		@Column(Type.INTEGER)
-		public static final String MY_INT = "int";
-
-		@Column(Type.TEXT)
-		public static final String MY_STRING = "string";
-
-		@Column(Type.REAL)
-		public static final String MY_REAL = "hour";
-
-		@ContentUri
-		public static final Uri CONTENT_URI = Uri.parse("content://com.tjeannin.provigen.sample/table_name");
-	}
+        @ContentUri
+        public static final Uri CONTENT_URI = Uri.parse("content://com.tjeannin.provigen.sample/table_name");
+    }
 }

@@ -13,7 +13,7 @@ import com.tjeannin.provigen.annotation.Id;
 import com.tjeannin.provigen.annotation.NotNull;
 import com.tjeannin.provigen.annotation.Unique;
 
-class ContractHolder {
+public class ContractHolder {
 
 	private int version;
 	private String authority;

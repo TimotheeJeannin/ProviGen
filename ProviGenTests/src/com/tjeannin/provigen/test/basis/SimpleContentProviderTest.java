@@ -110,7 +110,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 	}
 
 	public void testUpgradeFromContractOneToTwo() throws InvalidContractException {
-		getProvider().setContractClasses(new Class[] { ContractOne.class });
+        setContractClasses(new Class[] { ContractOne.class });
 
 		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
 
@@ -131,7 +131,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 		assertFalse(columnsContractOne.contains(ContractTwo.MY_REAL));
 		assertFalse(columnsContractOne.contains(ContractTwo.MY_STRING));
 
-		getProvider().setContractClasses(new Class[] { ContractTwo.class });
+        setContractClasses(new Class[] { ContractTwo.class });
 
 		// Check database fits ContractTwo.
 		final Cursor cursorTwo = contentResolver.query(ContractTwo.CONTENT_URI, null, "", null, "");

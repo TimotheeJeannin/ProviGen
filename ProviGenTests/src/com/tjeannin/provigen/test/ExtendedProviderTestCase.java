@@ -1,13 +1,17 @@
 package com.tjeannin.provigen.test;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.test.ProviderTestCase2;
 
+import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.ProviGenProvider;
+import com.tjeannin.provigen.ContractHolder;
+import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.Id;
@@ -29,6 +33,39 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
 		getContext().deleteDatabase("ProviGenDatabase");
 		super.tearDown();
 	}
+
+    /**
+     * @param contractClasses The contract classes to set to the content provider.
+     */
+    protected void setContractClasses(Class[] contractClasses){
+
+        ArrayList<ContractHolder> contracts = null;
+
+        for(Class contract : contractClasses){
+            try {
+                contracts = new ArrayList<ContractHolder>();
+                contracts.add(new ContractHolder(contract));
+            } catch (InvalidContractException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            Field contractsField = null;
+            contractsField = getProvider().getClass().getDeclaredField("contracts");
+            contractsField.setAccessible(true);
+            contractsField.set(null, contracts);
+
+            Field openHelperField = null;
+            openHelperField = getProvider().getClass().getDeclaredField("openHelper");
+            openHelperField.setAccessible(true);
+            openHelperField.set(null, new ProviGenSimpleSQLiteOpenHelper(getProvider().getContext(), contractClasses, 2));
+
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
 
 	/**
 	 * @param uri The {@link Uri} where to count rows.
