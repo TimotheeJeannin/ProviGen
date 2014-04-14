@@ -35,26 +35,4 @@ class DatabaseField {
 	public List<Constraint> getConstraints() {
 		return constraints;
 	}
-
-	public void setConstraints(List<Constraint> constraints) {
-		this.constraints = constraints;
-	}
-
-	public boolean isUnique() {
-		for (Constraint constraint : constraints) {
-			if (constraint.isUnique()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean isNotNull() {
-		for (Constraint constraint : constraints) {
-			if (constraint.isNotNull()) {
-				return true;
-			}
-		}
-		return false;
-	}
 }
