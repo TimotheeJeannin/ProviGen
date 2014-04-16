@@ -8,10 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.test.ProviderTestCase2;
 
-import com.tjeannin.provigen.InvalidContractException;
-import com.tjeannin.provigen.ProviGenProvider;
-import com.tjeannin.provigen.ContractHolder;
-import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
+import com.tjeannin.provigen.*;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.Id;
@@ -39,11 +36,11 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
      */
     protected void setContractClasses(Class[] contractClasses){
 
-        ArrayList<ContractHolder> contracts = null;
+		ContractHolderList contracts = null;
 
         for(Class contract : contractClasses){
             try {
-                contracts = new ArrayList<ContractHolder>();
+                contracts = new ContractHolderList();
                 contracts.add(new ContractHolder(contract));
             } catch (InvalidContractException e) {
                 e.printStackTrace();
@@ -51,14 +48,16 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
         }
         try {
             Field contractsField = null;
-            contractsField = getProvider().getClass().getDeclaredField("contracts");
+            contractsField = getProvider().getClass().getSuperclass().getDeclaredField("contracts");
             contractsField.setAccessible(true);
-            contractsField.set(null, contracts);
+            contractsField.set(getProvider(), contracts);
 
             Field openHelperField = null;
-            openHelperField = getProvider().getClass().getDeclaredField("openHelper");
+            openHelperField = getProvider().getClass().getSuperclass().getDeclaredField("openHelper");
             openHelperField.setAccessible(true);
-            openHelperField.set(null, new ProviGenSimpleSQLiteOpenHelper(getProvider().getContext(), contractClasses, 2));
+            openHelperField.set(getProvider(), new ProviGenSimpleSQLiteOpenHelper(getProvider().getContext(), contractClasses, 2));
+
+
 
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
