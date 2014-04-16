@@ -36,11 +36,10 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
      */
     protected void setContractClasses(Class[] contractClasses){
 
-		ContractHolderList contracts = null;
+		ContractHolderList contracts = new ContractHolderList();;
 
         for(Class contract : contractClasses){
             try {
-                contracts = new ContractHolderList();
                 contracts.add(new ContractHolder(contract));
             } catch (InvalidContractException e) {
                 e.printStackTrace();
