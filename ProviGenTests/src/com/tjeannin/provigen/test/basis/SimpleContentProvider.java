@@ -3,12 +3,13 @@ package com.tjeannin.provigen.test.basis;
 import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-
-import com.tjeannin.provigen.*;
+import com.tjeannin.provigen.Constraint;
+import com.tjeannin.provigen.ProviGenBaseContract;
+import com.tjeannin.provigen.ProviGenProvider;
+import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
-import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.annotation.NotNull;
 
 public class SimpleContentProvider extends ProviGenProvider {
@@ -23,7 +24,6 @@ public class SimpleContentProvider extends ProviGenProvider {
         return new Class[]{ContractOne.class};
     }
 
-    @Contract(version = 1)
     public interface ContractOne extends ProviGenBaseContract {
 
         @Column(Type.INTEGER)
@@ -31,10 +31,8 @@ public class SimpleContentProvider extends ProviGenProvider {
 
         @ContentUri
         Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
-
     }
 
-    @Contract(version = 2)
     public interface ContractTwo extends ProviGenBaseContract {
 
         @Column(Type.INTEGER)
@@ -49,6 +47,5 @@ public class SimpleContentProvider extends ProviGenProvider {
 
         @ContentUri
         Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
-
     }
 }

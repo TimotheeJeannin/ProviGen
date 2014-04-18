@@ -3,14 +3,15 @@ package com.tjeannin.provigen.test.constraint;
 import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-
 import com.tjeannin.provigen.Constraint.OnConflict;
-import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
-import com.tjeannin.provigen.annotation.*;
+import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
+import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.annotation.NotNull;
+import com.tjeannin.provigen.annotation.Unique;
 
 public class ConstraintsProvider extends ProviGenProvider {
 
@@ -25,7 +26,6 @@ public class ConstraintsProvider extends ProviGenProvider {
     }
 
 
-    @Contract(version = 1)
     public static interface NotNullContract extends ProviGenBaseContract {
 
         @NotNull(OnConflict.ABORT)
@@ -37,7 +37,6 @@ public class ConstraintsProvider extends ProviGenProvider {
 
     }
 
-    @Contract(version = 1)
     public static interface UniqueContract extends ProviGenBaseContract {
 
         @Unique(OnConflict.REPLACE)
@@ -49,7 +48,6 @@ public class ConstraintsProvider extends ProviGenProvider {
 
     }
 
-    @Contract(version = 1)
     public static interface UniqueAndNotNullContract extends ProviGenBaseContract {
 
         @Unique(OnConflict.REPLACE)

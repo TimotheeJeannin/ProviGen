@@ -6,10 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
-import com.tjeannin.provigen.annotation.Contract;
 
 /**
- * Behaves as a {@link ContentProvider} for the given {@link Contract} class.
+ * Behaves as a {@link ContentProvider} for the given contract class.
  */
 public abstract class ProviGenProvider extends ContentProvider {
 

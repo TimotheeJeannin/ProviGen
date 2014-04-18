@@ -1,12 +1,11 @@
 package com.tjeannin.provigen.test.constraint;
 
 import android.content.ContentValues;
-
 import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.constraint.ConstraintsProvider.NotNullContract;
-import com.tjeannin.provigen.test.constraint.ConstraintsProvider.UniqueContract;
 import com.tjeannin.provigen.test.constraint.ConstraintsProvider.UniqueAndNotNullContract;
+import com.tjeannin.provigen.test.constraint.ConstraintsProvider.UniqueContract;
 
 public class ConstraintsTest extends ExtendedProviderTestCase<ConstraintsProvider> {
 

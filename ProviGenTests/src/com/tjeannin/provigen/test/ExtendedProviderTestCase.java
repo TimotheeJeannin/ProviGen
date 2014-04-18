@@ -1,16 +1,15 @@
 package com.tjeannin.provigen.test;
 
-import java.lang.reflect.Field;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.test.ProviderTestCase2;
-
 import com.tjeannin.provigen.*;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.Id;
+
+import java.lang.reflect.Field;
 
 public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> extends ProviderTestCase2<T> {
 

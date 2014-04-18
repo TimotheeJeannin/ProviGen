@@ -1,11 +1,11 @@
 package com.tjeannin.provigen.annotation;
 
+import android.content.ContentProvider;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import android.content.ContentProvider;
 
 /**
  * Defines the {@link ContentUri} that should be used to query the {@link ContentProvider}.<br/>

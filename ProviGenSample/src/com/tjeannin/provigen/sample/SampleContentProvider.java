@@ -8,7 +8,6 @@ import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
-import com.tjeannin.provigen.annotation.Contract;
 import com.tjeannin.provigen.annotation.Id;
 
 
@@ -24,7 +23,6 @@ public class SampleContentProvider extends ProviGenProvider {
         return new Class[]{SampleContract.class};
     }
 
-    @Contract(version = 1)
     public static interface SampleContract {
 
         @Id

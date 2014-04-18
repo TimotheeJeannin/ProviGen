@@ -1,21 +1,14 @@
 package com.tjeannin.provigen;
 
+import android.net.Uri;
+import com.tjeannin.provigen.annotation.*;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.net.Uri;
-
-import com.tjeannin.provigen.annotation.Column;
-import com.tjeannin.provigen.annotation.ContentUri;
-import com.tjeannin.provigen.annotation.Contract;
-import com.tjeannin.provigen.annotation.Id;
-import com.tjeannin.provigen.annotation.NotNull;
-import com.tjeannin.provigen.annotation.Unique;
-
 public class ContractHolder {
 
-	private int version;
 	private String authority;
 	private String idField;
 	private String tableName;
@@ -23,13 +16,6 @@ public class ContractHolder {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ContractHolder(Class contractClass) throws InvalidContractException {
-
-		Contract contract = (Contract) contractClass.getAnnotation(Contract.class);
-		if (contract != null) {
-			version = contract.version();
-		} else {
-			throw new InvalidContractException("The given class does not have a @Contract annotation.");
-		}
 
 		databaseFields = new ArrayList<DatabaseField>();
 
@@ -87,10 +73,6 @@ public class ContractHolder {
 		if (authority == null || tableName == null) {
 			throw new InvalidContractException("The contract is missing a @ContentUri.");
 		}
-	}
-
-	public int getVersion() {
-		return version;
 	}
 
 	public String getAuthority() {

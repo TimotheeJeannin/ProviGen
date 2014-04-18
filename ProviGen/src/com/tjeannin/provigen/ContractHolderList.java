@@ -1,8 +1,8 @@
 package com.tjeannin.provigen;
 
-import java.util.ArrayList;
-
 import android.net.Uri;
+
+import java.util.ArrayList;
 
 public class ContractHolderList extends ArrayList<ContractHolder> {
 

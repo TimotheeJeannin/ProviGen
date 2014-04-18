@@ -7,8 +7,8 @@ import android.test.mock.MockContentResolver;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractAbort;
 import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractFail;
-import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractReplace;
 import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractMultipleResolution;
+import com.tjeannin.provigen.test.constraint.OnConflictProvider.ContractReplace;
 
 public class OnConflictTest extends ExtendedProviderTestCase<OnConflictProvider> {
 

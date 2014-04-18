@@ -3,13 +3,14 @@ package com.tjeannin.provigen.test.constraint;
 import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.Constraint.OnConflict;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
-import com.tjeannin.provigen.annotation.*;
+import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
-import com.tjeannin.provigen.Constraint.OnConflict;
+import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.annotation.Unique;
 
 public class OnConflictProvider extends ProviGenProvider {
 
@@ -23,7 +24,6 @@ public class OnConflictProvider extends ProviGenProvider {
         return new Class[] { ContractAbort.class, ContractReplace.class, ContractFail.class, ContractMultipleResolution.class };
     }
 
-	@Contract(version = 1)
 	public static interface ContractAbort extends ProviGenBaseContract {
 
 		@Unique(OnConflict.ABORT)
@@ -34,7 +34,6 @@ public class OnConflictProvider extends ProviGenProvider {
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/abort");
 	}
 
-	@Contract(version = 1)
 	public static interface ContractReplace extends ProviGenBaseContract {
 
 		@Unique(OnConflict.REPLACE)
@@ -45,7 +44,6 @@ public class OnConflictProvider extends ProviGenProvider {
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/replace");
 	}
 
-	@Contract(version = 1)
 	public static interface ContractFail extends ProviGenBaseContract {
 
 		@Unique(OnConflict.FAIL)
@@ -56,7 +54,6 @@ public class OnConflictProvider extends ProviGenProvider {
 		public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/fail");
 	}
 
-	@Contract(version = 1)
 	public static interface ContractMultipleResolution extends ProviGenBaseContract {
 
 		@Unique(OnConflict.REPLACE)

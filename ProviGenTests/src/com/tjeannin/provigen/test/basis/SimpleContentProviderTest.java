@@ -1,20 +1,19 @@
 package com.tjeannin.provigen.test.basis;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.mock.MockContentResolver;
-
 import com.tjeannin.provigen.InvalidContractException;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractOne;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractTwo;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleContentProvider> {
 
