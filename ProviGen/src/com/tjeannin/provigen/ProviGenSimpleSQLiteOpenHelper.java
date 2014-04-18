@@ -10,8 +10,7 @@ public class ProviGenSimpleSQLiteOpenHelper extends SQLiteOpenHelper {
     private final Class[] contracts;
 
     public ProviGenSimpleSQLiteOpenHelper(Context context, Class[] contractClasses, int version) {
-        super(context, "ProviGenDatabase", null, version);
-        this.contracts = contractClasses;
+        this(context, "ProviGenDatabase", null, version, contractClasses);
     }
 
     public ProviGenSimpleSQLiteOpenHelper(Context context, String databaseName, CursorFactory factory, int version, Class[] contractClasses) {
