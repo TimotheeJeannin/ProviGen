@@ -110,7 +110,6 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 	}
 
 	public void testUpgradeFromContractOneToTwo() throws InvalidContractException {
-        setContractClasses(new Class[] { ContractOne.class });
 
 		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
 

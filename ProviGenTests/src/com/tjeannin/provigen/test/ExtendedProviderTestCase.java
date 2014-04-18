@@ -1,7 +1,6 @@
 package com.tjeannin.provigen.test;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 
 import android.content.ContentValues;
 import android.database.Cursor;

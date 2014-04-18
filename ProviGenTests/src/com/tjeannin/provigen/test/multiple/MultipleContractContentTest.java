@@ -40,8 +40,6 @@ public class MultipleContractContentTest extends ExtendedProviderTestCase<Multip
 
 	public void testAddingAnotherContractLater() throws InvalidContractException {
 
-		setContractClasses(new Class[] { ContractOne.class });
-
 		contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
 		assertEquals(1, getRowCount(ContractOne.CONTENT_URI));
 
