@@ -25,7 +25,7 @@ public class TableBuilder {
                 builder.append(" PRIMARY KEY AUTOINCREMENT ");
             }
             for (Constraint constraint : field.getConstraints()) {
-                builder.append(" ").append(constraint.getType()).append(" ON CONFLICT ").append(constraint.getOnConflict());
+                builder.append(" ").append(constraint.type).append(" ON CONFLICT ").append(constraint.onConflict);
             }
             builder.append(", ");
         }
