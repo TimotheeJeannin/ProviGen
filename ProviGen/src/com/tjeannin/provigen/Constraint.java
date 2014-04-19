@@ -64,7 +64,7 @@ public class Constraint {
 		this.onConflict = onConflict;
 	}
 
-	String getType() {
+	public String getType() {
 		return type;
 	}
 
@@ -72,7 +72,7 @@ public class Constraint {
 		this.type = type;
 	}
 
-	String getOnConflict() {
+	public String getOnConflict() {
 		return onConflict;
 	}
 

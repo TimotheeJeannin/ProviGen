@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.tjeannin.provigen.builder.TableBuilder;
 
 public class ProviGenSimpleSQLiteOpenHelper extends SQLiteOpenHelper {
 
@@ -22,7 +23,7 @@ public class ProviGenSimpleSQLiteOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase database) {
         for (Class contract : contracts)
             try {
-                ProviGenDatabaseHelpers.createTable(database, contract);
+                new TableBuilder(contract).createTable(database);
             } catch (InvalidContractException e) {
                 e.printStackTrace();
             }

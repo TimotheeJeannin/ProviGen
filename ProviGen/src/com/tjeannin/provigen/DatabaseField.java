@@ -3,7 +3,7 @@ package com.tjeannin.provigen;
 import java.util.ArrayList;
 import java.util.List;
 
-class DatabaseField {
+public class DatabaseField {
 
 	private String name;
 	private String type;
