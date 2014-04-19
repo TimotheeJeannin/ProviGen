@@ -1,23 +1,48 @@
 package com.tjeannin.provigen.test.constraint;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import com.tjeannin.provigen.*;
 import com.tjeannin.provigen.Constraint.OnConflict;
-import com.tjeannin.provigen.ProviGenBaseContract;
-import com.tjeannin.provigen.ProviGenProvider;
-import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.annotation.NotNull;
 import com.tjeannin.provigen.annotation.Unique;
+import com.tjeannin.provigen.builder.TableBuilder;
 
 public class ConstraintsProvider extends ProviGenProvider {
 
     @Override
-    public SQLiteOpenHelper createOpenHelper(Context context) {
-        return new ProviGenSimpleSQLiteOpenHelper(context, new Class[]{NotNullContract.class, UniqueContract.class, UniqueAndNotNullContract.class}, 1);
+    public SQLiteOpenHelper createOpenHelper(final Context context) {
+        return new SQLiteOpenHelper(context, "ProviGenDatabase", null, 1) {
+            @Override
+            public void onCreate(SQLiteDatabase database) {
+                try {
+                    new TableBuilder(NotNullContract.class)
+                            .addConstraint(NotNullContract.AN_INT, Constraint.NOT_NULL, OnConflict.ABORT)
+                            .createTable(database);
+
+                    new TableBuilder(UniqueContract.class)
+                            .addConstraint(UniqueContract.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
+                            .createTable(database);
+
+                    new TableBuilder(UniqueAndNotNullContract.class)
+                            .addConstraint(UniqueAndNotNullContract.AN_INT, Constraint.NOT_NULL, OnConflict.ABORT)
+                            .addConstraint(UniqueAndNotNullContract.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
+                            .createTable(database);
+                } catch (InvalidContractException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+            }
+        };
     }
 
     @Override

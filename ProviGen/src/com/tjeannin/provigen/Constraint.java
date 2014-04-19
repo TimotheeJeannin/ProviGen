@@ -56,11 +56,13 @@ public class Constraint {
     }
 
     public String type;
-    public String onConflict;
+    public String targetColumn;
+    public String conflictClause;
 
-    Constraint(String type, String onConflict) {
+    public Constraint(String targetColumn, String type, String onConflict) {
         super();
         this.type = type;
-        this.onConflict = onConflict;
+        this.targetColumn = targetColumn;
+        this.conflictClause = onConflict;
     }
 }

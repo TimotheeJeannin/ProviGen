@@ -52,17 +52,6 @@ public class ContractHolder {
 			if (column != null) {
 				try {
 					DatabaseField databaseField = new DatabaseField((String) field.get(null), column.value());
-
-					Unique unique = field.getAnnotation(Unique.class);
-					if (unique != null) {
-						databaseField.getConstraints().add(new Constraint(Constraint.UNIQUE, unique.value()));
-					}
-
-					NotNull notNull = field.getAnnotation(NotNull.class);
-					if (notNull != null) {
-						databaseField.getConstraints().add(new Constraint(Constraint.NOT_NULL, notNull.value()));
-					}
-
 					databaseFields.add(databaseField);
 				} catch (Exception e) {
 					e.printStackTrace();

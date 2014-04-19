@@ -6,12 +6,22 @@ import com.tjeannin.provigen.ContractHolder;
 import com.tjeannin.provigen.DatabaseField;
 import com.tjeannin.provigen.InvalidContractException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TableBuilder {
 
     private ContractHolder contractHolder;
+    private List<Constraint> constraints;
 
     public TableBuilder(Class contractClass) throws InvalidContractException {
         contractHolder = new ContractHolder(contractClass);
+        constraints = new ArrayList<Constraint>();
+    }
+
+    public TableBuilder addConstraint(String constraintColumn, String constraintType, String constraintConflictClause) {
+        constraints.add(new Constraint(constraintColumn, constraintType, constraintConflictClause));
+        return this;
     }
 
     public String getSQL() {
@@ -24,8 +34,10 @@ public class TableBuilder {
             if (field.getName().equals(contractHolder.getIdField())) {
                 builder.append(" PRIMARY KEY AUTOINCREMENT ");
             }
-            for (Constraint constraint : field.getConstraints()) {
-                builder.append(" ").append(constraint.type).append(" ON CONFLICT ").append(constraint.onConflict);
+            for (Constraint constraint : constraints) {
+                if (constraint.targetColumn.equals(field.getName())) {
+                    builder.append(" ").append(constraint.type).append(" ON CONFLICT ").append(constraint.conflictClause);
+                }
             }
             builder.append(", ");
         }
