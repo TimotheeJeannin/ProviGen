@@ -10,6 +10,8 @@ import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.Id;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> extends ProviderTestCase2<T> {
 
@@ -34,7 +36,7 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
      */
     protected void setContractClasses(Class[] contractClasses){
 
-		ContractHolderList contracts = new ContractHolderList();;
+		List<ContractHolder> contracts = new ArrayList<ContractHolder>();
 
         for(Class contract : contractClasses){
             try {
