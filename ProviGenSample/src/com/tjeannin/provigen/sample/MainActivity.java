@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
-import com.tjeannin.provigen.sample.SampleContentProvider.SampleContract;
 
 public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnClickListener {
 
@@ -24,18 +23,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
         setContentView(R.layout.activity_main);
 
         String[] columns = new String[]{
-                SampleContract._ID,
-                SampleContract.MY_INT,
-                SampleContract.MY_REAL,
-                SampleContract.MY_STRING};
+                SampleContentProvider.Person.AGE,
+                SampleContentProvider.Person.NAME};
 
         int[] ids = {
-                R.id.item_id,
-                R.id.item_int,
-                R.id.item_real,
-                R.id.item_string};
+                R.id.person_age,
+                R.id.person_name};
 
-        adapter = new SimpleCursorAdapter(this, R.layout.item, null, columns, ids, 0);
+        adapter = new SimpleCursorAdapter(this, R.layout.person_item, null, columns, ids, 0);
 
         ((ListView) findViewById(R.id.list_view)).setAdapter(adapter);
 
@@ -53,7 +48,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this, SampleContract.CONTENT_URI, null, "", null, "");
+        return new CursorLoader(this, SampleContentProvider.Person.CONTENT_URI, null, "", null, "");
     }
 
     @Override
@@ -72,14 +67,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
         switch (view.getId()) {
             case R.id.add:
                 ContentValues values = new ContentValues();
-                values.put(SampleContract.MY_INT, 5);
-                values.put(SampleContract.MY_STRING, "afhzpuf");
-                values.put(SampleContract.MY_REAL, 0.45896);
-                getContentResolver().insert(SampleContract.CONTENT_URI, values);
+                values.put(SampleContentProvider.Person.AGE, 20);
+                values.put(SampleContentProvider.Person.NAME, "Some Name");
+                getContentResolver().insert(SampleContentProvider.Person.CONTENT_URI, values);
                 break;
 
             case R.id.delete:
-                getContentResolver().delete(SampleContract.CONTENT_URI, "", null);
+                getContentResolver().delete(SampleContentProvider.Person.CONTENT_URI, "", null);
                 break;
             default:
 
