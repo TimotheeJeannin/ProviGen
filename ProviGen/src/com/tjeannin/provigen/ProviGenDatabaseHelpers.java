@@ -11,8 +11,8 @@ public class ProviGenDatabaseHelpers {
 
         Cursor cursor = database.rawQuery("PRAGMA table_info(" + contractHolder.getTable() + ")", null);
         for (DatabaseField field : contractHolder.getFields()) {
-            if (!fieldExistAsColumn(field.getName(), cursor)) {
-                database.execSQL("ALTER TABLE " + contractHolder.getTable() + " ADD COLUMN " + field.getName() + " " + field.getType() + ";");
+            if (!fieldExistAsColumn(field.name, cursor)) {
+                database.execSQL("ALTER TABLE " + contractHolder.getTable() + " ADD COLUMN " + field.name + " " + field.type + ";");
             }
         }
     }

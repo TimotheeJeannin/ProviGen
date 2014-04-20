@@ -9,7 +9,7 @@ import com.tjeannin.provigen.Constraint.OnConflict;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
-import com.tjeannin.provigen.builder.TableBuilder;
+import com.tjeannin.provigen.TableBuilder;
 
 public class OnConflictProvider extends ProviGenProvider {
 
