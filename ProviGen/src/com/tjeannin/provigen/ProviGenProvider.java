@@ -23,15 +23,17 @@ public abstract class ProviGenProvider extends ContentProvider {
     private static final int ITEM_ID = 2;
     private SQLiteOpenHelper openHelper;
 
-    public abstract SQLiteOpenHelper setOpenHelper(Context context);
+    public SQLiteOpenHelper openHelper(Context context) {
+        return new ProviGenSimpleSQLiteOpenHelper(context, contractClasses(), 1);
+    }
 
-    public abstract Class[] setContractClasses();
+    public abstract Class[] contractClasses();
 
     @Override
     public boolean onCreate() {
 
-        openHelper = setOpenHelper(getContext());
-        for (Class contract : setContractClasses()) {
+        openHelper = openHelper(getContext());
+        for (Class contract : contractClasses()) {
             contracts.add(new Contract(contract));
         }
 

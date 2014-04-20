@@ -16,7 +16,7 @@ import com.tjeannin.provigen.model.Constraint.OnConflict;
 public class ConstraintsProvider extends ProviGenProvider {
 
     @Override
-    public SQLiteOpenHelper setOpenHelper(final Context context) {
+    public SQLiteOpenHelper openHelper(final Context context) {
         return new SQLiteOpenHelper(context, "ProviGenDatabase", null, 1) {
             @Override
             public void onCreate(SQLiteDatabase database) {
@@ -42,7 +42,7 @@ public class ConstraintsProvider extends ProviGenProvider {
     }
 
     @Override
-    public Class[] setContractClasses() {
+    public Class[] contractClasses() {
         return new Class[]{NotNullContract.class, UniqueContract.class, UniqueAndNotNullContract.class};
     }
 

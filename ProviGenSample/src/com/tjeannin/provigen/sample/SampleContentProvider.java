@@ -1,10 +1,7 @@
 package com.tjeannin.provigen.sample;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import com.tjeannin.provigen.ProviGenProvider;
-import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
@@ -14,12 +11,7 @@ import com.tjeannin.provigen.annotation.Id;
 public class SampleContentProvider extends ProviGenProvider {
 
     @Override
-    public SQLiteOpenHelper setOpenHelper(Context context) {
-        return new ProviGenSimpleSQLiteOpenHelper(context, new Class[]{SampleContract.class}, 1);
-    }
-
-    @Override
-    public Class[] setContractClasses() {
+    public Class[] contractClasses() {
         return new Class[]{SampleContract.class};
     }
 
