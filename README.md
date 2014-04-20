@@ -83,73 +83,59 @@ The table name will be the last path segment of the contract's content uri.
 ProviGen fully supports the uri notification mechanism.   
 You can safely use it with [CursorLoader]s and [ContentObserver]s.
 
-### Initial population
+### Initial population and contract upgrades
 
-ProviGen will automatically create the needed table for you.    
-Initial population can be done overriding the `onCreateDatabase` method.
+ProviGen comes with a default implementation of the [SQLiteOpenHelper].
+This default implementation will automatically create the needed tables on the first application launch.
+
+Initial population and contract upgrades can be done providing your own implementation of the [SQLiteOpenHelper].
 ```java
 public class MyContentProvider extends ProviGenProvider {
 
-	public MyContentProvider() throws InvalidContractException {
-		super(MyContract.class);
-	}
+    @Override
+    public Class[] contractClasses() {
+        return new Class[]{MyContract.class};
+    }
 
-	@Override
-	public void onCreateDatabase(SQLiteDatabase database) {
-		// Automatically creates table and needed columns.
-		super.onCreateDatabase(database); 
+    @Override
+    public SQLiteOpenHelper openHelper(Context context) {
+        return new SQLiteOpenHelper(getContext(), "databaseName", null, 1) {
+            @Override
+            public void onCreate(SQLiteDatabase database) {
+                // Automatically creates table and needed columns.
+                new TableBuilder(MyContract.class).createTable(database);
 
-		// If needed, populate table here.
-	}
+                // Do initial population here.
+            }
+
+            @Override
+            public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+                // Automatically adds new columns.
+                TableUpdater.addMissingColumns(database, MyContract.class);
+
+                // Anything else related to database upgrade should be done here.
+            }
+        };
+    }
 }
 ```
-If you want to create the table yourself, just don't call `super.onCreateDatabase(database)`.
-
-### Contract upgrades
-
-If you increase the version of a contract class, ProviGen will automatically add missing columns for you.    
-Any other changes should be done overriding the `onUpgradeDatabase` method.
-```java
-public class MyContentProvider extends ProviGenProvider {
-
-	public MyContentProvider() throws InvalidContractException {
-		super(MyContract.class);
-	}
-
-	@Override
-	public void onUpgradeDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
-		// Automatically adds new columns.
-		super.onUpgradeDatabase(database, oldVersion, newVersion);
-
-		// Anything else related to database upgrade should be done here. 
-	}
-}
-```
-If you want to add missing columns yourself, just don't call `super.onUpgradeDatabase(database, oldVersion, newVersion)`
 
 ### Data constraint
 
-You can apply a `UNIQUE` constraint to a column using the `@Unique` annotation.
+You can apply a `UNIQUE` or a `NOT_NULL` constraint to a column using the `TableBuilder`.
 
 ```java
-@Unique(OnConflict.REPLACE)
-@Column(Type.INTEGER)
-public static final String MY_INT = "my_int";
+new TableBuilder(MyContract.class)
+        .addConstraint(MyContract.MY_INT, Constraint.UNIQUE, OnConflict.ABORT)
+        .addConstraint(MyContract.MY_STRING, Constraint.NOT_NULL, OnConflict.IGNORE)
+        .createTable(database);
 ```
-
-You can apply a `NOT_NULL` constraint to a column using the `@NotNull` annotation.
-
-```java
-@NotNull(OnConflict.ABORT)
-@Column(Type.INTEGER)
-public static final String MY_INT = "my_int";
-```
-
-`CHECK` constraint is not supported yet.
 
 ## License
 
 This content is released under the MIT License.
+
+[SQLiteOpenHelper]: https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html
 
 [ContentObserver]: https://developer.android.com/reference/android/database/ContentObserver.html
 
