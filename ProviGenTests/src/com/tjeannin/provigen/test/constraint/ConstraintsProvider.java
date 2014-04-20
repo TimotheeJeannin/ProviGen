@@ -9,8 +9,6 @@ import com.tjeannin.provigen.Constraint.OnConflict;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
-import com.tjeannin.provigen.annotation.NotNull;
-import com.tjeannin.provigen.annotation.Unique;
 import com.tjeannin.provigen.builder.TableBuilder;
 
 public class ConstraintsProvider extends ProviGenProvider {
@@ -53,7 +51,6 @@ public class ConstraintsProvider extends ProviGenProvider {
 
     public static interface NotNullContract extends ProviGenBaseContract {
 
-        @NotNull(OnConflict.ABORT)
         @Column(Type.INTEGER)
         public static final String AN_INT = "an_int";
 
@@ -64,7 +61,6 @@ public class ConstraintsProvider extends ProviGenProvider {
 
     public static interface UniqueContract extends ProviGenBaseContract {
 
-        @Unique(OnConflict.REPLACE)
         @Column(Type.INTEGER)
         public static final String AN_INT = "an_int";
 
@@ -75,8 +71,6 @@ public class ConstraintsProvider extends ProviGenProvider {
 
     public static interface UniqueAndNotNullContract extends ProviGenBaseContract {
 
-        @Unique(OnConflict.REPLACE)
-        @NotNull(OnConflict.ABORT)
         @Column(Type.INTEGER)
         public static final String AN_INT = "an_int";
 

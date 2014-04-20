@@ -3,14 +3,12 @@ package com.tjeannin.provigen.test.basis;
 import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import com.tjeannin.provigen.Constraint;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
-import com.tjeannin.provigen.annotation.NotNull;
 
 public class SimpleContentProvider extends ProviGenProvider {
 
@@ -39,7 +37,6 @@ public class SimpleContentProvider extends ProviGenProvider {
         String MY_INT = "int";
 
         @Column(Type.TEXT)
-        @NotNull(Constraint.OnConflict.ABORT)
         String MY_STRING = "string";
 
         @Column(Type.REAL)

@@ -9,7 +9,6 @@ import com.tjeannin.provigen.Constraint.OnConflict;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
-import com.tjeannin.provigen.annotation.Unique;
 import com.tjeannin.provigen.builder.TableBuilder;
 
 public class OnConflictProvider extends ProviGenProvider {
@@ -56,7 +55,6 @@ public class OnConflictProvider extends ProviGenProvider {
 
     public static interface ContractAbort extends ProviGenBaseContract {
 
-        @Unique(OnConflict.ABORT)
         @Column(Type.INTEGER)
         public static final String AN_INT = "an_int";
 
@@ -66,7 +64,6 @@ public class OnConflictProvider extends ProviGenProvider {
 
     public static interface ContractReplace extends ProviGenBaseContract {
 
-        @Unique(OnConflict.REPLACE)
         @Column(Type.INTEGER)
         public static final String AN_INT = "an_int";
 
@@ -76,7 +73,6 @@ public class OnConflictProvider extends ProviGenProvider {
 
     public static interface ContractFail extends ProviGenBaseContract {
 
-        @Unique(OnConflict.FAIL)
         @Column(Type.INTEGER)
         public static final String AN_INT = "an_int";
 
@@ -86,11 +82,9 @@ public class OnConflictProvider extends ProviGenProvider {
 
     public static interface ContractMultipleResolution extends ProviGenBaseContract {
 
-        @Unique(OnConflict.REPLACE)
         @Column(Type.INTEGER)
         public static final String AN_INT = "an_int";
 
-        @Unique(OnConflict.ABORT)
         @Column(Type.INTEGER)
         public static final String ANOTHER_INT = "another_int";
 
