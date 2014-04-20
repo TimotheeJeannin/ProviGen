@@ -5,8 +5,17 @@ import android.database.sqlite.SQLiteDatabase;
 import com.tjeannin.provigen.model.Contract;
 import com.tjeannin.provigen.model.ContractField;
 
+/**
+ * Facilitate the update of an database table from a contract class.
+ */
 public class TableUpdater {
 
+    /**
+     * Adds missing table columns for the given contract class.
+     *
+     * @param database      The database in which the updated table is.
+     * @param contractClass The contract class to work with.
+     */
     public static void addMissingColumns(SQLiteDatabase database, Class contractClass) {
 
         Contract contract = new Contract(contractClass);
