@@ -7,15 +7,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.tjeannin.provigen.helper.TableBuilder;
 import com.tjeannin.provigen.helper.TableUpdater;
 
-public class ProviGenSimpleSQLiteOpenHelper extends SQLiteOpenHelper {
+public class ProviGenOpenHelper extends SQLiteOpenHelper {
 
     private final Class[] contracts;
 
-    public ProviGenSimpleSQLiteOpenHelper(Context context, Class[] contractClasses, int version) {
+    public ProviGenOpenHelper(Context context, Class[] contractClasses, int version) {
         this(context, "ProviGenDatabase", null, version, contractClasses);
     }
 
-    public ProviGenSimpleSQLiteOpenHelper(Context context, String databaseName, CursorFactory factory, int version, Class[] contractClasses) {
+    public ProviGenOpenHelper(Context context, String databaseName, CursorFactory factory, int version, Class[] contractClasses) {
         super(context, databaseName, factory, version);
         this.contracts = contractClasses;
     }

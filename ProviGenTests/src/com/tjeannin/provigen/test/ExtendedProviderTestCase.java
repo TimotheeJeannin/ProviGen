@@ -4,8 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.test.ProviderTestCase2;
+import com.tjeannin.provigen.ProviGenOpenHelper;
 import com.tjeannin.provigen.ProviGenProvider;
-import com.tjeannin.provigen.ProviGenSimpleSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.Id;
@@ -52,7 +52,7 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
             Field openHelperField = null;
             openHelperField = getProvider().getClass().getSuperclass().getDeclaredField("openHelper");
             openHelperField.setAccessible(true);
-            openHelperField.set(getProvider(), new ProviGenSimpleSQLiteOpenHelper(getProvider().getContext(), contractClasses, 2));
+            openHelperField.set(getProvider(), new ProviGenOpenHelper(getProvider().getContext(), contractClasses, 2));
 
 
         } catch (NoSuchFieldException e) {

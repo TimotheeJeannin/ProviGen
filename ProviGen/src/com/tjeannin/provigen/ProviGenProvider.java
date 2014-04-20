@@ -24,7 +24,7 @@ public abstract class ProviGenProvider extends ContentProvider {
     private SQLiteOpenHelper openHelper;
 
     public SQLiteOpenHelper openHelper(Context context) {
-        return new ProviGenSimpleSQLiteOpenHelper(context, contractClasses(), 1);
+        return new ProviGenOpenHelper(context, contractClasses(), 1);
     }
 
     public abstract Class[] contractClasses();

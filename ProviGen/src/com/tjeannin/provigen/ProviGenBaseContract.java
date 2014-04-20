@@ -1,5 +1,6 @@
 package com.tjeannin.provigen;
 
+import android.provider.BaseColumns;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.Id;
@@ -14,6 +15,6 @@ public interface ProviGenBaseContract {
      */
     @Id
     @Column(Type.INTEGER)
-    public static final String _ID = "_id";
+    public static final String _ID = BaseColumns._ID;
 
 }

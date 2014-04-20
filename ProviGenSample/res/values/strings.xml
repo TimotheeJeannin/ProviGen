@@ -5,9 +5,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="add">Add</string>
     <string name="clear">Clear</string>
-    <string name="item_id">Item Id:</string>
-    <string name="item_int">Item Int:</string>
-    <string name="item_string">Item String:</string>
-    <string name="item_real">Item Real:</string>
+    <string name="person_name">Person Name</string>
+    <string name="person_age">Person Age</string>
 
 </resources>
