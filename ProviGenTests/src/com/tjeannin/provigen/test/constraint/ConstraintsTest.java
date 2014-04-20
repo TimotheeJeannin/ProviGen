@@ -1,7 +1,7 @@
 package com.tjeannin.provigen.test.constraint;
 
 import android.content.ContentValues;
-import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.model.Contract.InvalidContractException;
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.constraint.ConstraintsProvider.NotNullContract;
 import com.tjeannin.provigen.test.constraint.ConstraintsProvider.UniqueAndNotNullContract;

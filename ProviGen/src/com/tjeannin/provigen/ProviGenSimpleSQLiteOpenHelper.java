@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.tjeannin.provigen.helper.TableBuilder;
 import com.tjeannin.provigen.helper.TableUpdater;
+import com.tjeannin.provigen.model.Contract;
 
 public class ProviGenSimpleSQLiteOpenHelper extends SQLiteOpenHelper {
 
@@ -25,7 +26,7 @@ public class ProviGenSimpleSQLiteOpenHelper extends SQLiteOpenHelper {
         for (Class contract : contracts)
             try {
                 new TableBuilder(contract).createTable(database);
-            } catch (InvalidContractException e) {
+            } catch (Contract.InvalidContractException e) {
                 e.printStackTrace();
             }
     }
@@ -35,7 +36,7 @@ public class ProviGenSimpleSQLiteOpenHelper extends SQLiteOpenHelper {
         for (Class contract : contracts)
             try {
                 TableUpdater.addMissingColumns(database, contract);
-            } catch (InvalidContractException e) {
+            } catch (Contract.InvalidContractException e) {
                 e.printStackTrace();
             }
     }

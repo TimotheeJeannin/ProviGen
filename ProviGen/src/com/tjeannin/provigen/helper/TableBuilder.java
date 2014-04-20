@@ -1,21 +1,21 @@
 package com.tjeannin.provigen.helper;
 
 import android.database.sqlite.SQLiteDatabase;
-import com.tjeannin.provigen.Constraint;
-import com.tjeannin.provigen.ContractHolder;
-import com.tjeannin.provigen.DatabaseField;
-import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.model.Constraint;
+import com.tjeannin.provigen.model.Contract;
+import com.tjeannin.provigen.model.ContractField;
+import com.tjeannin.provigen.model.Contract.InvalidContractException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TableBuilder {
 
-    private ContractHolder contractHolder;
+    private Contract contract;
     private List<Constraint> constraints;
 
     public TableBuilder(Class contractClass) throws InvalidContractException {
-        contractHolder = new ContractHolder(contractClass);
+        contract = new Contract(contractClass);
         constraints = new ArrayList<Constraint>();
     }
 
@@ -27,11 +27,11 @@ public class TableBuilder {
     public String getSQL() {
 
         StringBuilder builder = new StringBuilder("CREATE TABLE ");
-        builder.append(contractHolder.getTable()).append(" ( ");
+        builder.append(contract.getTable()).append(" ( ");
 
-        for (DatabaseField field : contractHolder.getFields()) {
+        for (ContractField field : contract.getFields()) {
             builder.append(" ").append(field.name).append(" ").append(field.type);
-            if (field.name.equals(contractHolder.getIdField())) {
+            if (field.name.equals(contract.getIdField())) {
                 builder.append(" PRIMARY KEY AUTOINCREMENT ");
             }
             for (Constraint constraint : constraints) {

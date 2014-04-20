@@ -5,11 +5,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import com.tjeannin.provigen.*;
-import com.tjeannin.provigen.Constraint.OnConflict;
+import com.tjeannin.provigen.model.Constraint;
+import com.tjeannin.provigen.model.Constraint.OnConflict;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.helper.TableBuilder;
+import com.tjeannin.provigen.model.Contract;
 
 public class ConstraintsProvider extends ProviGenProvider {
 
@@ -31,7 +33,7 @@ public class ConstraintsProvider extends ProviGenProvider {
                             .addConstraint(UniqueAndNotNullContract.AN_INT, Constraint.NOT_NULL, OnConflict.ABORT)
                             .addConstraint(UniqueAndNotNullContract.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
                             .createTable(database);
-                } catch (InvalidContractException e) {
+                } catch (Contract.InvalidContractException e) {
                     e.printStackTrace();
                 }
             }

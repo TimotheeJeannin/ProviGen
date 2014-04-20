@@ -1,4 +1,4 @@
-package com.tjeannin.provigen;
+package com.tjeannin.provigen.model;
 
 public class Constraint {
 

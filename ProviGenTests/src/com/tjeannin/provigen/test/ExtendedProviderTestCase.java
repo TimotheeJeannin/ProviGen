@@ -8,6 +8,7 @@ import com.tjeannin.provigen.*;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.Id;
+import com.tjeannin.provigen.model.Contract;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -36,12 +37,12 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
      */
     protected void setContractClasses(Class[] contractClasses){
 
-		List<ContractHolder> contracts = new ArrayList<ContractHolder>();
+		List<Contract> contracts = new ArrayList<Contract>();
 
         for(Class contract : contractClasses){
             try {
-                contracts.add(new ContractHolder(contract));
-            } catch (InvalidContractException e) {
+                contracts.add(new Contract(contract));
+            } catch (Contract.InvalidContractException e) {
                 e.printStackTrace();
             }
         }

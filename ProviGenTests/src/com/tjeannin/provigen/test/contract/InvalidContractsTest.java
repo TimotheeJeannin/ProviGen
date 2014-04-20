@@ -2,7 +2,7 @@ package com.tjeannin.provigen.test.contract;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
-import com.tjeannin.provigen.InvalidContractException;
+import com.tjeannin.provigen.model.Contract.InvalidContractException;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
@@ -54,7 +54,7 @@ public class InvalidContractsTest extends AndroidTestCase {
 
         for (Class clazz : INVALID_CONTRACTS) {
             try {
-                Class obj = Class.forName("com.tjeannin.provigen.ContractHolder");
+                Class obj = Class.forName("com.tjeannin.provigen.model.Contract");
                 obj.getConstructors()[0].newInstance(clazz);
                 fail("No exception thrown.");
             } catch (Exception exception) {

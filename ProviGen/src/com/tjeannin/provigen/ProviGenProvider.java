@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
+import com.tjeannin.provigen.model.Contract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public abstract class ProviGenProvider extends ContentProvider {
 
-    private List<ContractHolder> contracts = new ArrayList<ContractHolder>();
+    private List<Contract> contracts = new ArrayList<Contract>();
 
     private UriMatcher uriMatcher;
     private static final int ITEM = 1;
@@ -32,14 +33,14 @@ public abstract class ProviGenProvider extends ContentProvider {
         openHelper = setOpenHelper(getContext());
         for (Class contract : setContractClasses()) {
             try {
-                contracts.add(new ContractHolder(contract));
-            } catch (InvalidContractException e) {
+                contracts.add(new Contract(contract));
+            } catch (Contract.InvalidContractException e) {
                 e.printStackTrace();
             }
         }
 
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        for (ContractHolder contract : contracts) {
+        for (Contract contract : contracts) {
             uriMatcher.addURI(contract.getAuthority(), contract.getTable(), ITEM);
             uriMatcher.addURI(contract.getAuthority(), contract.getTable() + "/#", ITEM_ID);
         }
@@ -52,20 +53,20 @@ public abstract class ProviGenProvider extends ContentProvider {
         SQLiteDatabase database = openHelper.getWritableDatabase();
 
         int numberOfRowsAffected = 0;
-        ContractHolder contractHolder = findMatchingContract(uri);
+        Contract contract = findMatchingContract(uri);
 
         switch (uriMatcher.match(uri)) {
             case ITEM:
-                numberOfRowsAffected = database.delete(contractHolder.getTable(), selection, selectionArgs);
+                numberOfRowsAffected = database.delete(contract.getTable(), selection, selectionArgs);
                 break;
             case ITEM_ID:
                 String itemId = String.valueOf(ContentUris.parseId(uri));
 
                 if (TextUtils.isEmpty(selection)) {
-                    numberOfRowsAffected = database.delete(contractHolder.getTable(), contractHolder.getIdField() + " = ? ", new String[]{itemId});
+                    numberOfRowsAffected = database.delete(contract.getTable(), contract.getIdField() + " = ? ", new String[]{itemId});
                 } else {
-                    numberOfRowsAffected = database.delete(contractHolder.getTable(), selection + " AND " +
-                            contractHolder.getIdField() + " = ? ", appendToStringArray(selectionArgs, itemId));
+                    numberOfRowsAffected = database.delete(contract.getTable(), selection + " AND " +
+                            contract.getIdField() + " = ? ", appendToStringArray(selectionArgs, itemId));
                 }
                 break;
             default:
@@ -79,13 +80,13 @@ public abstract class ProviGenProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
 
-        ContractHolder contractHolder = findMatchingContract(uri);
+        Contract contract = findMatchingContract(uri);
 
         switch (uriMatcher.match(uri)) {
             case ITEM:
-                return "vnd.android.cursor.dir/vdn." + contractHolder.getTable();
+                return "vnd.android.cursor.dir/vdn." + contract.getTable();
             case ITEM_ID:
-                return "vnd.android.cursor.item/vdn." + contractHolder.getTable();
+                return "vnd.android.cursor.item/vdn." + contract.getTable();
             default:
                 throw new IllegalArgumentException("Unknown uri " + uri);
         }
@@ -95,10 +96,10 @@ public abstract class ProviGenProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         SQLiteDatabase database = openHelper.getWritableDatabase();
 
-        ContractHolder contractHolder = findMatchingContract(uri);
+        Contract contract = findMatchingContract(uri);
         switch (uriMatcher.match(uri)) {
             case ITEM:
-                long itemId = database.insert(contractHolder.getTable(), null, values);
+                long itemId = database.insert(contract.getTable(), null, values);
                 getContext().getContentResolver().notifyChange(uri, null);
                 return Uri.withAppendedPath(uri, String.valueOf(itemId));
             default:
@@ -110,19 +111,19 @@ public abstract class ProviGenProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase database = openHelper.getReadableDatabase();
 
-        ContractHolder contractHolder = findMatchingContract(uri);
+        Contract contract = findMatchingContract(uri);
         Cursor cursor = null;
 
         switch (uriMatcher.match(uri)) {
             case ITEM:
-                cursor = database.query(contractHolder.getTable(), projection, selection, selectionArgs, "", "", sortOrder);
+                cursor = database.query(contract.getTable(), projection, selection, selectionArgs, "", "", sortOrder);
                 break;
             case ITEM_ID:
                 String itemId = String.valueOf(ContentUris.parseId(uri));
                 if (TextUtils.isEmpty(selection)) {
-                    cursor = database.query(contractHolder.getTable(), projection, contractHolder.getIdField() + " = ? ", new String[]{itemId}, "", "", sortOrder);
+                    cursor = database.query(contract.getTable(), projection, contract.getIdField() + " = ? ", new String[]{itemId}, "", "", sortOrder);
                 } else {
-                    cursor = database.query(contractHolder.getTable(), projection, selection + " AND " + contractHolder.getIdField() + " = ? ",
+                    cursor = database.query(contract.getTable(), projection, selection + " AND " + contract.getIdField() + " = ? ",
                             appendToStringArray(selectionArgs, itemId), "", "", sortOrder);
                 }
                 break;
@@ -141,20 +142,20 @@ public abstract class ProviGenProvider extends ContentProvider {
                       String[] selectionArgs) {
         SQLiteDatabase database = openHelper.getWritableDatabase();
 
-        ContractHolder contractHolder = findMatchingContract(uri);
+        Contract contract = findMatchingContract(uri);
         int numberOfRowsAffected = 0;
 
         switch (uriMatcher.match(uri)) {
             case ITEM:
-                numberOfRowsAffected = database.update(contractHolder.getTable(), values, selection, selectionArgs);
+                numberOfRowsAffected = database.update(contract.getTable(), values, selection, selectionArgs);
                 break;
             case ITEM_ID:
                 String itemId = String.valueOf(ContentUris.parseId(uri));
 
                 if (TextUtils.isEmpty(selection)) {
-                    numberOfRowsAffected = database.update(contractHolder.getTable(), values, contractHolder.getIdField() + " = ? ", new String[]{itemId});
+                    numberOfRowsAffected = database.update(contract.getTable(), values, contract.getIdField() + " = ? ", new String[]{itemId});
                 } else {
-                    numberOfRowsAffected = database.update(contractHolder.getTable(), values, selection + " AND " + contractHolder.getIdField() + " = ? ",
+                    numberOfRowsAffected = database.update(contract.getTable(), values, selection + " AND " + contract.getIdField() + " = ? ",
                             appendToStringArray(selectionArgs, itemId));
                 }
                 break;
@@ -167,10 +168,10 @@ public abstract class ProviGenProvider extends ContentProvider {
 
     /**
      * @param uri The {@link Uri} to be matched.
-     * @return A {@link ContractHolder} matching the given {@link Uri}.
+     * @return A {@link com.tjeannin.provigen.model.Contract} matching the given {@link Uri}.
      */
-    public ContractHolder findMatchingContract(Uri uri) {
-        for (ContractHolder contract : contracts) {
+    public Contract findMatchingContract(Uri uri) {
+        for (Contract contract : contracts) {
             if (contract.getTable().equals(uri.getPathSegments().get(0))) {
                 return contract;
             }
