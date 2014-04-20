@@ -9,11 +9,11 @@ import com.tjeannin.provigen.annotation.Id;
  */
 public interface ProviGenBaseContract {
 
-	/**
-	 * The unique ID for a row.
-	 */
-	@Id
-	@Column(Type.INTEGER)
-	public static final String _ID = "_id";
+    /**
+     * The unique ID for a row.
+     */
+    @Id
+    @Column(Type.INTEGER)
+    public static final String _ID = "_id";
 
 }

@@ -4,11 +4,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.tjeannin.provigen.model.Contract;
 import com.tjeannin.provigen.model.ContractField;
-import com.tjeannin.provigen.model.Contract.InvalidContractException;
 
 public class TableUpdater {
 
-    public static void addMissingColumns(SQLiteDatabase database, Class contractClass) throws InvalidContractException {
+    public static void addMissingColumns(SQLiteDatabase database, Class contractClass) {
 
         Contract contract = new Contract(contractClass);
 

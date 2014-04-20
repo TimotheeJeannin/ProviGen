@@ -1,7 +1,9 @@
 package com.tjeannin.provigen.model;
 
 import android.net.Uri;
-import com.tjeannin.provigen.annotation.*;
+import com.tjeannin.provigen.annotation.Column;
+import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.annotation.Id;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -9,20 +11,13 @@ import java.util.List;
 
 public class Contract {
 
-    public class InvalidContractException extends Exception {
-
-        public InvalidContractException(String string) {
-            super(string);
-        }
-    }
-
     private String authority;
     private String idField;
     private String tableName;
     private List<ContractField> contractFields;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public Contract(Class contractClass) throws InvalidContractException {
+    public Contract(Class contractClass) {
 
         contractFields = new ArrayList<ContractField>();
 
@@ -31,9 +26,6 @@ public class Contract {
 
             ContentUri contentUri = field.getAnnotation(ContentUri.class);
             if (contentUri != null) {
-                if (authority != null || tableName != null) {
-                    throw new InvalidContractException("A contract can not have several @ContentUri.");
-                }
                 try {
                     Uri uri = (Uri) field.get(null);
                     authority = uri.getAuthority();
@@ -45,9 +37,6 @@ public class Contract {
 
             Id id = field.getAnnotation(Id.class);
             if (id != null) {
-                if (idField != null) {
-                    throw new InvalidContractException("A contract can not have several fields annotated with @Id.");
-                }
                 try {
                     idField = (String) field.get(null);
                 } catch (Exception e) {
@@ -63,10 +52,6 @@ public class Contract {
                     e.printStackTrace();
                 }
             }
-        }
-
-        if (authority == null || tableName == null) {
-            throw new InvalidContractException("The contract is missing a @ContentUri.");
         }
     }
 

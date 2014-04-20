@@ -18,12 +18,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Column {
-	String value();
+    String value();
 
-	public class Type {
-		public static final String INTEGER = "INTEGER";
-		public static final String REAL = "REAL";
-		public static final String TEXT = "TEXT";
-		public static final String BLOB = "BLOB";
-	}
+    public class Type {
+        public static final String INTEGER = "INTEGER";
+        public static final String REAL = "REAL";
+        public static final String TEXT = "TEXT";
+        public static final String BLOB = "BLOB";
+    }
 }

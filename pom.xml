@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.github.provigen</groupId>
-	<artifactId>ProviGen-parent</artifactId>
-	<version>1.7.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+    <groupId>com.github.provigen</groupId>
+    <artifactId>ProviGen-parent</artifactId>
+    <version>1.7.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <inceptionYear>2012</inceptionYear>
 
-	<name>ProviGen - parent</name>
+    <name>ProviGen - parent</name>
 
-	<modules>
-		<module>ProviGen</module>
-		<module>ProviGenSample</module>
-		<module>ProviGenTests</module>
-	</modules>
+    <modules>
+        <module>ProviGen</module>
+        <module>ProviGenSample</module>
+        <module>ProviGenTests</module>
+    </modules>
 
     <description>Easily make a ContentProvider from a ContractClass.</description>
     <url>https://github.com/TimotheeJeannin/ProviGen</url>
@@ -37,7 +38,7 @@
         </developer>
     </developers>
 
-    <contributors />
+    <contributors/>
 
     <distributionManagement>
         <snapshotRepository>
@@ -57,17 +58,17 @@
         </site>
     </distributionManagement>
 
-	<scm>
-		<url>https://github.com/TimotheeJeannin/ProviGen</url>
-		<connection>scm:git:https://github.com/TimotheeJeannin/ProviGen.git</connection>
-		<developerConnection>scm:git:https://github.com/TimotheeJeannin/ProviGen.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+    <scm>
+        <url>https://github.com/TimotheeJeannin/ProviGen</url>
+        <connection>scm:git:https://github.com/TimotheeJeannin/ProviGen.git</connection>
+        <developerConnection>scm:git:https://github.com/TimotheeJeannin/ProviGen.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
-	<issueManagement>
-		<system>GitHub Issues</system>
-		<url>https://github.com/TimotheeJeannin/ProviGen/issues</url>
-	</issueManagement>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/TimotheeJeannin/ProviGen/issues</url>
+    </issueManagement>
 
     <ciManagement>
         <system>Travis CI</system>
@@ -82,12 +83,12 @@
     </ciManagement>
 
     <properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<java.version>1.6</java.version>
-		<android.version>4.1.1.4</android.version>
-		<android.platform>19</android.platform>
+        <java.version>1.6</java.version>
+        <android.version>4.1.1.4</android.version>
+        <android.platform>19</android.platform>
 
         <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>2.2.1</maven-source-plugin.version>
@@ -108,31 +109,31 @@
         <versions-maven-plugin.version>2.1</versions-maven-plugin.version>
     </properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.google.android</groupId>
-				<artifactId>android</artifactId>
-				<version>${android.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.android</groupId>
+                <artifactId>android</artifactId>
+                <version>${android.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <prerequisites>
         <maven>3.1.1</maven>
     </prerequisites>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${maven-compiler-plugin.version}</version>
-					<configuration>
-						<source>${java.version}</source>
-						<target>${java.version}</target>
-					</configuration>
-				</plugin>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
 
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
@@ -240,21 +241,21 @@
                     </executions>
                 </plugin>
 
-				<plugin>
-					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-					<artifactId>android-maven-plugin</artifactId>
-					<version>${android-maven-plugin.version}</version>
-					<configuration>
-						<sdk>
-							<platform>${android.platform}</platform>
-						</sdk>
-					</configuration>
-					<extensions>true</extensions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+                <plugin>
+                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <version>${android-maven-plugin.version}</version>
+                    <configuration>
+                        <sdk>
+                            <platform>${android.platform}</platform>
+                        </sdk>
+                    </configuration>
+                    <extensions>true</extensions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
-		<plugins>
+        <plugins>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
@@ -267,21 +268,23 @@
                             <rules>
                                 <requireMavenVersion>
                                     <version>(,2.1.0),(2.1.0,2.2.0),(2.2.0,)</version>
-                                    <message>Maven 2.1.0 and 2.2.0 produce incorrect GPG signatures and checksums respectively.</message>
+                                    <message>Maven 2.1.0 and 2.2.0 produce incorrect GPG signatures and checksums
+                                        respectively.
+                                    </message>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <reporting>
         <plugins>

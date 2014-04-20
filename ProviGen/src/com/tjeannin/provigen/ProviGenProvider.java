@@ -32,11 +32,7 @@ public abstract class ProviGenProvider extends ContentProvider {
 
         openHelper = setOpenHelper(getContext());
         for (Class contract : setContractClasses()) {
-            try {
-                contracts.add(new Contract(contract));
-            } catch (Contract.InvalidContractException e) {
-                e.printStackTrace();
-            }
+            contracts.add(new Contract(contract));
         }
 
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);

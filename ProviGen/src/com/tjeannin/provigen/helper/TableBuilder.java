@@ -4,7 +4,6 @@ import android.database.sqlite.SQLiteDatabase;
 import com.tjeannin.provigen.model.Constraint;
 import com.tjeannin.provigen.model.Contract;
 import com.tjeannin.provigen.model.ContractField;
-import com.tjeannin.provigen.model.Contract.InvalidContractException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ public class TableBuilder {
     private Contract contract;
     private List<Constraint> constraints;
 
-    public TableBuilder(Class contractClass) throws InvalidContractException {
+    public TableBuilder(Class contractClass) {
         contract = new Contract(contractClass);
         constraints = new ArrayList<Constraint>();
     }

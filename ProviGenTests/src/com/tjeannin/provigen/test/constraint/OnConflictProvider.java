@@ -4,14 +4,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import com.tjeannin.provigen.*;
-import com.tjeannin.provigen.model.Constraint;
-import com.tjeannin.provigen.model.Constraint.OnConflict;
+import com.tjeannin.provigen.ProviGenBaseContract;
+import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
 import com.tjeannin.provigen.helper.TableBuilder;
-import com.tjeannin.provigen.model.Contract;
+import com.tjeannin.provigen.model.Constraint;
+import com.tjeannin.provigen.model.Constraint.OnConflict;
 
 public class OnConflictProvider extends ProviGenProvider {
 
@@ -20,27 +20,23 @@ public class OnConflictProvider extends ProviGenProvider {
         return new SQLiteOpenHelper(context, "ProviGenDatabase", null, 1) {
             @Override
             public void onCreate(SQLiteDatabase database) {
-                try {
-                    new TableBuilder(ContractAbort.class)
-                            .addConstraint(ContractAbort.AN_INT, Constraint.UNIQUE, OnConflict.ABORT)
-                            .createTable(database);
+                new TableBuilder(ContractAbort.class)
+                        .addConstraint(ContractAbort.AN_INT, Constraint.UNIQUE, OnConflict.ABORT)
+                        .createTable(database);
 
-                    new TableBuilder(ContractReplace.class)
-                            .addConstraint(ContractReplace.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
-                            .createTable(database);
+                new TableBuilder(ContractReplace.class)
+                        .addConstraint(ContractReplace.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
+                        .createTable(database);
 
-                    new TableBuilder(ContractFail.class)
-                            .addConstraint(ContractFail.AN_INT, Constraint.UNIQUE, OnConflict.FAIL)
-                            .createTable(database);
+                new TableBuilder(ContractFail.class)
+                        .addConstraint(ContractFail.AN_INT, Constraint.UNIQUE, OnConflict.FAIL)
+                        .createTable(database);
 
-                    new TableBuilder(ContractMultipleResolution.class)
-                            .addConstraint(ContractMultipleResolution.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
-                            .addConstraint(ContractMultipleResolution.ANOTHER_INT, Constraint.UNIQUE, OnConflict.ABORT)
-                            .createTable(database);
+                new TableBuilder(ContractMultipleResolution.class)
+                        .addConstraint(ContractMultipleResolution.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
+                        .addConstraint(ContractMultipleResolution.ANOTHER_INT, Constraint.UNIQUE, OnConflict.ABORT)
+                        .createTable(database);
 
-                } catch (Contract.InvalidContractException e) {
-                    e.printStackTrace();
-                }
             }
 
             @Override
