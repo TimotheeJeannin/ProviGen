@@ -9,7 +9,6 @@ Easily make a [ContentProvider] from a [ContractClass].
 * Annotate your ContractClass.
 
 ```java
-@Contract(version = 1)
 public interface MyContract extends ProviGenBaseContract {
 
 	@Column(Type.INTEGER)
@@ -28,9 +27,10 @@ public interface MyContract extends ProviGenBaseContract {
 ```java
 public class MyContentProvider extends ProviGenProvider {
 
-	public MyContentProvider() throws InvalidContractException {
-		super(MyContract.class);
-	}
+    @Override
+    public Class[] contractClasses() {
+            return new Class[]{ MyContract.class };
+    }
 }
 ```
 
@@ -69,9 +69,10 @@ You can use ProviGen with several [ContractClass] just by passing an array of co
 ```java
 public class MyContentProvider extends ProviGenProvider {
 
-	public MyContentProvider() throws InvalidContractException {
-		super(new Class[] { FirstContract.class, SecondContract.class });
-	}
+    @Override
+    public Class[] contractClasses() {
+            return new Class[]{ FirstContract.class, SecondContract.class };
+    }
 }
 ```
 ProviGen will create a table for each contract class.     
