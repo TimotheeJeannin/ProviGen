@@ -34,29 +34,38 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
     }
 
     /**
+     * @return An accessible field from the super class of the given instance.
+     */
+    private Field getSuperClassField(Object instance, String fieldName) {
+        try {
+            Field field = instance.getClass().getSuperclass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field;
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
      * @param contractClasses The contract classes to set to the content provider.
      */
-    protected void setContractClasses(Class[] contractClasses) {
+    protected void resetContractClasses(Class[] contractClasses) {
 
         List<Contract> contracts = new ArrayList<Contract>();
-
         for (Class contract : contractClasses) {
             contracts.add(new Contract(contract));
         }
         try {
-            Field contractsField = null;
-            contractsField = getProvider().getClass().getSuperclass().getDeclaredField("contracts");
-            contractsField.setAccessible(true);
-            contractsField.set(getProvider(), contracts);
+            // Replace the contracts.
+            getSuperClassField(getProvider(), "contracts").set(getProvider(), contracts);
 
-            Field openHelperField = null;
-            openHelperField = getProvider().getClass().getSuperclass().getDeclaredField("openHelper");
-            openHelperField.setAccessible(true);
-            openHelperField.set(getProvider(), new ProviGenOpenHelper(getProvider().getContext(), contractClasses, 2));
+            // Replace the open helper.
+            Field openHelperField = getSuperClassField(getProvider(), "openHelper");
+            ProviGenOpenHelper openHelper = (ProviGenOpenHelper) openHelperField.get(getProvider());
+            int version = getSuperClassField(openHelper, "mNewVersion").getInt(openHelper);
+            openHelperField.set(getProvider(), new ProviGenOpenHelper(getProvider().getContext(), contractClasses, version + 1));
 
-
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

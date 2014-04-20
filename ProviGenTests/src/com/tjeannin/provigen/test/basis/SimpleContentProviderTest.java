@@ -128,7 +128,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
         assertFalse(columnsContractOne.contains(ContractTwo.MY_REAL));
         assertFalse(columnsContractOne.contains(ContractTwo.MY_STRING));
 
-        setContractClasses(new Class[]{ContractTwo.class});
+        resetContractClasses(new Class[]{ContractTwo.class});
 
         // Check database fits ContractTwo.
         final Cursor cursorTwo = contentResolver.query(ContractTwo.CONTENT_URI, null, "", null, "");

@@ -41,7 +41,7 @@ public class MultipleContractContentTest extends ExtendedProviderTestCase<Multip
         contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
         assertEquals(1, getRowCount(ContractOne.CONTENT_URI));
 
-        setContractClasses(new Class[]{ContractTwo.class, ContractOne.class});
+        resetContractClasses(new Class[]{ContractTwo.class, ContractOne.class});
         assertEquals(0, getRowCount(ContractTwo.CONTENT_URI));
         assertEquals(1, getRowCount(ContractOne.CONTENT_URI));
 
