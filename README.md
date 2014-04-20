@@ -65,7 +65,7 @@ getContentResolver().query(
 
 ### Multiple contact classes
 
-You can use ProviGen with several [ContractClass] just by passing an array of contract classes to the ProviGenProvider constructor.
+You can use ProviGen with several [ContractClass]es just by making the `contractClasses` method return an array of contract classes.
 ```java
 public class MyContentProvider extends ProviGenProvider {
 
@@ -122,7 +122,7 @@ public class MyContentProvider extends ProviGenProvider {
 
 ### Data constraint
 
-You can apply a `UNIQUE` or a `NOT_NULL` constraint to a column using the `TableBuilder`.
+You can apply a `UNIQUE` or a `NOT_NULL` constraint to a column using the appropriate `TableBuilder` methods.
 
 ```java
 new TableBuilder(MyContract.class)
