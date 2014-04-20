@@ -75,7 +75,7 @@ public class MyContentProvider extends ProviGenProvider {
     }
 }
 ```
-ProviGen will create a table for each contract class.     
+By default, ProviGen will create a table for each contract class.     
 The table name will be the last path segment of the contract's content uri.
 
 ### Notifications and observers
