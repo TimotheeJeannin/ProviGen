@@ -32,7 +32,7 @@ public class ProviGenSimpleSQLiteOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         for (Class contract : contracts)
             try {
-                ProviGenDatabaseHelpers.addMissingColumns(database, contract);
+                TableUpdater.addMissingColumns(database, contract);
             } catch (InvalidContractException e) {
                 e.printStackTrace();
             }

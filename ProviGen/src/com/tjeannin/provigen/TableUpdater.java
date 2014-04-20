@@ -3,7 +3,7 @@ package com.tjeannin.provigen;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class ProviGenDatabaseHelpers {
+public class TableUpdater {
 
     public static void addMissingColumns(SQLiteDatabase database, Class contractClass) throws InvalidContractException {
 
