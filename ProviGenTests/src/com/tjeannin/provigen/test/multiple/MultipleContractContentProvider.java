@@ -13,12 +13,12 @@ import com.tjeannin.provigen.annotation.ContentUri;
 public class MultipleContractContentProvider extends ProviGenProvider {
 
     @Override
-    public SQLiteOpenHelper createOpenHelper(Context context) {
+    public SQLiteOpenHelper setOpenHelper(Context context) {
         return new ProviGenSimpleSQLiteOpenHelper(context, new Class[]{ContractOne.class, ContractTwo.class}, 1);
     }
 
     @Override
-    public Class[] getContractClasses() {
+    public Class[] setContractClasses() {
         return new Class[]{ContractOne.class, ContractTwo.class};
     }
 

@@ -14,12 +14,12 @@ import com.tjeannin.provigen.annotation.Id;
 public class SampleContentProvider extends ProviGenProvider {
 
     @Override
-    public SQLiteOpenHelper createOpenHelper(Context context) {
+    public SQLiteOpenHelper setOpenHelper(Context context) {
         return new ProviGenSimpleSQLiteOpenHelper(context, new Class[]{SampleContract.class}, 1);
     }
 
     @Override
-    public Class[] getContractClasses() {
+    public Class[] setContractClasses() {
         return new Class[]{SampleContract.class};
     }
 

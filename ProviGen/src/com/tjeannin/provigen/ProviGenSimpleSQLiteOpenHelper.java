@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.tjeannin.provigen.helper.TableBuilder;
+import com.tjeannin.provigen.helper.TableUpdater;
 
 public class ProviGenSimpleSQLiteOpenHelper extends SQLiteOpenHelper {
 

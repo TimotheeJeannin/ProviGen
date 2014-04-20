@@ -1,7 +1,10 @@
-package com.tjeannin.provigen;
+package com.tjeannin.provigen.helper;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import com.tjeannin.provigen.ContractHolder;
+import com.tjeannin.provigen.DatabaseField;
+import com.tjeannin.provigen.InvalidContractException;
 
 public class TableUpdater {
 

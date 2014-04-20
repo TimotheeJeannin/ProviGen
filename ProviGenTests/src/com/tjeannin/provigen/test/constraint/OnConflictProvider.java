@@ -9,12 +9,12 @@ import com.tjeannin.provigen.Constraint.OnConflict;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
-import com.tjeannin.provigen.TableBuilder;
+import com.tjeannin.provigen.helper.TableBuilder;
 
 public class OnConflictProvider extends ProviGenProvider {
 
     @Override
-    public SQLiteOpenHelper createOpenHelper(Context context) {
+    public SQLiteOpenHelper setOpenHelper(Context context) {
         return new SQLiteOpenHelper(context, "ProviGenDatabase", null, 1) {
             @Override
             public void onCreate(SQLiteDatabase database) {
@@ -49,7 +49,7 @@ public class OnConflictProvider extends ProviGenProvider {
     }
 
     @Override
-    public Class[] getContractClasses() {
+    public Class[] setContractClasses() {
         return new Class[]{ContractAbort.class, ContractReplace.class, ContractFail.class, ContractMultipleResolution.class};
     }
 
