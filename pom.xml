@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.provigen</groupId>
     <artifactId>ProviGen-parent</artifactId>
-    <version>1.7.1-SNAPSHOT</version>
+    <version>2.0.0</version>
     <packaging>pom</packaging>
     <inceptionYear>2012</inceptionYear>
 
@@ -38,7 +37,7 @@
         </developer>
     </developers>
 
-    <contributors/>
+    <contributors />
 
     <distributionManagement>
         <snapshotRepository>
@@ -57,7 +56,8 @@
         <url>https://github.com/TimotheeJeannin/ProviGen</url>
         <connection>scm:git:https://github.com/TimotheeJeannin/ProviGen.git</connection>
         <developerConnection>scm:git:https://github.com/TimotheeJeannin/ProviGen.git</developerConnection>
-    </scm>
+      <tag>2.0.0</tag>
+  </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
