@@ -43,8 +43,7 @@
 <ul>
 <li><p>Follow the <a href="https://github.com/TimotheeJeannin/ProviGen/wiki/Installation-Guide">installation guide</a>.</p></li>
 <li><p>Annotate your ContractClass.</p></li>
-</ul><div class="highlight highlight-java"><pre><span class="nd">@Contract</span><span class="o">(</span><span class="n">version</span> <span class="o">=</span> <span class="mi">1</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyContract</span> <span class="kd">extends</span> <span class="n">ProviGenBaseContract</span> <span class="o">{</span>
+</ul><div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyContract</span> <span class="kd">extends</span> <span class="n">ProviGenBaseContract</span> <span class="o">{</span>
 
     <span class="nd">@Column</span><span class="o">(</span><span class="n">Type</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">)</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MY_INT_COLUMN</span> <span class="o">=</span> <span class="s">"int"</span><span class="o">;</span>
@@ -61,8 +60,9 @@
 <li>Extend the ProviGenProvider.</li>
 </ul><div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyContentProvider</span> <span class="kd">extends</span> <span class="n">ProviGenProvider</span> <span class="o">{</span>
 
-    <span class="kd">public</span> <span class="nf">MyContentProvider</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InvalidContractException</span> <span class="o">{</span>
-        <span class="kd">super</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Class</span><span class="o">[]</span> <span class="nf">contractClasses</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]{</span> <span class="n">MyContract</span><span class="o">.</span><span class="na">class</span> <span class="o">};</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
@@ -101,17 +101,18 @@ For example querying a single row boils down to:</p>
 <h3>
 <a name="multiple-contact-classes" class="anchor" href="#multiple-contact-classes"><span class="octicon octicon-link"></span></a>Multiple contact classes</h3>
 
-<p>You can use ProviGen with several <a href="http://developer.android.com/guide/topics/providers/content-provider-basics.html#ContractClasses">ContractClass</a> just by passing an array of contract classes to the ProviGenProvider constructor.</p>
+<p>You can use ProviGen with several <a href="http://developer.android.com/guide/topics/providers/content-provider-basics.html#ContractClasses">ContractClass</a>es just by making the <code>contractClasses</code> method return an array of contract classes.</p>
 
 <div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyContentProvider</span> <span class="kd">extends</span> <span class="n">ProviGenProvider</span> <span class="o">{</span>
 
-    <span class="kd">public</span> <span class="nf">MyContentProvider</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InvalidContractException</span> <span class="o">{</span>
-        <span class="kd">super</span><span class="o">(</span><span class="k">new</span> <span class="n">Class</span><span class="o">[]</span> <span class="o">{</span> <span class="n">FirstContract</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">SecondContract</span><span class="o">.</span><span class="na">class</span> <span class="o">});</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Class</span><span class="o">[]</span> <span class="nf">contractClasses</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]{</span> <span class="n">FirstContract</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">SecondContract</span><span class="o">.</span><span class="na">class</span> <span class="o">};</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
 
-<p>ProviGen will create a table for each contract class.<br>
+<p>By default, ProviGen will create a table for each contract class.<br>
 The table name will be the last path segment of the contract's content uri.</p>
 
 <h3>
@@ -121,71 +122,53 @@ The table name will be the last path segment of the contract's content uri.</p>
 You can safely use it with <a href="http://developer.android.com/reference/android/content/CursorLoader.html">CursorLoader</a>s and <a href="https://developer.android.com/reference/android/database/ContentObserver.html">ContentObserver</a>s.</p>
 
 <h3>
-<a name="initial-population" class="anchor" href="#initial-population"><span class="octicon octicon-link"></span></a>Initial population</h3>
+<a name="initial-population-and-contract-upgrades" class="anchor" href="#initial-population-and-contract-upgrades"><span class="octicon octicon-link"></span></a>Initial population and contract upgrades</h3>
 
-<p>ProviGen will automatically create the needed table for you.<br>
-Initial population can be done overriding the <code>onCreateDatabase</code> method.</p>
+<p>ProviGen comes with a default implementation of the <a href="https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html">SQLiteOpenHelper</a>.
+This default implementation will automatically create the needed tables on the first application launch.</p>
 
-<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyContentProvider</span> <span class="kd">extends</span> <span class="n">ProviGenProvider</span> <span class="o">{</span>
-
-    <span class="kd">public</span> <span class="nf">MyContentProvider</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InvalidContractException</span> <span class="o">{</span>
-        <span class="kd">super</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreateDatabase</span><span class="o">(</span><span class="n">SQLiteDatabase</span> <span class="n">database</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// Automatically creates table and needed columns.</span>
-        <span class="kd">super</span><span class="o">.</span><span class="na">onCreateDatabase</span><span class="o">(</span><span class="n">database</span><span class="o">);</span> 
-
-        <span class="c1">// If needed, populate table here.</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</pre></div>
-
-<p>If you want to create the table yourself, just don't call <code>super.onCreateDatabase(database)</code>.</p>
-
-<h3>
-<a name="contract-upgrades" class="anchor" href="#contract-upgrades"><span class="octicon octicon-link"></span></a>Contract upgrades</h3>
-
-<p>If you increase the version of a contract class, ProviGen will automatically add missing columns for you.<br>
-Any other changes should be done overriding the <code>onUpgradeDatabase</code> method.</p>
+<p>Initial population and contract upgrades can be done providing your own implementation of the <a href="https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html">SQLiteOpenHelper</a>.</p>
 
 <div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyContentProvider</span> <span class="kd">extends</span> <span class="n">ProviGenProvider</span> <span class="o">{</span>
 
-    <span class="kd">public</span> <span class="nf">MyContentProvider</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InvalidContractException</span> <span class="o">{</span>
-        <span class="kd">super</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Class</span><span class="o">[]</span> <span class="nf">contractClasses</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]{</span><span class="n">MyContract</span><span class="o">.</span><span class="na">class</span><span class="o">};</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onUpgradeDatabase</span><span class="o">(</span><span class="n">SQLiteDatabase</span> <span class="n">database</span><span class="o">,</span> <span class="kt">int</span> <span class="n">oldVersion</span><span class="o">,</span> <span class="kt">int</span> <span class="n">newVersion</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// Automatically adds new columns.</span>
-        <span class="kd">super</span><span class="o">.</span><span class="na">onUpgradeDatabase</span><span class="o">(</span><span class="n">database</span><span class="o">,</span> <span class="n">oldVersion</span><span class="o">,</span> <span class="n">newVersion</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="n">SQLiteOpenHelper</span> <span class="nf">openHelper</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">SQLiteOpenHelper</span><span class="o">(</span><span class="n">getContext</span><span class="o">(),</span> <span class="s">"databaseName"</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">SQLiteDatabase</span> <span class="n">database</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// Automatically creates table and needed columns.</span>
+                <span class="k">new</span> <span class="nf">TableBuilder</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">createTable</span><span class="o">(</span><span class="n">database</span><span class="o">);</span>
 
-        <span class="c1">// Anything else related to database upgrade should be done here. </span>
+                <span class="c1">// Do initial population here.</span>
+            <span class="o">}</span>
+
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onUpgrade</span><span class="o">(</span><span class="n">SQLiteDatabase</span> <span class="n">database</span><span class="o">,</span> <span class="kt">int</span> <span class="n">oldVersion</span><span class="o">,</span> <span class="kt">int</span> <span class="n">newVersion</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// Automatically adds new columns.</span>
+                <span class="n">TableUpdater</span><span class="o">.</span><span class="na">addMissingColumns</span><span class="o">(</span><span class="n">database</span><span class="o">,</span> <span class="n">MyContract</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+                <span class="c1">// Anything else related to database upgrade should be done here.</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
-
-<p>If you want to add missing columns yourself, just don't call <code>super.onUpgradeDatabase(database, oldVersion, newVersion)</code></p>
 
 <h3>
 <a name="data-constraint" class="anchor" href="#data-constraint"><span class="octicon octicon-link"></span></a>Data constraint</h3>
 
-<p>You can apply a <code>UNIQUE</code> constraint to a column using the <code>@Unique</code> annotation.</p>
+<p>You can apply a <code>UNIQUE</code> or a <code>NOT_NULL</code> constraint to a column using the appropriate <code>TableBuilder</code> methods.</p>
 
-<div class="highlight highlight-java"><pre><span class="nd">@Unique</span><span class="o">(</span><span class="n">OnConflict</span><span class="o">.</span><span class="na">REPLACE</span><span class="o">)</span>
-<span class="nd">@Column</span><span class="o">(</span><span class="n">Type</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MY_INT</span> <span class="o">=</span> <span class="s">"my_int"</span><span class="o">;</span>
+<div class="highlight highlight-java"><pre><span class="k">new</span> <span class="nf">TableBuilder</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">addConstraint</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">MY_INT</span><span class="o">,</span> <span class="n">Constraint</span><span class="o">.</span><span class="na">UNIQUE</span><span class="o">,</span> <span class="n">OnConflict</span><span class="o">.</span><span class="na">ABORT</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">addConstraint</span><span class="o">(</span><span class="n">MyContract</span><span class="o">.</span><span class="na">MY_STRING</span><span class="o">,</span> <span class="n">Constraint</span><span class="o">.</span><span class="na">NOT_NULL</span><span class="o">,</span> <span class="n">OnConflict</span><span class="o">.</span><span class="na">IGNORE</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">createTable</span><span class="o">(</span><span class="n">database</span><span class="o">);</span>
 </pre></div>
-
-<p>You can apply a <code>NOT_NULL</code> constraint to a column using the <code>@NotNull</code> annotation.</p>
-
-<div class="highlight highlight-java"><pre><span class="nd">@NotNull</span><span class="o">(</span><span class="n">OnConflict</span><span class="o">.</span><span class="na">ABORT</span><span class="o">)</span>
-<span class="nd">@Column</span><span class="o">(</span><span class="n">Type</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MY_INT</span> <span class="o">=</span> <span class="s">"my_int"</span><span class="o">;</span>
-</pre></div>
-
-<p><code>CHECK</code> constraint is not supported yet.</p>
 
 <h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
