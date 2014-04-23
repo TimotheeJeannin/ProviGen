@@ -27,16 +27,16 @@ public interface MyContract extends ProviGenBaseContract {
 ```java
 public class MyContentProvider extends ProviGenProvider {
 
-    private static Class[] contractClasses = new Class[]{MyContract.class};
+    private static Class[] contracts = new Class[]{MyContract.class};
 
     @Override
     public SQLiteOpenHelper openHelper(Context context) {
-        return new ProviGenOpenHelper(getContext(), "dbName", null, 1, contractClasses);
+        return new ProviGenOpenHelper(getContext(), "dbName", null, 1, contracts);
     }
 
     @Override
     public Class[] contractClasses() {
-            return contractClasses;
+            return contracts;
     }
 }
 ```
