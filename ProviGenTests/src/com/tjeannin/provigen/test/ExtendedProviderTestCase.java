@@ -64,7 +64,8 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
             Field openHelperField = getSuperClassField(getProvider(), "openHelper");
             ProviGenOpenHelper openHelper = (ProviGenOpenHelper) openHelperField.get(getProvider());
             int version = getSuperClassField(openHelper, "mNewVersion").getInt(openHelper);
-            openHelperField.set(getProvider(), new ProviGenOpenHelper(getProvider().getContext(), contractClasses, version + 1));
+            openHelperField.set(getProvider(), new ProviGenOpenHelper(
+                    getProvider().getContext(), "ProviGenDatabase", null, version + 1, contractClasses));
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();

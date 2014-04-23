@@ -27,9 +27,16 @@ public interface MyContract extends ProviGenBaseContract {
 ```java
 public class MyContentProvider extends ProviGenProvider {
 
+    private static Class[] contractClasses = new Class[]{MyContract.class};
+
+    @Override
+    public SQLiteOpenHelper openHelper(Context context) {
+        return new ProviGenOpenHelper(getContext(), "dbName", null, 1, contractClasses);
+    }
+
     @Override
     public Class[] contractClasses() {
-            return new Class[]{ MyContract.class };
+            return contractClasses;
     }
 }
 ```
@@ -63,32 +70,24 @@ getContentResolver().query(
 
 ## Features
 
-### Multiple contact classes
+### Table creation and contract upgrades
 
-You can use ProviGen with several [ContractClass]es just by making the `contractClasses` method return an array of contract classes.
-```java
-public class MyContentProvider extends ProviGenProvider {
+ProviGen comes with an implementation of the [SQLiteOpenHelper] called `ProviGenOpenHelper`.
+This default implementation will
 
-    @Override
-    public Class[] contractClasses() {
-            return new Class[]{ FirstContract.class, SecondContract.class };
-    }
-}
-```
-By default, ProviGen will create a table for each contract class.     
-The table name will be the last path segment of the contract's content uri.
+* automatically create the needed tables on the first application launch
+* automatically add missing columns every time the database version increases
 
 ### Notifications and observers
 
 ProviGen fully supports the uri notification mechanism.   
 You can safely use it with [CursorLoader]s and [ContentObserver]s.
 
-### Initial population and contract upgrades
+### Custom SQLiteOpenHelper
 
-ProviGen comes with a default implementation of the [SQLiteOpenHelper].
-This default implementation will automatically create the needed tables on the first application launch.
+You can provide your own implementation of the [SQLiteOpenHelper] for initial population, complex contract upgrades
+or anything else database related you want to achieve.
 
-Initial population and contract upgrades can be done providing your own implementation of the [SQLiteOpenHelper].
 ```java
 public class MyContentProvider extends ProviGenProvider {
 

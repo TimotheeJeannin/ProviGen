@@ -23,10 +23,21 @@ public abstract class ProviGenProvider extends ContentProvider {
     private static final int ITEM_ID = 2;
     private SQLiteOpenHelper openHelper;
 
-    public SQLiteOpenHelper openHelper(Context context) {
-        return new ProviGenOpenHelper(context, contractClasses(), 1);
-    }
+    /**
+     * This method should return an instance of a {@link android.database.sqlite.SQLiteOpenHelper}.
+     * It will be called only once, so you can safely create a new instance of the SQLiteOpenHelper on the method body.
+     *
+     * @param context A context to pass to the SQLiteOpenHelper instance while creating it.
+     * @return the SQLiteOpenHelper that the ProviGenProvider will use.
+     */
+    public abstract SQLiteOpenHelper openHelper(Context context);
 
+    /**
+     * This method should return the list of contract classes that the ProviGenProvider will use.
+     * It will be called only once.
+     *
+     * @return an array of contract classes.
+     */
     public abstract Class[] contractClasses();
 
     @Override
