@@ -98,7 +98,9 @@ public class MyContentProvider extends ProviGenProvider {
 
     @Override
     public SQLiteOpenHelper openHelper(Context context) {
+    
         return new SQLiteOpenHelper(getContext(), "databaseName", null, 1) {
+        
             @Override
             public void onCreate(SQLiteDatabase database) {
                 // Automatically creates table and needed columns.
