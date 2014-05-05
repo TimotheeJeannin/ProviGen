@@ -36,7 +36,7 @@ public class MyContentProvider extends ProviGenProvider {
 
     @Override
     public Class[] contractClasses() {
-            return contracts;
+        return contracts;
     }
 }
 ```
