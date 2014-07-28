@@ -82,7 +82,9 @@ public abstract class ProviGenProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown uri " + uri);
         }
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        if (numberOfRowsAffected > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return numberOfRowsAffected;
     }
 
@@ -171,7 +173,10 @@ public abstract class ProviGenProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown uri " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+
+        if (numberOfRowsAffected > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return numberOfRowsAffected;
     }
 
