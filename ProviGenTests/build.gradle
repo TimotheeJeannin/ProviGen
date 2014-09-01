@@ -1,0 +1,26 @@
+android {
+    buildToolsVersion "19.1.0"
+    compileSdkVersion 19
+
+    defaultConfig {
+        testPackageName "com.tjeannin.provigen"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testHandleProfiling true
+        testFunctionalTest true
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            res.srcDirs = ['res']
+        }
+        instrumentTest {
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+            resources.srcDirs = ['src']
+        }
+    }
+}
+
+
+
+

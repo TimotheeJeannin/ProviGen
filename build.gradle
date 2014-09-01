@@ -31,3 +31,11 @@ project(":ProviGenSample") {
         compile 'com.android.support:support-v4:19.0.0'
     }
 }
+
+project(":ProviGenTests") {
+    apply plugin: "android"
+
+    dependencies {
+        compile project(":ProviGenLib")
+    }
+}

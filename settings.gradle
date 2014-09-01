@@ -1,1 +1,1 @@
-include ':ProviGenLib', ':ProviGenSample'
+include ':ProviGenLib', ':ProviGenSample', ':ProviGenTests'
