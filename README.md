@@ -1,4 +1,4 @@
-# ProviGen [![Build Status](https://travis-ci.org/TimotheeJeannin/ProviGen.png?branch=master)](https://travis-ci.org/TimotheeJeannin/ProviGen)
+# ProviGen [![Build Status](https://travis-ci.org/TimotheeJeannin/ProviGen.png?branch=master)](https://travis-ci.org/TimotheeJeannin/ProviGen) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.provigen/ProviGen-lib/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.provigen/ProviGen-lib/)
 
 Easily make a [ContentProvider] from a [ContractClass].    
 
