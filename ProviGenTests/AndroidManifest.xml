@@ -4,16 +4,13 @@
           android:versionCode="1"
           android:versionName="1.0">
 
-    <uses-sdk
-            android:minSdkVersion="15"
-            android:targetSdkVersion="19"/>
+    <uses-sdk android:minSdkVersion="15"/>
 
     <instrumentation
             android:name="android.test.InstrumentationTestRunner"
             android:targetPackage="com.tjeannin.provigen.test"/>
 
     <application
-            android:allowBackup="false"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name">
         <uses-library android:name="android.test.runner"/>
