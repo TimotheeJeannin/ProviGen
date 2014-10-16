@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.10+'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+project(":ProviGenLib") {
+    apply plugin: "java"
+
+    dependencies {
+        compile 'com.google.android:android:4.1.1.4'
+    }
+}
+
+project(":ProviGenSample") {
+    apply plugin: "android"
+
+    dependencies {
+        compile project(":ProviGenLib")
+        compile 'com.android.support:support-v4:19.0.0'
+    }
+}
+
+project(":ProviGenTests") {
+    apply plugin: "android"
+
+    dependencies {
+        compile project(":ProviGenLib")
+    }
+}
