@@ -4,7 +4,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.2'
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 
@@ -28,7 +28,7 @@ project(":ProviGenSample") {
 
     dependencies {
         compile project(":ProviGenLib")
-        compile 'com.android.support:support-v4:19.0.0'
+        compile 'com.android.support:support-v4:21.0.3'
     }
 }
 
