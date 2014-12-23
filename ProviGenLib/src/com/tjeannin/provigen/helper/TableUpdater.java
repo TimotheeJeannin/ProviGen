@@ -2,6 +2,8 @@ package com.tjeannin.provigen.helper;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.model.Contract;
 import com.tjeannin.provigen.model.ContractField;
 
@@ -23,7 +25,27 @@ public class TableUpdater {
         Cursor cursor = database.rawQuery("PRAGMA table_info(" + contract.getTable() + ")", null);
         for (ContractField field : contract.getFields()) {
             if (!fieldExistAsColumn(field.name, cursor)) {
-                database.execSQL("ALTER TABLE " + contract.getTable() + " ADD COLUMN " + field.name + " " + field.type + ";");
+
+                StringBuilder builder = new StringBuilder("ALTER TABLE ");
+                builder.append(contract.getTable()).append(" ADD COLUMN ");
+
+                builder.append(" ").append(field.name).append(" ").append(field.type);
+
+                if (field.defaultValue != null) {
+                    if (field.type.equals(Column.Type.TIMESTAMP)) {
+                        throw new IllegalArgumentException("SQLite doesn't support DEFAULT value for TIMESTAMP " +
+                                "when you add additional column to an already created TABLE.");
+                    } else {
+                        if(field.defaultValue.equals(Column.DefaultValue.NULL)) {
+                            builder.append(" DEFAULT NULL");
+                        } else {
+                            builder.append(" DEFAULT '").append(field.defaultValue).append("'");
+                        }
+                    }
+                }
+                builder.append(";");
+
+                database.execSQL(builder.toString());
             }
         }
     }

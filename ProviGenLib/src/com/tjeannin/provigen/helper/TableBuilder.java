@@ -1,6 +1,8 @@
 package com.tjeannin.provigen.helper;
 
 import android.database.sqlite.SQLiteDatabase;
+
+import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.model.Constraint;
 import com.tjeannin.provigen.model.Contract;
 import com.tjeannin.provigen.model.ContractField;
@@ -59,14 +61,44 @@ public class TableBuilder {
         builder.append(contract.getTable()).append(" ( ");
 
         for (ContractField field : contract.getFields()) {
+
+            List<Constraint> selectedConstraints = new ArrayList<Constraint>();
+            for (Constraint constraint : constraints) {
+                if (constraint.targetColumn.equals(field.name)) {
+                    selectedConstraints.add(constraint);
+                }
+            }
+
             builder.append(" ").append(field.name).append(" ").append(field.type);
+
+            if (field.defaultValue != null) {
+                if (field.type.equals(Column.Type.TIMESTAMP)) {
+                    if (field.defaultValue.equals(Column.DefaultValue.CURRENT_TIME)
+                            || field.defaultValue.equals(Column.DefaultValue.CURRENT_DATE)
+                            || field.defaultValue.equals(Column.DefaultValue.CURRENT_TIMESTAMP)) {
+                        builder.append(" DEFAULT ").append(field.defaultValue);
+                    } else {
+                        throw new IllegalArgumentException("You should use one of the following when the Type is TIMESTAMP "
+                                + "CURRENT_TIME, CURRENT_DATE or CURRENT_TIMESTAMP. ");
+                    }
+                } else {
+                    if (field.defaultValue.equals(Column.DefaultValue.NULL)) {
+                        if (selectedConstraints.contains(Constraint.NOT_NULL)) {
+                            throw new IllegalArgumentException("You should provide a DEFAULT value"
+                                    + "when you use NOT_NULL constraint.");
+                        }
+                        builder.append(" DEFAULT NULL ");
+                    } else {
+                        builder.append(" DEFAULT '").append(field.defaultValue).append("' ");
+                    }
+                }
+            }
             if (field.name.equals(contract.getIdField())) {
                 builder.append(" PRIMARY KEY AUTOINCREMENT ");
             }
-            for (Constraint constraint : constraints) {
-                if (constraint.targetColumn.equals(field.name)) {
-                    builder.append(" ").append(constraint.type).append(" ON CONFLICT ").append(constraint.conflictClause);
-                }
+
+            for (Constraint constraint : selectedConstraints) {
+                builder.append(" ").append(constraint.type).append(" ON CONFLICT ").append(constraint.conflictClause);
             }
             builder.append(", ");
         }

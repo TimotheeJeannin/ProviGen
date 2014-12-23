@@ -47,7 +47,7 @@ public class Contract {
             Column column = field.getAnnotation(Column.class);
             if (column != null) {
                 try {
-                    contractFields.add(new ContractField((String) field.get(null), column.value()));
+                    contractFields.add(new ContractField((String) field.get(null), column.value(), column.defaultValue()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
