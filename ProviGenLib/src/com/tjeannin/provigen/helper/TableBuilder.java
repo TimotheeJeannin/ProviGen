@@ -1,6 +1,7 @@
 package com.tjeannin.provigen.helper;
 
 import android.database.sqlite.SQLiteDatabase;
+
 import com.tjeannin.provigen.model.Constraint;
 import com.tjeannin.provigen.model.Contract;
 import com.tjeannin.provigen.model.ContractField;
@@ -47,6 +48,17 @@ public class TableBuilder {
      */
     public TableBuilder addConstraint(String columnName, String constraintType, String constraintConflictClause) {
         constraints.add(new Constraint(columnName, constraintType, constraintConflictClause));
+        return this;
+    }
+
+    public TableBuilder addDefault(String columnName, int defaultValue) {
+        // TODO : Implement this.
+        return this;
+    }
+
+
+    public TableBuilder addDefault(String columnName, String defaultValue) {
+        // TODO : Implement this.
         return this;
     }
 
