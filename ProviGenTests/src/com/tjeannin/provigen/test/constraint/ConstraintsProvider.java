@@ -2,13 +2,16 @@ package com.tjeannin.provigen.test.constraint;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
+import com.tjeannin.provigen.ProviGenSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.database.AndroidSQLiteDatabase;
+import com.tjeannin.provigen.database.Database;
+import com.tjeannin.provigen.OpenHelper;
 import com.tjeannin.provigen.helper.TableBuilder;
 import com.tjeannin.provigen.model.Constraint;
 import com.tjeannin.provigen.model.Constraint.OnConflict;
@@ -16,22 +19,23 @@ import com.tjeannin.provigen.model.Constraint.OnConflict;
 public class ConstraintsProvider extends ProviGenProvider {
 
     @Override
-    public SQLiteOpenHelper openHelper(final Context context) {
-        return new SQLiteOpenHelper(context, "ProviGenDatabase", null, 1) {
+    public OpenHelper openHelper(Context context) {
+        return new ProviGenSQLiteOpenHelper(context, "ProviGenDatabase", null, 1, contractClasses()) {
             @Override
             public void onCreate(SQLiteDatabase database) {
+                Database db = new AndroidSQLiteDatabase(database);
                 new TableBuilder(NotNullContract.class)
                         .addConstraint(NotNullContract.AN_INT, Constraint.NOT_NULL, OnConflict.ABORT)
-                        .createTable(database);
+                        .createTable(db);
 
                 new TableBuilder(UniqueContract.class)
                         .addConstraint(UniqueContract.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
-                        .createTable(database);
+                        .createTable(db);
 
                 new TableBuilder(UniqueAndNotNullContract.class)
                         .addConstraint(UniqueAndNotNullContract.AN_INT, Constraint.NOT_NULL, OnConflict.ABORT)
                         .addConstraint(UniqueAndNotNullContract.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
-                        .createTable(database);
+                        .createTable(db);
             }
 
             @Override

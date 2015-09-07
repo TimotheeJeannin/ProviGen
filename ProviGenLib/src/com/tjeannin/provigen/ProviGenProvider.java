@@ -1,11 +1,14 @@
 package com.tjeannin.provigen;
 
-import android.content.*;
+import android.content.ContentProvider;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
+import com.tjeannin.provigen.database.Database;
 import com.tjeannin.provigen.model.Contract;
 
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ public abstract class ProviGenProvider extends ContentProvider {
     private UriMatcher uriMatcher;
     private static final int ITEM = 1;
     private static final int ITEM_ID = 2;
-    private SQLiteOpenHelper openHelper;
+    private OpenHelper openHelper;
 
     /**
      * This method should return an instance of a {@link android.database.sqlite.SQLiteOpenHelper}.
@@ -30,7 +33,7 @@ public abstract class ProviGenProvider extends ContentProvider {
      * @param context A context to pass to the SQLiteOpenHelper instance while creating it.
      * @return the SQLiteOpenHelper that the ProviGenProvider will use.
      */
-    public abstract SQLiteOpenHelper openHelper(Context context);
+    public abstract OpenHelper openHelper(Context context);
 
     /**
      * This method should return the list of contract classes that the ProviGenProvider will use.
@@ -59,7 +62,7 @@ public abstract class ProviGenProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        SQLiteDatabase database = openHelper.getWritableDatabase();
+        Database database = openHelper.getWritableDb();
 
         int numberOfRowsAffected = 0;
         Contract contract = findMatchingContract(uri);
@@ -105,7 +108,7 @@ public abstract class ProviGenProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        SQLiteDatabase database = openHelper.getWritableDatabase();
+        Database database = openHelper.getWritableDb();
 
         Contract contract = findMatchingContract(uri);
         switch (uriMatcher.match(uri)) {
@@ -120,7 +123,7 @@ public abstract class ProviGenProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        SQLiteDatabase database = openHelper.getReadableDatabase();
+        Database database = openHelper.getReadableDb();
 
         Contract contract = findMatchingContract(uri);
         Cursor cursor = null;
@@ -151,7 +154,7 @@ public abstract class ProviGenProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        SQLiteDatabase database = openHelper.getWritableDatabase();
+        Database database = openHelper.getWritableDb();
 
         Contract contract = findMatchingContract(uri);
         int numberOfRowsAffected = 0;
