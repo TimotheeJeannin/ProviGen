@@ -4,7 +4,7 @@ import com.tjeannin.provigen.database.Database;
 
 /**
  * this interface defines the methods used from the SQLite and SqlCipher implementations of SQLiteOpenHelper,
- * {@link net.sqlcipher.database.SQLiteOpenHelper} and {@link android.database.sqlite.SQLiteOpenHelper}
+ * {@link net.sqlcipher.database.SQLiteOpenHelper} and {@link android.database.sqlite.SQLiteOpenHelper}.
  */
 public interface OpenHelper {
 	Database getWritableDb();
