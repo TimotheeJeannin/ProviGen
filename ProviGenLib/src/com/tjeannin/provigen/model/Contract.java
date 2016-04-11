@@ -7,19 +7,23 @@ import com.tjeannin.provigen.annotation.Id;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Contract {
 
     private String authority;
-    private String idField;
+    private String dbName;
     private String tableName;
     private List<ContractField> contractFields;
+    private Map<String, Boolean> idFieldMap;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public Contract(Class contractClass) {
 
-        contractFields = new ArrayList<ContractField>();
+        idFieldMap = new HashMap<>();
+        contractFields = new ArrayList<>();
 
         Field[] fields = contractClass.getFields();
         for (Field field : fields) {
@@ -30,15 +34,22 @@ public class Contract {
                     Uri uri = (Uri) field.get(null);
                     authority = uri.getAuthority();
                     tableName = uri.getLastPathSegment();
+
+                    List<String> pathSegments = uri.getPathSegments();
+                    if(pathSegments.size() == 2) {
+                        dbName = pathSegments.get(0);
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
-            Id id = field.getAnnotation(Id.class);
+           Id id = field.getAnnotation(Id.class);
             if (id != null) {
                 try {
-                    idField = (String) field.get(null);
+                    String idField = (String) field.get(null);
+                    idFieldMap.put(idField, id.autoincrement());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -59,15 +70,23 @@ public class Contract {
         return authority;
     }
 
-    public String getIdField() {
-        return idField;
-    }
-
     public String getTable() {
         return tableName;
     }
 
+    public String getDbName() {
+        return dbName;
+    }
+
+    public List<String> getIdFields() {
+        return new ArrayList<>(idFieldMap.keySet());
+    }
+
     public List<ContractField> getFields() {
         return contractFields;
+    }
+
+    public boolean isAutoincrement(String field) {
+        return idFieldMap.get(field);
     }
 }

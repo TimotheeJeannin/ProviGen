@@ -15,6 +15,8 @@ import android.widget.ListView;
 
 public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnClickListener {
 
+    private static final String[] NAMES = {"David", "Stephanie", "John", "Anna", "Thomas", "Natalie", "Andrew", "Sofia", "Richard", "Alexandra"};
+    private static final String[] SPECIALTIES = {"Android Developer", "iOS Developer", "Backend Developer", "Frontend Developer",  "Team Lead", "Project Manager", "CEO"};
     private SimpleCursorAdapter adapter;
 
     @Override
@@ -23,8 +25,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
         setContentView(R.layout.activity_main);
 
         String[] columns = new String[]{
-                SampleContentProvider.Person.AGE,
-                SampleContentProvider.Person.NAME};
+                SampleContract.Person.AGE,
+                SampleContract.Person.NAME};
 
         int[] ids = {
                 R.id.person_age,
@@ -46,9 +48,27 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
         return true;
     }
 
+    private void addPerson() {
+        ContentValues values = new ContentValues();
+        values.put(SampleContract.Person.AGE, (int) (Math.random() * 40 + 20));
+        values.put(SampleContract.Person.NAME, NAMES[(int) (Math.random() * NAMES.length)]);
+        getContentResolver().insert(SampleContract.Person.CONTENT_URI, values);
+    }
+
+    private void addSpecialty() {
+        ContentValues values = new ContentValues();
+        values.put(SampleContract.Specialty._ID, (int) (Math.random() * SPECIALTIES.length));
+        values.put(SampleContract.Specialty.NAME, SPECIALTIES[(int) (Math.random() * SPECIALTIES.length)]);
+        getContentResolver().insert(SampleContract.Person.CONTENT_URI, values);
+    }
+
+    private void clearAll() {
+        getContentResolver().delete(SampleContract.Person.CONTENT_URI, null, null);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this, SampleContentProvider.Person.CONTENT_URI, null, "", null, "");
+        return new CursorLoader(this, SampleContract.Person.CONTENT_URI, null, null, null, null);
     }
 
     @Override
@@ -66,17 +86,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
         switch (view.getId()) {
             case R.id.add:
-                ContentValues values = new ContentValues();
-                values.put(SampleContentProvider.Person.AGE, 20);
-                values.put(SampleContentProvider.Person.NAME, "Some Name");
-                getContentResolver().insert(SampleContentProvider.Person.CONTENT_URI, values);
+                addPerson();
                 break;
 
             case R.id.delete:
-                getContentResolver().delete(SampleContentProvider.Person.CONTENT_URI, "", null);
+                clearAll();
                 break;
-            default:
 
+            default:
                 break;
         }
 

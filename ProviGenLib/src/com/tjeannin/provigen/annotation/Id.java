@@ -7,9 +7,10 @@ import java.lang.annotation.Target;
 
 /**
  * Identifies a field of a contract class that should be used as a primary key in the database. <br/>
- * This annotation should be used alongside with a {@link Column} annotation.
+ * This annotation should be used alongside with a {@link Column} annotation. The autoincrement attribute should be true or false (by default).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Id {
+    boolean autoincrement() default false;
 }

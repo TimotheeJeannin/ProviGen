@@ -42,9 +42,14 @@ public class ProviGenOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+        // create new tables if not exists
+        onCreate(database);
+
+        // add missing columns
         if (newVersion > oldVersion) {
-            for (Class contract : contracts)
+            for (Class contract : contracts) {
                 TableUpdater.addMissingColumns(database, contract);
+            }
         }
     }
 }

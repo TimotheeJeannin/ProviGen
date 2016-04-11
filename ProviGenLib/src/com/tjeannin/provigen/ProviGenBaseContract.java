@@ -13,8 +13,8 @@ public interface ProviGenBaseContract {
     /**
      * The unique ID for a row.
      */
-    @Id
+    @Id(autoincrement = true)
     @Column(Type.INTEGER)
-    public static final String _ID = BaseColumns._ID;
+    String _ID = BaseColumns._ID;
 
 }
