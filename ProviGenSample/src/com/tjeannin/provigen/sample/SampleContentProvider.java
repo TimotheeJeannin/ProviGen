@@ -29,7 +29,7 @@ public class SampleContentProvider extends ProviGenProvider {
 
     @Override
     public SQLiteOpenHelper openHelper(Context context) {
-        return null;
+        return null; // you can return null
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SampleContentProvider extends ProviGenProvider {
 
     @Override
     public Class[] contractClasses() {
-        return null;
+        return null; // you can return null
     }
 
     @Override

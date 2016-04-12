@@ -31,6 +31,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
         String[] columns = new String[]{
                 SampleContract.Person.AGE,
+                // important for correct obtaining of the columns
                 ContractUtil.joinName(SampleContract.Person.TABLE_NAME, SampleContract.Person.NAME),
                 ContractUtil.joinName(SampleContract.Specialty.TABLE_NAME, SampleContract.Specialty.NAME)
         };
@@ -83,13 +84,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // create special join URI and execute the query
         Uri innerJoinUri = ProviGenUriBuilder.joinUri(
                 ProviGenUriBuilder.JoinType.INNER_JOIN,
                 SampleContract.Person.CONTENT_URI,
                 new JoinEntity(SampleContract.Specialty.CONTENT_URI, SampleContract.Person.SPECIALTY_ID , SampleContract.Specialty.ID)
         );
 
-        return new CursorLoader(this, innerJoinUri, SampleContract.Person.JOIN_PROJECTION, null, null, SampleContract.Person.DEFAULT_SORT_ORDER);
+        return new CursorLoader(this, innerJoinUri, SampleContract.Person.JOIN_PROJECTION, null, null, null);
     }
 
     @Override

@@ -31,13 +31,12 @@ public class SampleContract {
         @ContentUri
         public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(SampleContentProvider.AUTHORITY, TABLE_NAME);
 
-        public static final String DEFAULT_SORT_ORDER = _ID + " DESC";
-
         public static final String[] DEFAULT_PROJECTION = new String[] { _ID, AGE, NAME };
 
         public static final String[] JOIN_PROJECTION = new String[] {
                 _ID,
                 AGE,
+                // ContractUtil.fullName() used to avoid ambiguous column name
                 ContractUtil.fullName(TABLE_NAME, NAME),
                 ContractUtil.fullName(Specialty.TABLE_NAME, Specialty.NAME)
         };
@@ -49,10 +48,10 @@ public class SampleContract {
         public static final String TABLE_NAME = "specialty";
 
         @Id(autoincrement = false)
-        @Column(Column.Type.TEXT)
+        @Column(Column.Type.INTEGER)
         public static final String ID = "id";
 
-        @Column(Column.Type.INTEGER)
+        @Column(Column.Type.TEXT)
         public static final String NAME = "name";
 
         @ContentUri
@@ -97,7 +96,10 @@ public class SampleContract {
         public static final String NAME = "name";
 
         @ContentUri
-        public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(SampleContentProvider.AUTHORITY, TABLE_NAME, SampleContentProvider.SECOND_DB_NAME); // add name of second database
+        public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(
+                SampleContentProvider.AUTHORITY,
+                TABLE_NAME,
+                SampleContentProvider.SECOND_DB_NAME); // name of second database
 
         public static final String[] DEFAULT_PROJECTION = new String[] { _ID, AGE, NAME };
     }
