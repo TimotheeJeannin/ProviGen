@@ -26,11 +26,13 @@ public class MultipleContractContentProvider extends ProviGenProvider {
 
     public static interface ContractOne extends ProviGenBaseContract {
 
+        String TABLE_NAME = "table_name_simple";
+
         @Column(Type.INTEGER)
         public static final String MY_INT = "int";
 
         @ContentUri
-        public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
+        public static final Uri CONTENT_URI = Uri.parse("content://com.test.simple/" + TABLE_NAME);
     }
 
     public static interface ContractTwo extends ProviGenBaseContract {

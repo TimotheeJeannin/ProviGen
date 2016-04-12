@@ -24,14 +24,18 @@ public class SimpleContentProvider extends ProviGenProvider {
 
     public interface ContractOne extends ProviGenBaseContract {
 
+        String TABLE_NAME = "table_name_simple";
+
         @Column(Type.INTEGER)
         String MY_INT = "int";
 
         @ContentUri
-        Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
+        Uri CONTENT_URI = Uri.parse("content://com.test.simple/" + TABLE_NAME);
     }
 
     public interface ContractTwo extends ProviGenBaseContract {
+
+        String TABLE_NAME = "table_name_simple";
 
         @Column(Type.INTEGER)
         String MY_INT = "int";
@@ -43,6 +47,6 @@ public class SimpleContentProvider extends ProviGenProvider {
         String MY_REAL = "real";
 
         @ContentUri
-        Uri CONTENT_URI = Uri.parse("content://com.test.simple/table_name_simple");
+        Uri CONTENT_URI = Uri.parse("content://com.test.simple/" + TABLE_NAME);
     }
 }

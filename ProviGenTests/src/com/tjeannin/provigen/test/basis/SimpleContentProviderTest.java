@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.mock.MockContentResolver;
+
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractOne;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractTwo;
@@ -16,10 +17,11 @@ import java.util.List;
 
 public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleContentProvider> {
 
+    private static final String PROVIDER_AUTHORITY = "com.test.simple";
     private MockContentResolver contentResolver;
 
     public SimpleContentProviderTest() {
-        super(SimpleContentProvider.class, "com.test.simple");
+        super(SimpleContentProvider.class, PROVIDER_AUTHORITY);
     }
 
     @Override
@@ -167,6 +169,6 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 
     public void testGetMimeType() {
         final String mimeType = getProvider().getType(ContractOne.CONTENT_URI);
-        assertEquals("vnd.android.cursor.dir/vdn.table_name_simple", mimeType);
+        assertEquals("vnd.android.cursor.dir/vdn." + PROVIDER_AUTHORITY + '.' + ContractOne.TABLE_NAME, mimeType);
     }
 }
