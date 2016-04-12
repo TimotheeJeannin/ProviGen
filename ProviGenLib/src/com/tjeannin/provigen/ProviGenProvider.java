@@ -12,11 +12,15 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.tjeannin.provigen.helper.ContractUtil;
 import com.tjeannin.provigen.model.Contract;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Behaves as a {@link ContentProvider} for the given contract class.
@@ -25,6 +29,9 @@ public abstract class ProviGenProvider extends ContentProvider {
 
     private static final int ITEM = 1;
     private static final int ITEM_ID = 2;
+    private static final int INNER_JOIN = 3;
+    private static final int LEFT_OUTER_JOIN = 4;
+    private static final int CROSS_JOIN = 5;
 
     private List<Contract> contracts = new ArrayList<>();
     private UriMatcher uriMatcher;
@@ -75,6 +82,14 @@ public abstract class ProviGenProvider extends ContentProvider {
         return SQLiteDatabase.CONFLICT_REPLACE;
     }
 
+    /**
+     * Get max number of join entities (by default 10)
+     * @return Max number of join entities
+     */
+    public int maxJoinEntities() {
+        return 10;
+    }
+
     @Override
     public boolean onCreate() {
         openHelpers = openHelpers(getContext());
@@ -87,12 +102,33 @@ public abstract class ProviGenProvider extends ContentProvider {
 
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         for (Contract contract : contracts) {
+            StringBuilder innerJoinPathSegment;
+            StringBuilder leftOuterJoinPathSegment;
+            StringBuilder crossJoinPathSegment;
+
             if(contract.getDbName() == null) {
                 uriMatcher.addURI(contract.getAuthority(), contract.getTable(), ITEM);
                 uriMatcher.addURI(contract.getAuthority(), contract.getTable() + "/#", ITEM_ID);
+
+                innerJoinPathSegment = new StringBuilder(contract.getTable()).append("/inner_join/*/*");
+                leftOuterJoinPathSegment = new StringBuilder(contract.getTable()).append("/left_outer_join/*/*");
+                crossJoinPathSegment = new StringBuilder(contract.getTable()).append("/cross_join/*/*");
             } else {
                 uriMatcher.addURI(contract.getAuthority(), contract.getDbName() + "/" + contract.getTable(), ITEM);
                 uriMatcher.addURI(contract.getAuthority(), contract.getDbName() + "/" + contract.getTable() + "/#", ITEM_ID);
+
+                innerJoinPathSegment = new StringBuilder(contract.getDbName()).append("/").append(contract.getTable()).append("/inner_join/*/*");
+                leftOuterJoinPathSegment = new StringBuilder(contract.getDbName()).append("/").append(contract.getTable()).append("/left_outer_join/*/*");
+                crossJoinPathSegment = new StringBuilder(contract.getDbName()).append("/").append(contract.getTable()).append("/cross_join/*/*");
+            }
+
+            for(int i = 0; i < maxJoinEntities(); i++) {
+                uriMatcher.addURI(contract.getAuthority(), innerJoinPathSegment.toString(), INNER_JOIN);
+                uriMatcher.addURI(contract.getAuthority(), leftOuterJoinPathSegment.toString(), LEFT_OUTER_JOIN);
+                uriMatcher.addURI(contract.getAuthority(), crossJoinPathSegment.toString(), CROSS_JOIN);
+                innerJoinPathSegment.append("/*/*");
+                leftOuterJoinPathSegment.append("/*/*");
+                crossJoinPathSegment.append("/*/*");
             }
         }
 
@@ -123,6 +159,19 @@ public abstract class ProviGenProvider extends ContentProvider {
                 }
                 break;
 
+            // JOINs
+            case INNER_JOIN:
+            case LEFT_OUTER_JOIN:
+            case CROSS_JOIN:
+                Map<String, String> joinProjectionMap = new LinkedHashMap<>();
+                for(String field : projection) {
+                    joinProjectionMap.put(field, field.contains(".") ? field + " AS " + ContractUtil.joinName(field.substring(0, field.indexOf(".")), field.substring(field.indexOf(".") + 1)) : field);
+                }
+                queryBuilder.setProjectionMap(joinProjectionMap);
+                queryBuilder.setTables(parseJoinUri(uri, contract.getDbName() != null));
+                cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+
             default:
                 throw new IllegalArgumentException("Unknown uri " + uri);
         }
@@ -144,9 +193,8 @@ public abstract class ProviGenProvider extends ContentProvider {
                 Uri rowUri = Uri.EMPTY;
                 if (rowId > 0) {
                     rowUri = ContentUris.withAppendedId(uri, rowId);
-                    getContext().getContentResolver().notifyChange(rowUri, null);
                 }
-
+                getContext().getContentResolver().notifyChange(uri, null);
                 return rowUri;
 
             default:
@@ -163,16 +211,12 @@ public abstract class ProviGenProvider extends ContentProvider {
             case ITEM:
                 db.beginTransaction();
                 try {
-                    // вставляем
                     for (ContentValues cv : values) {
                         db.insertWithOnConflict(contract.getTable(), null, cv, conflictAlgorithm());
                     }
                     db.setTransactionSuccessful();
 
-                    Context context = getContext();
-                    if(context != null) {
-                        context.getContentResolver().notifyChange(uri, null);
-                    }
+                    getContext().getContentResolver().notifyChange(uri, null);
                 } finally {
                     db.endTransaction();
                 }
@@ -219,6 +263,9 @@ public abstract class ProviGenProvider extends ContentProvider {
 
         switch (uriMatcher.match(uri)) {
             case ITEM:
+            case INNER_JOIN:
+            case LEFT_OUTER_JOIN:
+            case CROSS_JOIN:
                 numberOfRowsAffected = db.delete(contract.getTable(), selection, selectionArgs);
                 break;
 
@@ -244,12 +291,17 @@ public abstract class ProviGenProvider extends ContentProvider {
     public String getType(Uri uri) {
         Contract contract = findMatchingContract(uri);
 
+        Log.i(getClass().getSimpleName(), "getType() -> contract.getTable() = " + contract.getTable());
+
         switch (uriMatcher.match(uri)) {
             case ITEM:
-                return "vnd.android.cursor.dir/vdn." + contract.getTable();
+            case INNER_JOIN:
+            case LEFT_OUTER_JOIN:
+            case CROSS_JOIN:
+                return "vnd.android.cursor.dir/vdn." + contract.getAuthority() + '.' + contract.getTable();
 
             case ITEM_ID:
-                return "vnd.android.cursor.item/vdn." + contract.getTable();
+                return "vnd.android.cursor.item/vdn."  + contract.getAuthority() + '.' + contract.getTable();
 
             default:
                 throw new IllegalArgumentException("Unknown uri " + uri);
@@ -312,6 +364,57 @@ public abstract class ProviGenProvider extends ContentProvider {
                 }
             }
             return readOnly ? openHelpers[1].getReadableDatabase() : openHelpers[1].getWritableDatabase();
+        }
+    }
+
+    /**
+     * Return join expression as string from URI
+     * @param uri Join URI
+     * @param hasDbName True if URI has database name
+     * @return Join expression
+     */
+    private String parseJoinUri(Uri uri, boolean hasDbName) {
+        List<String> pathSegments = uri.getPathSegments();
+        if(pathSegments.size() > 3) {
+            StringBuilder builder = new StringBuilder();
+            String table1 = pathSegments.get(hasDbName ? 1 : 0);
+            String joinType;
+            switch (pathSegments.get(hasDbName ? 2 : 1)) {
+                case "inner_join":
+                    joinType = " INNER JOIN ";
+                    break;
+
+                case "left_outer_join":
+                    joinType = " LEFT OUTER JOIN ";
+                    break;
+
+                case "cross_join":
+                    joinType = " CROSS JOIN ";
+                    break;
+
+                default:
+                    joinType = "";
+            }
+            builder.append(table1);
+
+            List<String> subList = pathSegments.subList(hasDbName ? 3 : 2, pathSegments.size()); // ex: {"doctor", "doctor_id:id", ...}
+            for(String tableOrFields : subList) {
+                // fields separate by ":"
+                if(tableOrFields.contains(":")) {
+                    builder.append(" ON ")
+                            .append(tableOrFields.substring(0, tableOrFields.indexOf(":")))
+                            .append(" = ")
+                            .append(tableOrFields.substring(tableOrFields.indexOf(":") + 1));
+                }
+                // table name
+                else {
+                    builder.append(joinType).append(" ").append(tableOrFields);
+                }
+            }
+
+            return builder.toString();
+        } else {
+            throw new IllegalArgumentException("Illegal join URI: " + uri);
         }
     }
 }

@@ -25,19 +25,20 @@ public class SampleContract {
         @Column(Column.Type.TEXT)
         public static final String NAME = "name";
 
+        @Column(Column.Type.INTEGER)
+        public static final String SPECIALTY_ID = "specialty_id";
+
         @ContentUri
         public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(SampleContentProvider.AUTHORITY, TABLE_NAME);
 
-        public static final String[] DEFAULT_PROJECTION = new String[] {
-                _ID,
-                AGE,
-                NAME
-        };
+        public static final String DEFAULT_SORT_ORDER = _ID + " DESC";
+
+        public static final String[] DEFAULT_PROJECTION = new String[] { _ID, AGE, NAME };
 
         public static final String[] JOIN_PROJECTION = new String[] {
                 _ID,
                 AGE,
-                NAME,
+                ContractUtil.fullName(TABLE_NAME, NAME),
                 ContractUtil.fullName(Specialty.TABLE_NAME, Specialty.NAME)
         };
     }
@@ -49,7 +50,7 @@ public class SampleContract {
 
         @Id(autoincrement = false)
         @Column(Column.Type.TEXT)
-        public static final String _ID = "_id";
+        public static final String ID = "id";
 
         @Column(Column.Type.INTEGER)
         public static final String NAME = "name";
@@ -57,10 +58,7 @@ public class SampleContract {
         @ContentUri
         public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(SampleContentProvider.AUTHORITY, TABLE_NAME);
 
-        public static final String[] DEFAULT_PROJECTION = new String[] {
-                _ID,
-                NAME
-        };
+        public static final String[] DEFAULT_PROJECTION = new String[] { ID, NAME };
     }
 
     // not implement ProviGenBaseContract interface (because non-autoincrement composite primary key)
@@ -101,10 +99,6 @@ public class SampleContract {
         @ContentUri
         public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(SampleContentProvider.AUTHORITY, TABLE_NAME, SampleContentProvider.SECOND_DB_NAME); // add name of second database
 
-        public static final String[] DEFAULT_PROJECTION = new String[] {
-                _ID,
-                AGE,
-                NAME
-        };
+        public static final String[] DEFAULT_PROJECTION = new String[] { _ID, AGE, NAME };
     }
 }
