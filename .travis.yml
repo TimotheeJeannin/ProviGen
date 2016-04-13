@@ -21,6 +21,7 @@ android:
     - android-18
     - android-19
     - android-21
+    - android-23
     - sys-img-armeabi-v7a-android-15
     - sys-img-armeabi-v7a-android-16
     - sys-img-armeabi-v7a-android-17
