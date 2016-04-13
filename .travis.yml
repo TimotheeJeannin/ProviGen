@@ -9,22 +9,25 @@ env:
   - ANDROID_TARGET=android-18
   - ANDROID_TARGET=android-19
   - ANDROID_TARGET=android-21
+  - ANDROID_TARGET=android-23
 
 android:
   components:
-    - build-tools-19.1.0
+    - build-tools-23.0.3
     - android-15
     - android-16
     - android-17
     - android-18
     - android-19
     - android-21
+    - android-23
     - sys-img-armeabi-v7a-android-15
     - sys-img-armeabi-v7a-android-16
     - sys-img-armeabi-v7a-android-17
     - sys-img-armeabi-v7a-android-18
     - sys-img-armeabi-v7a-android-19
     - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-23
     - extra-android-support
     - extra-android-m2repository
     - extra-google-m2repository
