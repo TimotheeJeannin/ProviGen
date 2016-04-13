@@ -29,7 +29,6 @@ android:
     - sys-img-armeabi-v7a-android-18
     - sys-img-armeabi-v7a-android-19
     - sys-img-armeabi-v7a-android-21
-    - sys-img-armeabi-v7a-android-23
     - extra-android-support
     - extra-android-m2repository
     - extra-google-m2repository
