@@ -1,6 +1,7 @@
 package com.tjeannin.provigen.sample;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.tjeannin.provigen.ProviGenOpenHelper;
@@ -48,5 +49,10 @@ public class SampleContentProvider extends ProviGenProvider {
     @Override
     public Class[][] contractClassesMultipleDb() {
         return new Class[][] {CONTRACTS, CONTRACTS_SECOND};
+    }
+
+    @Override
+    public int conflictAlgorithm() {
+        return SQLiteDatabase.CONFLICT_REPLACE;
     }
 }

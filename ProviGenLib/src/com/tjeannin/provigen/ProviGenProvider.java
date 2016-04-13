@@ -76,10 +76,10 @@ public abstract class ProviGenProvider extends ContentProvider {
     }
 
     /**
-     * Override for insert conflict resolver. By default return SQLiteDatabase.CONFLICT_REPLACE.
+     * Override for insert conflict resolver. By default return SQLiteDatabase.CONFLICT_NONE.
      */
     public int conflictAlgorithm() {
-        return SQLiteDatabase.CONFLICT_REPLACE;
+        return SQLiteDatabase.CONFLICT_NONE;
     }
 
     /**
@@ -189,7 +189,13 @@ public abstract class ProviGenProvider extends ContentProvider {
 
         switch (uriMatcher.match(uri)) {
             case ITEM:
-                long rowId = db.insertWithOnConflict(contract.getTable(), null, values, conflictAlgorithm());
+                long rowId;
+                if(conflictAlgorithm() == SQLiteDatabase.CONFLICT_NONE) {
+                    rowId = db.insert(contract.getTable(), null, values);
+                } else {
+                    rowId = db.insertWithOnConflict(contract.getTable(), null, values, conflictAlgorithm());
+                }
+
                 Uri rowUri = Uri.EMPTY;
                 if (rowId > 0) {
                     rowUri = ContentUris.withAppendedId(uri, rowId);
@@ -212,7 +218,11 @@ public abstract class ProviGenProvider extends ContentProvider {
                 db.beginTransaction();
                 try {
                     for (ContentValues cv : values) {
-                        db.insertWithOnConflict(contract.getTable(), null, cv, conflictAlgorithm());
+                        if(conflictAlgorithm() == SQLiteDatabase.CONFLICT_NONE) {
+                            db.insert(contract.getTable(), null, cv);
+                        } else {
+                            db.insertWithOnConflict(contract.getTable(), null, cv, conflictAlgorithm());
+                        }
                     }
                     db.setTransactionSuccessful();
 
