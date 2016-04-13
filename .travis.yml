@@ -9,7 +9,6 @@ env:
   - ANDROID_TARGET=android-18
   - ANDROID_TARGET=android-19
   - ANDROID_TARGET=android-21
-  - ANDROID_TARGET=android-23
 
 android:
   components:
@@ -22,7 +21,6 @@ android:
     - android-18
     - android-19
     - android-21
-    - android-23
     - sys-img-armeabi-v7a-android-15
     - sys-img-armeabi-v7a-android-16
     - sys-img-armeabi-v7a-android-17
