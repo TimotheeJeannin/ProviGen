@@ -132,7 +132,7 @@ new TableBuilder(MyContract.class)
         .createTable(database);
 ```
 
-### Primary key
+### Primary key and foreign key
 
 Autoincrement or non-autoincrement primary key.
 
@@ -161,6 +161,14 @@ public class Passport {
     public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(SampleContentProvider.AUTHORITY, TABLE_NAME);
         
 }
+```
+
+Foreign key support.
+
+```java
+@ForeignKey(table = Specialty.TABLE_NAME, column = Specialty.ID)
+@Column(Column.Type.INTEGER)
+public static final String SPECIALTY_ID = "specialty_id";
 ```
 
 ### Multiple databases support

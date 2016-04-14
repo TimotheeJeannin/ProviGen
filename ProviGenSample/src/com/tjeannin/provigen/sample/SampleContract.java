@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.annotation.ForeignKey;
 import com.tjeannin.provigen.annotation.Id;
 import com.tjeannin.provigen.helper.ContractUtil;
 import com.tjeannin.provigen.helper.ProviGenUriBuilder;
@@ -25,6 +26,7 @@ public class SampleContract {
         @Column(Column.Type.TEXT)
         public static final String NAME = "name";
 
+        @ForeignKey(table = Specialty.TABLE_NAME, column = Specialty.ID)
         @Column(Column.Type.INTEGER)
         public static final String SPECIALTY_ID = "specialty_id";
 

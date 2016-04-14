@@ -6,6 +6,7 @@ import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.model.Constraint;
 import com.tjeannin.provigen.model.Contract;
 import com.tjeannin.provigen.model.ContractField;
+import com.tjeannin.provigen.model.ForeignKeyConstraint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,31 +64,41 @@ public class TableBuilder {
         for (ContractField field : contract.getFields()) {
             builder.append(" ").append(field.name).append(" ").append(field.type);
 
+            boolean isSinglePrimaryKey = false;
             // single PRIMARY KEY
             if(contract.getIdFields().size() == 1) {
                 if (field.name.equals(contract.getIdFields().get(0))) {
-                    builder.append(" PRIMARY KEY ");
+                    isSinglePrimaryKey = true;
+                    builder.append(" NOT NULL PRIMARY KEY ");
 
                     if (field.type.equals(Column.Type.INTEGER)) {
                         if(contract.isAutoincrement(field.name)) {
-                            builder.append(" AUTOINCREMENT ");
+                            builder.append(" AUTOINCREMENT "); // 123 456 789
                         }
                     }
                 }
             }
 
-            for (Constraint constraint : constraints) {
-                if (constraint.targetColumn.equals(field.name)) {
-                    builder.append(" ").append(constraint.type).append(" ON CONFLICT ").append(constraint.conflictClause);
+            if(!isSinglePrimaryKey) {
+                for (Constraint constraint : constraints) {
+                    if (constraint.targetColumn.equals(field.name)) {
+                        builder.append(" ").append(constraint.type).append(" ON CONFLICT ").append(constraint.conflictClause);
+                    }
                 }
             }
 
             builder.append(", ");
         }
 
-        // composite PRIMARY KEY
+        // foreign keys
+        for(ForeignKeyConstraint foreignKey : contract.getForeignKeys()) {
+            builder.append("FOREIGN KEY (").append(foreignKey.getColumn()).append(") references ")
+                    .append(foreignKey.getTableReferenced()).append("(").append(foreignKey.getColumnReferenced()).append("), ");
+        }
+
+        // composite primary key
         if(contract.getIdFields().size() > 1) {
-            builder.append(" PRIMARY KEY ( ");
+            builder.append("PRIMARY KEY (");
             // пробегаем по полям, помеченными как @Id
             for(int i = 0; i < contract.getIdFields().size(); i++) {
                 builder.append(contract.getIdFields().get(i));
@@ -95,13 +106,13 @@ public class TableBuilder {
                     builder.append(", ");
                 }
             }
-            builder.append(" ) ");
+            builder.append(")");
         }
         else {
             // delete ',' in the end
             builder.deleteCharAt(builder.length() - 2);
         }
-        builder.append(" ) ");
+        builder.append(")");
 
         return builder.toString();
     }

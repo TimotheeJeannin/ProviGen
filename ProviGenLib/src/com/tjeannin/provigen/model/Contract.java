@@ -3,6 +3,7 @@ package com.tjeannin.provigen.model;
 import android.net.Uri;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.annotation.ForeignKey;
 import com.tjeannin.provigen.annotation.Id;
 
 import java.lang.reflect.Field;
@@ -18,12 +19,14 @@ public class Contract {
     private String tableName;
     private List<ContractField> contractFields;
     private Map<String, Boolean> idFieldMap;
+    private List<ForeignKeyConstraint> foreignKeys;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public Contract(Class contractClass) {
 
         idFieldMap = new HashMap<>();
         contractFields = new ArrayList<>();
+        foreignKeys = new ArrayList<>();
 
         Field[] fields = contractClass.getFields();
         for (Field field : fields) {
@@ -45,11 +48,26 @@ public class Contract {
                 }
             }
 
-           Id id = field.getAnnotation(Id.class);
+            Id id = field.getAnnotation(Id.class);
             if (id != null) {
                 try {
                     String idField = (String) field.get(null);
                     idFieldMap.put(idField, id.autoincrement());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
+            if(foreignKey != null) {
+                try {
+                    ForeignKeyConstraint foreignKeyConstraint = null;
+                    if(foreignKey.table() != null && foreignKey.column() != null) {
+                        foreignKeyConstraint = new ForeignKeyConstraint((String) field.get(null), foreignKey.table(), foreignKey.column());
+                    }
+                    if(foreignKeyConstraint != null) {
+                        foreignKeys.add(foreignKeyConstraint);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -88,5 +106,9 @@ public class Contract {
 
     public boolean isAutoincrement(String field) {
         return idFieldMap.get(field);
+    }
+
+    public List<ForeignKeyConstraint> getForeignKeys() {
+        return foreignKeys;
     }
 }
