@@ -1,10 +1,6 @@
 package com.tjeannin.provigen;
 
-import android.content.ContentProvider;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.UriMatcher;
+import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -12,8 +8,6 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
-
 import com.tjeannin.provigen.helper.ContractUtil;
 import com.tjeannin.provigen.model.Contract;
 
@@ -80,6 +74,30 @@ public abstract class ProviGenProvider extends ContentProvider {
      */
     public int conflictAlgorithm() {
         return SQLiteDatabase.CONFLICT_NONE;
+    }
+
+    /**
+     * Whether to call the getContentResolver().notifyChange(uri, null) method after insert.
+     * @return true or false
+     */
+    public boolean insertNotifyChange() {
+        return true;
+    }
+
+    /**
+     * Whether to call the getContentResolver().notifyChange(uri, null) method after update.
+     * @return true or false
+     */
+    public boolean updateNotifyChange() {
+        return true;
+    }
+
+    /**
+     * Whether to call the getContentResolver().notifyChange(uri, null) method after delete.
+     * @return true or false
+     */
+    public boolean deleteNotifyChange() {
+        return true;
     }
 
     /**
@@ -200,7 +218,9 @@ public abstract class ProviGenProvider extends ContentProvider {
                 if (rowId > 0) {
                     rowUri = ContentUris.withAppendedId(uri, rowId);
                 }
-                getContext().getContentResolver().notifyChange(uri, null);
+                if(insertNotifyChange()) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
                 return rowUri;
 
             default:
@@ -226,7 +246,9 @@ public abstract class ProviGenProvider extends ContentProvider {
                     }
                     db.setTransactionSuccessful();
 
-                    getContext().getContentResolver().notifyChange(uri, null);
+                    if(insertNotifyChange()) {
+                        getContext().getContentResolver().notifyChange(uri, null);
+                    }
                 } finally {
                     db.endTransaction();
                 }
@@ -261,7 +283,9 @@ public abstract class ProviGenProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown uri " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        if(updateNotifyChange()) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return numberOfRowsAffected;
     }
 
@@ -292,17 +316,15 @@ public abstract class ProviGenProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown uri " + uri);
         }
-
-        getContext().getContentResolver().notifyChange(uri, null);
+        if(deleteNotifyChange()) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return numberOfRowsAffected;
     }
 
     @Override
     public String getType(Uri uri) {
         Contract contract = findMatchingContract(uri);
-
-        Log.i(getClass().getSimpleName(), "getType() -> contract.getTable() = " + contract.getTable());
-
         switch (uriMatcher.match(uri)) {
             case ITEM:
             case INNER_JOIN:
