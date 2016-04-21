@@ -2,8 +2,10 @@ package com.tjeannin.provigen.test;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.test.ProviderTestCase2;
+
 import com.tjeannin.provigen.ProviGenOpenHelper;
 import com.tjeannin.provigen.ProviGenProvider;
 import com.tjeannin.provigen.annotation.Column;
@@ -61,11 +63,13 @@ public abstract class ExtendedProviderTestCase<T extends ProviGenProvider> exten
             getSuperClassField(getProvider(), "contracts").set(getProvider(), contracts);
 
             // Replace the open helper.
-            Field openHelperField = getSuperClassField(getProvider(), "openHelper");
-            ProviGenOpenHelper openHelper = (ProviGenOpenHelper) openHelperField.get(getProvider());
+            Field openHelpersField = getSuperClassField(getProvider(), "openHelpers");
+            ProviGenOpenHelper openHelper = (ProviGenOpenHelper) ((SQLiteOpenHelper[]) openHelpersField.get(getProvider()))[0];
             int version = getSuperClassField(openHelper, "mNewVersion").getInt(openHelper);
-            openHelperField.set(getProvider(), new ProviGenOpenHelper(
-                    getProvider().getContext(), "ProviGenDatabase", null, version + 1, contractClasses));
+            openHelpersField.set(
+                    getProvider(),
+                    new SQLiteOpenHelper[] {new ProviGenOpenHelper(getProvider().getContext(), "ProviGenDatabase", null, version + 1, contractClasses)}
+            );
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();

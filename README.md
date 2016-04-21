@@ -132,6 +132,201 @@ new TableBuilder(MyContract.class)
         .createTable(database);
 ```
 
+### Primary key and foreign key
+
+Autoincrement or non-autoincrement primary key.
+
+```java
+@Id(autoincrement = true)
+@Column(Column.Type.INTEGER)
+public static final String ID = "id";
+```
+
+Composite primary key support.
+
+```java
+public class Passport {
+
+    public static final String TABLE_NAME = "passport";
+    
+    @Id
+    @Column(Column.Type.TEXT)
+    public static final String SERIES = "series";
+    
+    @Id
+    @Column(Column.Type.INTEGER)
+    public static final String NUMBER = "number";
+    
+    @ContentUri
+    public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(SampleContentProvider.AUTHORITY, TABLE_NAME);
+        
+}
+```
+
+Foreign key support.
+
+```java
+@ForeignKey(table = Specialty.TABLE_NAME, column = Specialty.ID)
+@Column(Column.Type.INTEGER)
+public static final String SPECIALTY_ID = "specialty_id";
+```
+
+### Multiple databases support
+
+Add a name of the second database in your ContractClass.
+
+```java
+public class PersonSecondDb implements ProviGenBaseContract {
+
+    public static final String TABLE_NAME = "persons_second";
+
+    @Column(Column.Type.INTEGER)
+    public static final String AGE = "age";
+
+    @Column(Column.Type.TEXT)
+    public static final String NAME = "name";
+
+    @ContentUri
+    public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(
+            SampleContentProvider.AUTHORITY, 
+            TABLE_NAME, 
+            SampleContentProvider.SECOND_DB_NAME); // name of second database
+}
+```
+
+Override openHelpers(Context context) and contractClassesMultipleDb() methods in your content provider.
+
+```java
+public class SampleContentProvider extends ProviGenProvider {
+
+    public static final String AUTHORITY = "com.tjeannin.provigen.sample";
+
+    public static final String DB_NAME = "ProviGenDatabase";
+    public static final int DB_VERSION = 1;
+
+    public static final String SECOND_DB_NAME = "ProviGenDatabaseSecond";
+    public static final int SECOND_DB_VERSION = 1;
+
+    private static final Class[] CONTRACTS = new Class[] {
+            SampleContract.Person.class,
+            SampleContract.Specialty.class,
+            SampleContract.Passport.class
+    };
+
+    private static final Class[] CONTRACTS_SECOND = new Class[] {
+            SampleContract.PersonSecondDb.class
+    };
+
+    @Override
+    public SQLiteOpenHelper openHelper(Context context) {
+        return null; // you can return null
+    }
+
+    @Override
+    public SQLiteOpenHelper[] openHelpers(Context context) {
+        return new SQLiteOpenHelper[] {
+                new ProviGenOpenHelper(getContext(), DB_NAME, null, DB_VERSION, CONTRACTS), // first db
+                new ProviGenOpenHelper(getContext(), SECOND_DB_NAME, null, SECOND_DB_VERSION, CONTRACTS_SECOND) // second db
+        };
+    }
+
+    @Override
+    public Class[] contractClasses() {
+        return null; // you can return null
+    }
+
+    @Override
+    public Class[][] contractClassesMultipleDb() {
+        return new Class[][] {CONTRACTS, CONTRACTS_SECOND};
+    }
+}
+```
+
+### Joins support
+
+Inner join, left outer join and cross join support.
+Your ContractClasses.
+
+```java
+public static class Person implements ProviGenBaseContract {
+
+    public static final String TABLE_NAME = "person";
+
+    @Column(Column.Type.INTEGER)
+    public static final String AGE = "age";
+
+    @Column(Column.Type.TEXT)
+    public static final String NAME = "name";
+
+    @Column(Column.Type.INTEGER)
+    public static final String SPECIALTY_ID = "specialty_id";
+
+    @ContentUri
+    public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(SampleContentProvider.AUTHORITY, TABLE_NAME);
+
+    public static final String[] DEFAULT_PROJECTION = new String[] { _ID, AGE, NAME };
+
+    // projection for join-query
+    public static final String[] JOIN_PROJECTION = new String[] {
+            _ID,
+            AGE,
+            // ContractUtil.fullName() used to avoid ambiguous column name
+            ContractUtil.fullName(TABLE_NAME, NAME),
+            ContractUtil.fullName(Specialty.TABLE_NAME, Specialty.NAME)
+    };
+}
+
+public static class Specialty {
+
+    public static final String TABLE_NAME = "specialty";
+
+    @Id
+    @Column(Column.Type.INTEGER)
+    public static final String ID = "id";
+
+    @Column(Column.Type.TEXT)
+    public static final String NAME = "name";
+
+    @ContentUri
+    public static final Uri CONTENT_URI = ProviGenUriBuilder.contentUri(SampleContentProvider.AUTHORITY, TABLE_NAME);
+
+    public static final String[] DEFAULT_PROJECTION = new String[] { ID, NAME };
+}
+```
+
+Use the method ContractUtil.joinName() for correct obtaining of the columns.
+
+```java
+String[] columns = new String[]{
+        SampleContract.Person.AGE,
+        // important for correct obtaining of the columns
+        ContractUtil.joinName(SampleContract.Person.TABLE_NAME, SampleContract.Person.NAME),
+        ContractUtil.joinName(SampleContract.Specialty.TABLE_NAME, SampleContract.Specialty.NAME)
+};
+
+int[] ids = {
+        R.id.person_age,
+        R.id.person_name,
+        R.id.person_spec
+};
+
+SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.person_item, null, columns, ids, 0);
+```
+
+Create special join URI using the method ProviGenUriBuilder.joinUri() and execute the query.
+
+```java
+@Override
+public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    Uri innerJoinUri = ProviGenUriBuilder.joinUri(
+            ProviGenUriBuilder.JoinType.INNER_JOIN, // inner, left outer or cross join
+            SampleContract.Person.CONTENT_URI,
+            new JoinEntity(SampleContract.Specialty.CONTENT_URI, SampleContract.Person.SPECIALTY_ID , SampleContract.Specialty.ID));
+
+    return new CursorLoader(this, innerJoinUri, SampleContract.Person.JOIN_PROJECTION, null, null, null);
+}
+```
+
 ## License
 
 This content is released under the MIT License.

@@ -4,7 +4,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:2.0.0'
     }
 }
 
@@ -16,7 +16,7 @@ allprojects {
 }
 
 project(":ProviGenLib") {
-    apply plugin: "java"
+    apply plugin: 'java'
 
     dependencies {
         compile 'com.google.android:android:4.1.1.4'
@@ -24,16 +24,15 @@ project(":ProviGenLib") {
 }
 
 project(":ProviGenSample") {
-    apply plugin: "android"
+    apply plugin: 'com.android.application'
 
     dependencies {
         compile project(":ProviGenLib")
-        compile 'com.android.support:support-v4:21.0.3'
     }
 }
 
 project(":ProviGenTests") {
-    apply plugin: "android"
+    apply plugin: 'com.android.application'
 
     dependencies {
         compile project(":ProviGenLib")

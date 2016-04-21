@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.mock.MockContentResolver;
+
 import com.tjeannin.provigen.test.ExtendedProviderTestCase;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractOne;
 import com.tjeannin.provigen.test.basis.SimpleContentProvider.ContractTwo;
@@ -16,10 +17,11 @@ import java.util.List;
 
 public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleContentProvider> {
 
+    private static final String PROVIDER_AUTHORITY = "com.test.simple";
     private MockContentResolver contentResolver;
 
     public SimpleContentProviderTest() {
-        super(SimpleContentProvider.class, "com.test.simple");
+        super(SimpleContentProvider.class, PROVIDER_AUTHORITY);
     }
 
     @Override
@@ -41,16 +43,16 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
         // Update
         final ContentValues contentValues = new ContentValues(2);
         contentValues.put(ContractOne.MY_INT, 15);
-        contentResolver.update(ContractOne.CONTENT_URI, contentValues, "", null);
+        contentResolver.update(ContractOne.CONTENT_URI, contentValues, null, null);
 
         // Query
-        final Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, "", null, "");
+        final Cursor cursor = contentResolver.query(ContractOne.CONTENT_URI, null, null, null, null);
         cursor.moveToFirst();
         assertEquals(cursor.getInt(cursor.getColumnIndex(ContractOne.MY_INT)), 15);
         cursor.close();
 
         // Delete
-        contentResolver.delete(Uri.withAppendedPath(ContractOne.CONTENT_URI, String.valueOf(1)), "", null);
+        contentResolver.delete(Uri.withAppendedPath(ContractOne.CONTENT_URI, String.valueOf(1)), null, null);
         assertEquals(0, getRowCount(ContractOne.CONTENT_URI));
     }
 
@@ -99,7 +101,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
         contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
         contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
 
-        contentResolver.delete(Uri.withAppendedPath(ContractOne.CONTENT_URI, String.valueOf(3)), "", null);
+        contentResolver.delete(Uri.withAppendedPath(ContractOne.CONTENT_URI, String.valueOf(3)), null, null);
 
         contentResolver.insert(ContractOne.CONTENT_URI, getContentValues(ContractOne.class));
 
@@ -155,7 +157,7 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
         final SQLiteDatabase sqLiteDatabase = getMockContext().openOrCreateDatabase("ProviGenDatabase", Context.MODE_PRIVATE, null);
         final String tableName = contentUri.getLastPathSegment();
         final Cursor rawQuery = sqLiteDatabase.rawQuery("PRAGMA table_info(" + tableName + ')', null);
-        final List<String> result = new ArrayList<String>(rawQuery.getCount());
+        final List<String> result = new ArrayList<>(rawQuery.getCount());
         if (rawQuery.moveToFirst()) {
             do {
                 result.add(rawQuery.getString(rawQuery.getColumnIndex("name")));
@@ -167,6 +169,6 @@ public class SimpleContentProviderTest extends ExtendedProviderTestCase<SimpleCo
 
     public void testGetMimeType() {
         final String mimeType = getProvider().getType(ContractOne.CONTENT_URI);
-        assertEquals("vnd.android.cursor.dir/vdn.table_name_simple", mimeType);
+        assertEquals("vnd.android.cursor.dir/vdn." + PROVIDER_AUTHORITY + '.' + ContractOne.TABLE_NAME, mimeType);
     }
 }

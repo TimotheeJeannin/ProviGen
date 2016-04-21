@@ -10,3 +10,8 @@ sourceSets {
         }
     }
 }
+
+task generateSourcesJar(type: Jar) {
+    from sourceSets.main.java.srcDirs
+    classifier 'sources'
+}

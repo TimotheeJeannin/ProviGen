@@ -1,9 +1,12 @@
 package com.tjeannin.provigen.helper;
 
 import android.database.sqlite.SQLiteDatabase;
+
+import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.model.Constraint;
 import com.tjeannin.provigen.model.Contract;
 import com.tjeannin.provigen.model.ContractField;
+import com.tjeannin.provigen.model.ForeignKeyConstraint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +24,7 @@ public class TableBuilder {
      */
     public TableBuilder(Class contractClass) {
         contract = new Contract(contractClass);
-        constraints = new ArrayList<Constraint>();
+        constraints = new ArrayList<>();
     }
 
     /**
@@ -55,23 +58,62 @@ public class TableBuilder {
      */
     public String getSQL() {
 
-        StringBuilder builder = new StringBuilder("CREATE TABLE ");
+        StringBuilder builder = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
         builder.append(contract.getTable()).append(" ( ");
 
         for (ContractField field : contract.getFields()) {
             builder.append(" ").append(field.name).append(" ").append(field.type);
-            if (field.name.equals(contract.getIdField())) {
-                builder.append(" PRIMARY KEY AUTOINCREMENT ");
-            }
-            for (Constraint constraint : constraints) {
-                if (constraint.targetColumn.equals(field.name)) {
-                    builder.append(" ").append(constraint.type).append(" ON CONFLICT ").append(constraint.conflictClause);
+
+            boolean isSinglePrimaryKey = false;
+            // single PRIMARY KEY
+            if(contract.getIdFields().size() == 1) {
+                if (field.name.equals(contract.getIdFields().get(0))) {
+                    isSinglePrimaryKey = true;
+                    builder.append(" NOT NULL PRIMARY KEY ");
+
+                    if (field.type.equals(Column.Type.INTEGER)) {
+                        if(contract.isAutoincrement(field.name)) {
+                            builder.append(" AUTOINCREMENT "); // 123 456 789
+                        }
+                    }
                 }
             }
+
+            if(!isSinglePrimaryKey) {
+                for (Constraint constraint : constraints) {
+                    if (constraint.targetColumn.equals(field.name)) {
+                        builder.append(" ").append(constraint.type).append(" ON CONFLICT ").append(constraint.conflictClause);
+                    }
+                }
+            }
+
             builder.append(", ");
         }
-        builder.deleteCharAt(builder.length() - 2);
-        builder.append(" ) ");
+
+        // foreign keys
+        for(ForeignKeyConstraint foreignKey : contract.getForeignKeys()) {
+            builder.append("FOREIGN KEY (").append(foreignKey.getColumn()).append(") references ")
+                    .append(foreignKey.getTableReferenced()).append("(").append(foreignKey.getColumnReferenced()).append("), ");
+        }
+
+        // composite primary key
+        if(contract.getIdFields().size() > 1) {
+            builder.append("PRIMARY KEY (");
+            // пробегаем по полям, помеченными как @Id
+            for(int i = 0; i < contract.getIdFields().size(); i++) {
+                builder.append(contract.getIdFields().get(i));
+                if(i < contract.getIdFields().size() - 1) {
+                    builder.append(", ");
+                }
+            }
+            builder.append(")");
+        }
+        else {
+            // delete ',' in the end
+            builder.deleteCharAt(builder.length() - 2);
+        }
+        builder.append(")");
+
         return builder.toString();
     }
 
