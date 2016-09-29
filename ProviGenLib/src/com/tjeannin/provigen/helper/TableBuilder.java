@@ -1,6 +1,6 @@
 package com.tjeannin.provigen.helper;
 
-import android.database.sqlite.SQLiteDatabase;
+import com.tjeannin.provigen.database.Database;
 import com.tjeannin.provigen.model.Constraint;
 import com.tjeannin.provigen.model.Contract;
 import com.tjeannin.provigen.model.ContractField;
@@ -80,7 +80,7 @@ public class TableBuilder {
      *
      * @param database The database in which the table need to be created.
      */
-    public void createTable(SQLiteDatabase database) {
+    public void createTable(Database database) {
         database.execSQL(getSQL());
     }
 }

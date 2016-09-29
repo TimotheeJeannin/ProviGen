@@ -20,6 +20,7 @@ project(":ProviGenLib") {
 
     dependencies {
         compile 'com.google.android:android:4.1.1.4'
+        compile files('../libs/sqlcipher.jar')
     }
 }
 
@@ -29,6 +30,16 @@ project(":ProviGenSample") {
     dependencies {
         compile project(":ProviGenLib")
         compile 'com.android.support:support-v4:21.0.3'
+    }
+}
+
+project(":ProviGenSqlcipherSample") {
+    apply plugin: "android"
+
+    dependencies {
+        compile project(":ProviGenLib")
+        compile 'com.android.support:support-v4:21.0.3'
+        compile files('../libs/sqlcipher.jar', '../libs/sqlcipher-nativelibs.jar')
     }
 }
 

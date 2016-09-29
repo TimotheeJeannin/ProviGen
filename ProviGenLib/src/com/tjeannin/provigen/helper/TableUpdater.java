@@ -1,7 +1,7 @@
 package com.tjeannin.provigen.helper;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import com.tjeannin.provigen.database.Database;
 import com.tjeannin.provigen.model.Contract;
 import com.tjeannin.provigen.model.ContractField;
 
@@ -16,7 +16,7 @@ public class TableUpdater {
      * @param database      The database in which the updated table is.
      * @param contractClass The contract class to work with.
      */
-    public static void addMissingColumns(SQLiteDatabase database, Class contractClass) {
+    public static void addMissingColumns(Database database, Class contractClass) {
 
         Contract contract = new Contract(contractClass);
 

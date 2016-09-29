@@ -2,13 +2,16 @@ package com.tjeannin.provigen.test.constraint;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import com.tjeannin.provigen.ProviGenBaseContract;
 import com.tjeannin.provigen.ProviGenProvider;
+import com.tjeannin.provigen.ProviGenSQLiteOpenHelper;
 import com.tjeannin.provigen.annotation.Column;
 import com.tjeannin.provigen.annotation.Column.Type;
 import com.tjeannin.provigen.annotation.ContentUri;
+import com.tjeannin.provigen.database.AndroidSQLiteDatabase;
+import com.tjeannin.provigen.database.Database;
+import com.tjeannin.provigen.OpenHelper;
 import com.tjeannin.provigen.helper.TableBuilder;
 import com.tjeannin.provigen.model.Constraint;
 import com.tjeannin.provigen.model.Constraint.OnConflict;
@@ -16,27 +19,27 @@ import com.tjeannin.provigen.model.Constraint.OnConflict;
 public class OnConflictProvider extends ProviGenProvider {
 
     @Override
-    public SQLiteOpenHelper openHelper(Context context) {
-        return new SQLiteOpenHelper(context, "ProviGenDatabase", null, 1) {
+    public OpenHelper openHelper(Context context) {
+        return new ProviGenSQLiteOpenHelper(context, "ProviGenDatabase", null, 1, contractClasses()) {
             @Override
             public void onCreate(SQLiteDatabase database) {
+                Database db = new AndroidSQLiteDatabase(database);
                 new TableBuilder(ContractAbort.class)
                         .addConstraint(ContractAbort.AN_INT, Constraint.UNIQUE, OnConflict.ABORT)
-                        .createTable(database);
+                        .createTable(db);
 
                 new TableBuilder(ContractReplace.class)
                         .addConstraint(ContractReplace.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
-                        .createTable(database);
+                        .createTable(db);
 
                 new TableBuilder(ContractFail.class)
                         .addConstraint(ContractFail.AN_INT, Constraint.UNIQUE, OnConflict.FAIL)
-                        .createTable(database);
+                        .createTable(db);
 
                 new TableBuilder(ContractMultipleResolution.class)
                         .addConstraint(ContractMultipleResolution.AN_INT, Constraint.UNIQUE, OnConflict.REPLACE)
                         .addConstraint(ContractMultipleResolution.ANOTHER_INT, Constraint.UNIQUE, OnConflict.ABORT)
-                        .createTable(database);
-
+                        .createTable(db);
             }
 
             @Override

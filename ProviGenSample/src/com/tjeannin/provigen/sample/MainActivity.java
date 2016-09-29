@@ -13,7 +13,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
 
+import java.util.Random;
+
 public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnClickListener {
+    private static Random sRandom = new Random();
+    private static int sPersonNumber = 0;
 
     private SimpleCursorAdapter adapter;
 
@@ -67,8 +71,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
         switch (view.getId()) {
             case R.id.add:
                 ContentValues values = new ContentValues();
-                values.put(SampleContentProvider.Person.AGE, 20);
-                values.put(SampleContentProvider.Person.NAME, "Some Name");
+                values.put(SampleContentProvider.Person.AGE, sRandom.nextInt(120));
+                values.put(SampleContentProvider.Person.NAME, "Some Name " + sPersonNumber++);
                 getContentResolver().insert(SampleContentProvider.Person.CONTENT_URI, values);
                 break;
 
